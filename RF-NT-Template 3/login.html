@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom-input.css">
+    <link rel="stylesheet" href="css/custom-dropdown.css">
+    <style>
+        .vertical-divider {
+            border-left: 1px solid #53595F;
+            height: auto;
+        }
+
+        .btn-secondary:not(:disabled):not(.disabled).active,
+        .btn-secondary:not(:disabled):not(.disabled):hover,
+        .btn-secondary:not(:disabled):not(.disabled):focus,
+        .btn-secondary:not(:disabled):not(.disabled).active:hover,
+        .btn-secondary:not(:disabled):not(.disabled).active:focus,
+        .btn-secondary:not(:disabled):not(.disabled):focus:hover,
+        .button-extra:not(:disabled):not(.disabled).active,
+        .button-extra:not(:disabled):not(.disabled):hover,
+        .button-extra:not(:disabled):not(.disabled):focus,
+        .button-extra:not(:disabled):not(.disabled).active:hover,
+        .button-extra:not(:disabled):not(.disabled).active:focus,
+        .button-extra:not(:disabled):not(.disabled):focus:hover {
+            background-color: transparent;
+            color: #53595F;
+            border: 0px;
+            font-size: 18px;
+            text-align: left;
+            height: 60px !important;
+            box-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="height: 100%;">
+        <div class="wrapper d-flex flex-column min-vh-100" style="background-image: url(./img/background.png);">
+            <!-- Top Bar -->
+            <div class="top-bar login bg-color align-self-start col-md-11 mx-0 px-0">
+                <div class="d-flex justify-content-between align-items-start p-3 top-wrapper">
+                    <div class="d-flex flex-column flex-md-row col-6 col-md-auto px-0">
+                        <img src="img/NT1.png" alt="Icon" class="icon-top-left">
+                        <img src="img/NT2.png" alt="Icon" class="icon-top-left">
+                    </div>
+                    <div class="custom-dropdown language-dropdown align-self-start col-6 col-md-1 px-0">
+                        <button class="btn btn-light custom-dropdown-toggle" type="button" id="languageDropdown">
+                            <img class="mr-2" src="img/flag-th.png" alt="Thai Flag" width="20" height="15">
+                            ไทย
+                            <span class="dropdown-arrow">&#9662;</span>
+                        </button>
+                        <div class="custom-dropdown-menu" id="languageDropdownMenu">
+                            <a class="dropdown-item" href="#" data-value="ไทย" data-flag="img/flag-th.png"><img
+                                    src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย</a>
+                            <a class="dropdown-item" href="#" data-value="English" data-flag="img/flag-us.png"><img
+                                    src="img/flag-us.png" alt="US Flag" width="20" height="15"> English</a>
+                            <a class="dropdown-item" href="#" data-value="日本語" data-flag="img/flag-jp.png"><img
+                                    src="img/flag-jp.png" alt="Japan Flag" width="20" height="15"> 日本語</a>
+                            <a class="dropdown-item" href="#" data-value="한국어" data-flag="img/flag-kr.png"><img
+                                    src="img/flag-kr.png" alt="Korea Flag" width="20" height="15"> 한국어</a>
+                            <a class="dropdown-item" href="#" data-value="中国的" data-flag="img/flag-cn.png"><img
+                                    src="img/flag-cn.png" alt="China Flag" width="20" height="15"> 中国的</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="container-fluid p-0 flex-grow-1 col-md-11 mx-auto bg-main-content-login bg-color d-flex flex-column flex-md-row">
+                <!-- Left Side Banner -->
+                <div class="col-md-6 d-md-flex justify-content-center align-items-center text-center bg-banner py-3">
+                    <img src="img/promo2.png" alt="Promotion Banner" class="banner-image promo-banner">
+                </div>
+                <!-- Right Side Content -->
+                <div class="col-md-6 d-md-flex flex-column main-content-right-mobile">
+                    <div class="flex-grow-1 d-flex flex-column">
+                        <!-- Main Content Card -->
+                        <div
+                            class="main-content-card-login-wrapper flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                            <div class="main-content-card-login mx-auto">
+
+                                <div class="text-center promo-wrapper">
+                                    <img src="img/promo.png" alt="Promotion Banner" class="img-fluid promo-image px-0">
+                                </div>
+                                <!-- Form Content Start -->
+                                <form class="form-login mt-3" onsubmit="return login(event)">
+                                    <div class="form-group">
+                                        <div class="position-relative">
+                                            <img src="img/user.png" alt="User Icon" class="custom-input-login-icon">
+                                            <input type="text" id="username" class="form-control custom-input-login"
+                                                placeholder="ชื่อผู้ใช้">
+                                        </div>
+                                    </div>
+                                    <div class="form-group custom-input-password">
+                                        <div class="position-relative">
+                                            <img src="img/passlock.png" alt="Password Icon"
+                                                class="custom-input-login-icon">
+                                            <input type="password" id="password" class="form-control custom-input-login"
+                                                placeholder="รหัสผ่าน">
+                                            <span class="toggle-password" onclick="togglePassword()">Show</span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="form-group form-check d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input custom-checkbox"
+                                                id="rememberMe">
+                                            <label class="form-check-label ml-2" for="rememberMe">จดจำรหัสผ่าน</label>
+                                        </div>
+                                        <a href="reset-password.html" class="float-right"
+                                            style="color: #53595F;">ลืมรหัสผ่าน</a>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary col-12 mx-auto mb-3"
+                                            style="height: 40px; background-color: #FFE800; border-color:  #FFE800;  color: #53595F;">เข้าสู่ระบบ</button>
+                                        <button type="button"
+                                            class="btn btn-primary col-12 mx-auto mb-2 d-flex align-items-center justify-content-center"
+                                            style="height: 40px; background-color: #030650; border-color: #030650; font-size: 14px">
+                                            <img src="img/thaiID.png" alt="Logout Icon" width="40" height="40"
+                                                style="margin-inline: 10px;">
+                                            พิสูจน์และยืนยันตัวตนผ่าน ThaiID
+                                        </button>
+                                    </div>
+                                    <div class="text-center my-3">
+                                        <label style="font-size: 16px;">Social login</label>
+                                        <div>
+                                            <a href="#"><img src="img/gmail.png" alt="Google" width="40"
+                                                    class="social-icon mx-2"></a>
+                                            <a href="#"><img src="img/instagram.png" alt="Instagram" width="40"
+                                                    height="40" class="social-icon mx-2"></a>
+                                            <a href="#"><img src="img/line.png" alt="Line" width="40" height="40"
+                                                    class="social-icon mx-2"></a>
+                                            <a href="#"><img src="img/facebook.png" alt="Facebook" width="40"
+                                                    height="40" class="social-icon mx-2"></a>
+                                        </div>
+                                    </div>
+                                    <!-- Additional Links -->
+                                    <div class="text-center">
+                                        <div class="d-flex flex-row justify-content-center w-100">
+                                            <button type="button"
+                                                class="btn btn-secondary button-extra col-6 d-flex align-items-center justify-content-center mb-2">
+                                                <img src="img/shopping.png" alt="Logout Icon"
+                                                    style="width: 50px; margin-right: 1rem;">
+                                                ซื้อแพ็กเกจ<br>WiFi
+                                            </button>
+                                            <button type="button" onclick="window.location.href='register.html'"
+                                                class="btn btn-secondary button-extra col-6 d-flex align-items-center justify-content-center">
+                                                <img src="img/wifi.png" alt="Logout Icon"
+                                                    style="width: 50px; margin-right: 1rem;">
+                                                ลงทะเบียน<br>Free WiFi
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <!-- Form Content End -->
+                            </div>
+                        </div>
+
+                        <!-- Bottom Navigation -->
+                        <div class="bottom-nav d-flex align-items-center bg-color">
+                            <div class="nav-button-group d-flex justify-content-around">
+                                <a href="error.html" class="nav-item">
+                                    <img src="img/check-usage.png" alt="ตรวจสอบยอดใช้งาน">
+                                    <p>ตรวจสอบยอดใช้งาน</p>
+                                </a>
+                                <a href="howto.html" class="nav-item">
+                                    <img src="img/usage-guide.png" alt="วิธีการใช้งาน">
+                                    <p>วิธีการใช้งาน</p>
+                                </a>
+                                <a href="troubleshoot.html" class="nav-item">
+                                    <img src="img/problem-solving.png" alt="การแก้ไขปัญหา">
+                                    <p>การแก้ไขปัญหา</p>
+                                </a>
+                                <a href="error.html" class="nav-item">
+                                    <img src="img/service-area.png" alt="พื้นที่ให้บริการ">
+                                    <p>พื้นที่ให้บริการ</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main-content-mobile-radius d-md-none mb-100"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleText = document.querySelector('.toggle-password');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleText.textContent = 'Hide';
+            } else {
+                passwordField.type = 'password';
+                toggleText.textContent = 'Show';
+            }
+        }
+        function login() {
+            event.preventDefault();
+            window.location.href = "login-success.html";
+        }
+    </script>
+</body>
+
+</html>
