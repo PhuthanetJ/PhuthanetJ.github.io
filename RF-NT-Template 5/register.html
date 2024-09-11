@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียน</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom-input.css">
+    <link rel="stylesheet" href="css/custom-dropdown.css">
+</head>
+
+<body>
+    <div style="height: 100%;">
+        <div class="wrapper d-flex flex-column min-vh-100" style="background-image: url(./img/background.png);">
+            <div class="container-fluid p-0 flex-grow-1">
+                <!-- Top Bar -->
+                <div class="d-flex justify-content-between align-items-center p-3 top-bar">
+                    <div class="d-flex flex-column col-6 col-md-auto px-0 logo-wrapper">
+                        <img src="img/NT1.png" alt="Icon" class="icon-top-left">
+                        <img src="img/NT2.png" alt="Icon" class="icon-top-left">
+                    </div>
+                    <div class="custom-dropdown language-dropdown align-self-start col-6 col-md-1"
+                        style="padding-left: 0px; padding-right: 0px;">
+                        <button class="btn btn-light custom-dropdown-toggle" type="button" id="languageDropdown">
+                            <img class="mr-2" src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย
+                            <span class="dropdown-arrow">&#9662;</span>
+                        </button>
+                        <div class="custom-dropdown-menu" id="languageDropdownMenu">
+                            <a class="dropdown-item" href="#" data-value="ไทย" data-flag="img/flag-th.png"><img
+                                    src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย</a>
+                            <a class="dropdown-item" href="#" data-value="English" data-flag="img/flag-us.png"><img
+                                    src="img/flag-us.png" alt="US Flag" width="20" height="15"> English</a>
+                            <a class="dropdown-item" href="#" data-value="日本語" data-flag="img/flag-jp.png"><img
+                                    src="img/flag-jp.png" alt="Japan Flag" width="20" height="15"> 日本語</a>
+                            <a class="dropdown-item" href="#" data-value="한국어" data-flag="img/flag-kr.png"><img
+                                    src="img/flag-kr.png" alt="Korea Flag" width="20" height="15"> 한국어</a>
+                            <a class="dropdown-item" href="#" data-value="中国的" data-flag="img/flag-cn.png"><img
+                                    src="img/flag-cn.png" alt="China Flag" width="20" height="15"> 中国的</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Promo Banner -->
+                <div class="promo mb-3 text-center">
+                    <img src="img/promo.png" alt="Promotion Banner" class="img-fluid promo-image">
+                </div>
+
+                <!-- Main Content Card -->
+                <div class="main-content-card-register bg-color mx-auto">
+                    <h1 class="text-center font-weight-bold">ลงทะเบียน</h1>
+
+                    <!-- Form Content Start -->
+                    <form onsubmit="return register(event)">
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                <div class="custom-dropdown">
+                                    <button class="btn btn-secondary custom-dropdown-toggle" type="button"
+                                        id="titleDropdown">
+                                        คำนำหน้าชื่อ
+                                        <span class="dropdown-arrow">&#9662;</span>
+                                    </button>
+                                    <div class="custom-dropdown-menu" id="titleDropdownMenu">
+                                        <a class="dropdown-item" href="#">นาย</a>
+                                        <a class="dropdown-item" href="#">นาง</a>
+                                        <a class="dropdown-item" href="#">นางสาว</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-12">
+                                <input type="text" id="full-name" class="form-control custom-input"
+                                    placeholder="ชื่อ - นามสกุล">
+                            </div>
+                            <div class="form-group col-12">
+                                <div class="custom-dropdown">
+                                    <button class="btn btn-secondary custom-dropdown-toggle" type="button"
+                                        id="genderDropdown">
+                                        เพศ
+                                        <span class="dropdown-arrow">&#9662;</span>
+                                    </button>
+                                    <div class="custom-dropdown-menu" id="genderDropdownMenu">
+                                        <a class="dropdown-item" href="#">ชาย</a>
+                                        <a class="dropdown-item" href="#">หญิง</a>
+                                        <a class="dropdown-item" href="#">LGBTQ</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-12">
+                                <div class="custom-dropdown">
+                                    <button class="btn btn-secondary custom-dropdown-toggle" type="button"
+                                        id="provinceDropdown">
+                                        จังหวัด
+                                        <span class="dropdown-arrow">&#9662;</span>
+                                    </button>
+                                    <div class="custom-dropdown-menu" id="provinceDropdownMenu">
+                                        <input type="text" class="form-control custom-dropdown-search"
+                                            placeholder="Search" id="dropdownSearch4" onkeyup="filterFunction4(event)">
+                                        <a class="dropdown-item" href="#">กรุงเทพมหานคร</a>
+                                        <a class="dropdown-item" href="#">กระบี่</a>
+                                        <a class="dropdown-item" href="#">กาญจนบุรี</a>
+                                        <a class="dropdown-item" href="#">กาฬสินธุ์</a>
+                                        <a class="dropdown-item" href="#">กำแพงเพชร</a>
+                                        <a class="dropdown-item" href="#">ขอนแก่น</a>
+                                        <a class="dropdown-item" href="#">จันทบุรี</a>
+                                        <a class="dropdown-item" href="#">ฉะเชิงเทรา</a>
+                                        <a class="dropdown-item" href="#">ชลบุรี</a>
+                                        <a class="dropdown-item" href="#">ชัยนาท</a>
+                                        <a class="dropdown-item" href="#">ชัยภูมิ</a>
+                                        <a class="dropdown-item" href="#">ชุมพร</a>
+                                        <a class="dropdown-item" href="#">เชียงราย</a>
+                                        <a class="dropdown-item" href="#">เชียงใหม่</a>
+                                        <a class="dropdown-item" href="#">ตรัง</a>
+                                        <a class="dropdown-item" href="#">ตราด</a>
+                                        <a class="dropdown-item" href="#">ตาก</a>
+                                        <a class="dropdown-item" href="#">นครนายก</a>
+                                        <a class="dropdown-item" href="#">นครปฐม</a>
+                                        <a class="dropdown-item" href="#">นครพนม</a>
+                                        <a class="dropdown-item" href="#">นครราชสีมา</a>
+                                        <a class="dropdown-item" href="#">นครศรีธรรมราช</a>
+                                        <a class="dropdown-item" href="#">นครสวรรค์</a>
+                                        <a class="dropdown-item" href="#">นนทบุรี</a>
+                                        <a class="dropdown-item" href="#">นราธิวาส</a>
+                                        <a class="dropdown-item" href="#">น่าน</a>
+                                        <a class="dropdown-item" href="#">บึงกาฬ</a>
+                                        <a class="dropdown-item" href="#">บุรีรัมย์</a>
+                                        <a class="dropdown-item" href="#">ปทุมธานี</a>
+                                        <a class="dropdown-item" href="#">ประจวบคีรีขันธ์</a>
+                                        <a class="dropdown-item" href="#">ปราจีนบุรี</a>
+                                        <a class="dropdown-item" href="#">ปัตตานี</a>
+                                        <a class="dropdown-item" href="#">พะเยา</a>
+                                        <a class="dropdown-item" href="#">พระนครศรีอยุธยา</a>
+                                        <a class="dropdown-item" href="#">พังงา</a>
+                                        <a class="dropdown-item" href="#">พัทลุง</a>
+                                        <a class="dropdown-item" href="#">พิจิตร</a>
+                                        <a class="dropdown-item" href="#">พิษณุโลก</a>
+                                        <a class="dropdown-item" href="#">เพชรบุรี</a>
+                                        <a class="dropdown-item" href="#">เพชรบูรณ์</a>
+                                        <a class="dropdown-item" href="#">แพร่</a>
+                                        <a class="dropdown-item" href="#">ภูเก็ต</a>
+                                        <a class="dropdown-item" href="#">มหาสารคาม</a>
+                                        <a class="dropdown-item" href="#">มุกดาหาร</a>
+                                        <a class="dropdown-item" href="#">แม่ฮ่องสอน</a>
+                                        <a class="dropdown-item" href="#">ยโสธร</a>
+                                        <a class="dropdown-item" href="#">ยะลา</a>
+                                        <a class="dropdown-item" href="#">ร้อยเอ็ด</a>
+                                        <a class="dropdown-item" href="#">ระนอง</a>
+                                        <a class="dropdown-item" href="#">ระยอง</a>
+                                        <a class="dropdown-item" href="#">ราชบุรี</a>
+                                        <a class="dropdown-item" href="#">ลพบุรี</a>
+                                        <a class="dropdown-item" href="#">ลำปาง</a>
+                                        <a class="dropdown-item" href="#">ลำพูน</a>
+                                        <a class="dropdown-item" href="#">เลย</a>
+                                        <a class="dropdown-item" href="#">ศรีสะเกษ</a>
+                                        <a class="dropdown-item" href="#">สกลนคร</a>
+                                        <a class="dropdown-item" href="#">สงขลา</a>
+                                        <a class="dropdown-item" href="#">สตูล</a>
+                                        <a class="dropdown-item" href="#">สมุทรปราการ</a>
+                                        <a class="dropdown-item" href="#">สมุทรสงคราม</a>
+                                        <a class="dropdown-item" href="#">สมุทรสาคร</a>
+                                        <a class="dropdown-item" href="#">สระแก้ว</a>
+                                        <a class="dropdown-item" href="#">สระบุรี</a>
+                                        <a class="dropdown-item" href="#">สิงห์บุรี</a>
+                                        <a class="dropdown-item" href="#">สุโขทัย</a>
+                                        <a class="dropdown-item" href="#">สุพรรณบุรี</a>
+                                        <a class="dropdown-item" href="#">สุราษฎร์ธานี</a>
+                                        <a class="dropdown-item" href="#">สุรินทร์</a>
+                                        <a class="dropdown-item" href="#">หนองคาย</a>
+                                        <a class="dropdown-item" href="#">หนองบัวลำภู</a>
+                                        <a class="dropdown-item" href="#">อ่างทอง</a>
+                                        <a class="dropdown-item" href="#">อำนาจเจริญ</a>
+                                        <a class="dropdown-item" href="#">อุดรธานี</a>
+                                        <a class="dropdown-item" href="#">อุตรดิตถ์</a>
+                                        <a class="dropdown-item" href="#">อุทัยธานี</a>
+                                        <a class="dropdown-item" href="#">อุบลราชธานี</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-12">
+                                <input type="number" id="id-number" class="form-control custom-input"
+                                    placeholder="เลขประจำตัวประชาชน 13 หลัก">
+                            </div>
+                            <div class="form-group col-12">
+                                <input type="number" id="passport-number" class="form-control custom-input"
+                                    placeholder="เลขหนังสือเดินทาง">
+                            </div>
+                            <!-- <div class="form-group col-12">
+                                <div class="calendar-input">
+                                    <input type="text" id="birth-date" class="form-control custom-input date-type"
+                                        placeholder="วันเกิด" onfocus="(this.type='date')">
+                                    <span class="calendar-icon"></span>
+                                </div>
+                            </div> -->
+                            <div class="form-group col-12">
+                                <input type="email" id="email" class="form-control custom-input" placeholder="อีเมล์">
+                            </div>
+                            <div class="form-group col-12">
+                                <input type="number" id="phone" class="form-control custom-input"
+                                    placeholder="เบอร์มือถือ">
+                            </div>
+                            <div class="form-group col-7">
+                                <button type="button" id="request-otp" class="btn btn-warning text-white w-100"
+                                    style="height: 40px !important; min-height: 40px !important; border-radius: 25px; background-color: #F4A022; border-color: #F4A022; margin-bottom: 20px;">ขอรับหมายเลข
+                                    OTP</button>
+                            </div>
+                            <div class="form-group col-12">
+                                <input type="text" id="otp" class="form-control custom-input" placeholder="หมายเลข OTP">
+                            </div>
+                            <div class="form-group col-12">
+                                <button type="button" id="submit-otp" class="btn btn-warning text-white w-100"
+                                    style="height: 40px !important; min-height: 40px !important; border-radius: 25px; background-color: #F4A022; border-color: #F4A022; margin-bottom: 20px;">ยืนยันรหัส
+                                    OTP</button>
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center">
+                            <div class="form-check d-flex align-items-center">
+                                <input type="checkbox" class="form-check-input custom-checkbox" id="accept-terms">
+                                <label class="form-check-label ml-2" for="accept-terms"
+                                    style="text-decoration: underline;">
+                                    <a href="term.html"
+                                        style="color: inherit; text-decoration: underline; font-size: 16px;">ยอมรับเงื่อนไขในการใช้บริการ</a>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-row justify-content-center pt-3">
+                            <button type="submit" class="btn btn-primary col-12"
+                                style="border-radius: 25px; background-color: #FFE800; border-color:  #FFE800;  color: #53595F;">ลงทะเบียน</button>
+                        </div>
+                    </form>
+                    <!-- Form Content End -->
+                </div>
+
+                <!-- Promo2 Banner -->
+                <div class="promo2-mobile text-center">
+                    <img src="img/promo2.png" alt="Promotion Banner" class="img-fluid w-100 promo2-image">
+                </div>
+            </div>
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav d-flex align-items-center">
+                <div class="nav-button-group d-flex justify-content-around bg-color">
+                    <a href="error.html" class="nav-item">
+                        <img src="img/check-usage.png" alt="ตรวจสอบยอดใช้งาน">
+                        <p>ตรวจสอบยอดใช้งาน</p>
+                    </a>
+                    <a href="howto.html" class="nav-item">
+                        <img src="img/usage-guide.png" alt="วิธีการใช้งาน">
+                        <p>วิธีการใช้งาน</p>
+                    </a>
+                    <a href="troubleshoot.html" class="nav-item">
+                        <img src="img/problem-solving.png" alt="การแก้ไขปัญหา">
+                        <p>การแก้ไขปัญหา</p>
+                    </a>
+                    <a href="error.html" class="nav-item">
+                        <img src="img/service-area.png" alt="พื้นที่ให้บริการ">
+                        <p>พื้นที่ให้บริการ</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const maxLengths = {
+                'id-number': 13,
+                'passport-number': 9,
+                'phone': 10
+            };
+
+            for (const [id, maxLength] of Object.entries(maxLengths)) {
+                document.getElementById(id).addEventListener('input', function () {
+                    if (this.value.length > maxLength) {
+                        this.value = this.value.slice(0, maxLength);
+                    }
+                });
+            }
+        });
+
+        function register(event) {
+            event.preventDefault();
+
+            // Clear previous errors
+            const inputs = document.querySelectorAll('.custom-input');
+            inputs.forEach(input => {
+                input.classList.remove('error');
+            });
+
+            const dropdowns = document.querySelectorAll('.custom-dropdown-toggle');
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('error');
+            });
+
+            let isValid = true;
+
+            // Validate ID number
+            const idNumber = document.getElementById('id-number');
+            if (idNumber.value.length !== 13) {
+                idNumber.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate Email
+            const email = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email.value)) {
+                email.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate Phone number
+            const phone = document.getElementById('phone');
+            if (phone.value.length !== 10) {
+                phone.classList.add('error');
+                isValid = false;
+            }
+
+            // Validate Dropdowns
+            const titleDropdown = document.getElementById('titleDropdown');
+            const genderDropdown = document.getElementById('genderDropdown');
+            const provinceDropdown = document.getElementById('provinceDropdown');
+
+            if (titleDropdown.innerText.trim().startsWith('คำนำหน้าชื่อ')) {
+                titleDropdown.classList.add('error');
+                isValid = false;
+            }
+            if (genderDropdown.innerText.trim().startsWith('เพศ')) {
+                genderDropdown.classList.add('error');
+                isValid = false;
+            }
+            if (provinceDropdown.innerText.trim().startsWith('จังหวัด')) {
+                provinceDropdown.classList.add('error');
+                isValid = false;
+            }
+
+            const requiredFields = document.querySelectorAll('.custom-input:not(#passport-number)');
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                window.location.href = "register-success.html";
+            }
+        }
+    </script>
+</body>
+
+</html>

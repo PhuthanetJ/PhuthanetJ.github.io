@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ออกจากระบบสำเร็จ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom-input.css">
+    <link rel="stylesheet" href="css/custom-dropdown.css">
+</head>
+
+<body>
+    <div style="height: 100%;">
+        <div class="wrapper d-flex flex-column min-vh-100" style="background-image: url(./img/background.png);">
+            <div class="container-fluid p-0 flex-grow-1">
+                <!-- Top Bar -->
+                <div class="d-flex justify-content-between align-items-center p-3 top-bar">
+                    <div class="d-flex flex-column col-6 col-md-auto px-0 logo-wrapper">
+                        <img src="img/NT1.png" alt="Icon" class="icon-top-left">
+                        <img src="img/NT2.png" alt="Icon" class="icon-top-left">
+                    </div>
+                    <div class="custom-dropdown language-dropdown align-self-start col-6 col-md-1"
+                        style="padding-left: 0px; padding-right: 0px;">
+                        <button class="btn btn-light custom-dropdown-toggle" type="button" id="languageDropdown">
+                            <img class="mr-2" src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย
+                            <span class="dropdown-arrow">&#9662;</span>
+                        </button>
+                        <div class="custom-dropdown-menu" id="languageDropdownMenu">
+                            <a class="dropdown-item" href="#" data-value="ไทย" data-flag="img/flag-th.png"><img
+                                    src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย</a>
+                            <a class="dropdown-item" href="#" data-value="English" data-flag="img/flag-us.png"><img
+                                    src="img/flag-us.png" alt="US Flag" width="20" height="15"> English</a>
+                            <a class="dropdown-item" href="#" data-value="日本語" data-flag="img/flag-jp.png"><img
+                                    src="img/flag-jp.png" alt="Japan Flag" width="20" height="15"> 日本語</a>
+                            <a class="dropdown-item" href="#" data-value="한국어" data-flag="img/flag-kr.png"><img
+                                    src="img/flag-kr.png" alt="Korea Flag" width="20" height="15"> 한국어</a>
+                            <a class="dropdown-item" href="#" data-value="中国的" data-flag="img/flag-cn.png"><img
+                                    src="img/flag-cn.png" alt="China Flag" width="20" height="15"> 中国的</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Promo Banner -->
+                <div class="promo mb-3 text-center">
+                    <img src="img/promo.png" alt="Promotion Banner" class="img-fluid promo-image">
+                </div>
+
+                <!-- Main Content Card -->
+                <div class="main-content-card bg-color mx-auto">
+                    <h1 class="text-center font-weight-bold">ออกจากระบบสำเร็จ</h1>
+                    <!-- Form Content Start -->
+                    <div class="text-center">
+                        <p class="welcome-text text-center" style="margin-bottom: 20px;">ขอบคุณที่ใช้บริการ NT-Wi-Fi</p>
+
+                        <div class="box-center-content">
+                            <div class="box-content justify-content-center">
+                                <div style="line-height: 26.4px; margin-bottom: 20px;">
+                                    <p style="margin-bottom: 0px; font-weight: 700;">แพ็คเกจ:</p>
+                                    <p style="color: rgba(0, 0, 0, 0.7); ">WIFI 30 days</p>
+                                </div>
+                                <div style="line-height: 26.4px; margin-bottom: 20px;">
+                                    <p style="margin-bottom: 0px; font-weight: 700;">จำนวนการใช้งาน WIFI ที่คงเหลือ:</p>
+                                    <p style="color: rgba(0, 0, 0, 0.7);">30 days</p>
+                                </div>
+                                <div style="line-height: 26.4px; margin-bottom: 20px;">
+                                    <p style="margin-bottom: 0px; font-weight: 700;">วันหมดอายุ:</p>
+                                    <p style="color: rgba(0, 0, 0, 0.7);">8/8/2024</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-center">
+                            <button type="button" onclick="window.location.href='login.html'"
+                                class="btn btn-primary col-12 col-md-5 "
+                                style="border-radius: 25px; background-color: #53595F; border-color: #53595F;">กลับสู่หน้าหลัก</button>
+                        </div>
+                    </div>
+                    <!-- Form Content End -->
+
+                </div>
+
+                <!-- Promo2 Banner -->
+                <div class="promo2-mobile text-center">
+                    <img src="img/promo2.png" alt="Promotion Banner" class="img-fluid w-100 promo2-image">
+                </div>
+            </div>
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav d-flex align-items-center">
+                <div class="nav-button-group d-flex justify-content-around bg-color">
+                    <a href="error.html" class="nav-item">
+                        <img src="img/check-usage.png" alt="ตรวจสอบยอดใช้งาน">
+                        <p>ตรวจสอบยอดใช้งาน</p>
+                    </a>
+                    <a href="howto.html" class="nav-item">
+                        <img src="img/usage-guide.png" alt="วิธีการใช้งาน">
+                        <p>วิธีการใช้งาน</p>
+                    </a>
+                    <a href="troubleshoot.html" class="nav-item">
+                        <img src="img/problem-solving.png" alt="การแก้ไขปัญหา">
+                        <p>การแก้ไขปัญหา</p>
+                    </a>
+                    <a href="error.html" class="nav-item">
+                        <img src="img/service-area.png" alt="พื้นที่ให้บริการ">
+                        <p>พื้นที่ให้บริการ</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>
