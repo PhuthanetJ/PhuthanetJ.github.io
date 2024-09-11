@@ -1,0 +1,171 @@
+.form-check {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.form-check-label {
+    font-size: 16px;
+}
+
+.form-check-input {
+    margin-top: 0px;
+}
+
+.custom-input {
+    border-radius: 25px;
+    border: 0px solid #DEDEDE;
+    padding: 8px 20px;
+    background-color: white;
+    font-size: 16px;
+    color: #53595F;
+    height: 40px;
+    margin-bottom: 20px;
+}
+
+.custom-input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.error {
+    border-color: red !important;
+    border-width: 1px !important;
+
+}
+
+.custom-input::placeholder {
+    color: #C6C9C4;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.custom-checkbox {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #DEDEDE;
+    appearance: none; /* Remove default checkbox styling */
+    -webkit-appearance: none; /* Remove default checkbox styling for WebKit browsers */
+    outline: none; /* Remove default outline */
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-checkbox:checked {
+    background-color: #FCC353;
+    border-color: #FCC353;
+}
+
+.custom-checkbox:checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.custom-input-password {
+    position: relative;
+}
+
+.custom-input-password input {
+    width: 100%;
+    padding-right: 60px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #FCC35352;
+    /* Default color */
+    font-size: 18px;
+}
+
+.toggle-password:hover {
+    color: #FCC353;
+    /* Hover color */
+}
+
+.custom-input-login {
+    position: relative;
+    border-radius: 25px;
+    border: 0px solid #DEDEDE;
+    padding: 12px 20px 8px 54px;
+    background-color: white;
+    font-size: 16px;
+    color: #53595F;
+    height: 40px;
+    margin-bottom: 20px;
+}
+
+.custom-input-login::placeholder {
+    color: #C6C9C4;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.custom-input-login:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-input-login.error {
+    border-color: red;
+    border-width: 1px;
+}
+
+.custom-input-login-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    z-index: 1;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+.calendar-input {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.calendar-input .calendar-icon {
+    position: absolute;
+    right: 20px;
+    top: 30%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>') no-repeat center center;
+    pointer-events: none;
+}
+
+.hidden-date-input {
+    display: none;
+}
