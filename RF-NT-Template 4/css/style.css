@@ -1,0 +1,472 @@
+@font-face {
+  font-family: "NT";
+  src: url("../fonts/NT Regular.otf") format("opentype"),
+    url("../fonts/NT Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "NT";
+  src: url("../fonts/NT Bold.otf") format("opentype"),
+    url("../fonts/NT Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+html,
+body {
+  font-family: "NT", sans-serif;
+  /* background-color: #ffffff; */
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  height: 100%;
+}
+
+body {
+  line-height: auto;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+.promo {
+  margin-bottom: 20px;
+}
+
+.promo img {
+  width: 100%; /* Adjusted width for responsiveness */
+  max-width: 450px;
+  height: auto;
+}
+
+h1 {
+  color: #665ae1; /* Adjusted color */
+  font-size: 22pt;
+  margin-bottom: 20px;
+  font-weight: 700; /* Make it bold */
+}
+
+p {
+  color: #53595F;
+}
+
+label {
+  font-family: "NT", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #53595f;
+}
+
+#left-banner {
+  background-color: transparent; /* Light background for left banner */
+  margin-top: 200px;
+}
+
+#main-content {
+  background-color: rgba(255, 255, 255, 0.5); /* Added white background for the main content */
+  overflow-y: auto; /* Ensure main content is scrollable */
+  padding: 48px 20px 0px 20px;
+}
+#main-content-login {
+  background-color: rgba(255, 255, 255, 0.5); /* Added white background for the main content */
+  overflow-y: auto; /* Ensure main content is scrollable */
+  padding: 70px 20px 0px 20px;
+}
+
+.icon-nt {
+  max-height: 80px;
+  max-width: 300px;
+  object-fit: contain;
+  object-position: left;
+  margin: 10px;
+}
+
+.promo {
+  max-height: 150px;
+  max-width: 450px;
+  object-fit: contain;
+}
+
+.top-bar {
+  background-color: transparent; /* Background color for the top bar */
+  z-index: 3; /* Ensure top bar is above other content */
+  height: 150px;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-container {
+  min-height: 100vh;
+  margin-top: -150px;
+}
+
+.bottom-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  /* padding: 10px 0; */
+  background-color: #ffffff;
+  width: 100%;
+  z-index: 3;
+  border-radius: 4px;
+  max-width: 450px;
+  align-self: center;
+}
+
+.bottom-nav .nav-item {
+  text-align: center;
+  margin: 10px;
+}
+
+.bottom-nav .nav-item img {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 5px;
+}
+
+.bottom-nav .nav-item p {
+  margin: 0;
+  font-size: 16px;
+  color: #53595f;
+}
+
+.content-body {
+  background-color: #ccc;
+  width: 450px;
+  font-size: 22px;
+  line-height: 0.9;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 24px 20px 24px;
+  border-radius: 28px;
+}
+
+.body-long-content{
+  max-height: 383px; 
+  overflow-y: auto; 
+  padding-right: 20px; 
+}
+/* Custom Scrollbar */
+.body-long-content::-webkit-scrollbar {
+  width: 15px; /* ความกว้างของ scrollbar */
+}
+
+.body-long-content::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1; /* สีของ thumb */
+  border-radius: 5px; /* มุมโค้งของ thumb */
+  border: 3px solid #f1f1f1; /* ขอบของ thumb */
+}
+
+.body-long-content::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* สีของ track */
+  border-radius: 5px; /* มุมโค้งของ track */
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border-radius: 28px; */
+}
+
+.login-content-75 {
+  width: 75% !important;
+}
+
+.box-content {
+  width: 450px;
+  font-size: 22px;
+  line-height: 1;
+  text-align: left;
+  border-radius: 5px;
+}
+
+.btn-wrapper {
+  width: 100%;
+  max-height: 40px !important;
+  height: 40px !important;
+  margin-inline: 0px;
+}
+
+.btn {
+  border-radius: 28px;
+  font-size: 16px;
+  max-height: 40px !important;
+  height: 40px !important;
+}
+
+.btn-primary,
+.btn-secondary {
+  max-height: 40px !important;
+  height: 40px !important;
+}
+
+.btn-custom {
+  width: 100%;
+  max-height: 40px !important;
+  height: 40px;
+  margin-bottom: 10px;
+  padding: 10px 10px;
+  font-size: 18px;
+  border-radius: 5px;
+}
+
+.btn-custom-primary {
+  background-color: #ff9800;
+  color: white;
+  border: 1px solid #ff9800;
+  width: 100%;
+}
+
+.btn-custom-primary:hover {
+  background-color: #e68900;
+  border-color: #e68900;
+}
+
+.btn-custom-outline {
+  background-color: transparent;
+  color: #ff9800;
+  border: 1px solid #ff9800;
+  width: 100%;
+}
+
+.btn-custom-outline:hover {
+  background-color: #ff9800;
+  color: white;
+}
+
+.btn-custom-outline.active {
+  background-color: #ff9800;
+  color: white;
+  border: 1px solid #ff9800;
+}
+
+.accordion .accordion-button {
+  text-align: left;
+  font-size: 22px;
+  width: 100%;
+  background-color: #F4A022;
+  color: white;
+  position: relative;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.accordion .accordion-button.collapsed {
+  background-color: #ffffff;
+  color: #F4A022;
+  border: 1px solid #F4A022;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.accordion .accordion-button.collapsed::after {
+  text-align: right;
+  content: "+";
+  font-size: 2rem;
+  color: #F4A022;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.accordion .accordion-button:not(.collapsed)::after {
+  text-align: right;
+  content: "-";
+  font-size: 2rem;
+  color: white;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+button.btn.btn-link.accordion-button:focus {
+  outline: 0;
+  box-shadow: none !important;
+  text-decoration: none;
+}
+
+button.btn.btn-link.accordion-button:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.accordion .card {
+  border: 0 !important;
+  background-color: transparent;
+}
+
+.card-header {
+  padding: 0 !important;
+  margin-bottom: 10px !important;
+  border-bottom: 0 !important;
+
+}
+
+.card-body {
+  color: #53595F;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin-bottom: 20px !important;
+  font-size: 20px !important;
+}
+/* Accordion content  V2 */
+.accordion-button2 {
+  text-align: left;
+  font-size: 22px;
+  width: 100%;
+  background-color: #ffffff;
+  color: #F4A022;
+  position: relative;
+  border-bottom: 1px solid #F4A022;
+  border-radius: 0px !important;
+  text-decoration: none;
+}
+.accordion-button2.collapsed {
+  background-color: #ffffff;
+  color: #53595f;
+  border-bottom: 1px solid #53595f;
+  text-decoration: none;
+}
+
+.accordion-button2::after {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+}
+
+.accordion-button2.collapsed::after {
+  content: "+";
+}
+
+.accordion-button2:not(.collapsed)::after {
+  content: "-";
+}
+
+button.btn.btn-link.accordion-button2:focus {
+  outline: 0;
+  box-shadow: none !important;
+}
+
+button.btn.btn-link.accordion-button2:hover {
+  color: #F4A022;
+  text-decoration : none;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #F4A022;
+  margin: 20px 0;
+}
+
+.button-extra {
+  background-color: transparent;
+  color: #53595f;
+  border: 0px;
+  font-size: 18px !important;
+  text-align: left;
+  height: 60px !important;
+}
+
+.center-elements {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pb-20 {
+  padding-bottom: 20px !important;
+}
+
+.form-group {
+  margin-bottom: 0px;
+  width: 100%;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 767px) {
+  #left-banner {
+    height: 0px;
+  }
+
+  #main-content {
+    padding: 4px 24px 0px 24px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+  }
+  #main-content-login {
+    padding: 20px 24px 0px 24px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    height: 100%;
+  }
+
+  .top-bar .icon-nt {
+    margin-bottom: 10px;
+  }
+
+
+
+
+  .promo.mobile {
+    margin-bottom: 116px !important;
+  }
+
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    flex-direction: row;
+    background-color: #ffffff;
+    justify-content: space-between;
+    max-width: none;
+  }
+
+  .box-content {
+    width: 100%;
+    font-size: 18px;
+    padding: 0px;
+  }
+
+  .btn-wrapper {
+    width: 100%;
+  }
+
+  .content-body {
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .promo-mb {
+    margin-bottom: 116px !important;
+  }
+  .bottom-nav .nav-item {
+    margin-inline: 7px;
+  }
+  
+}

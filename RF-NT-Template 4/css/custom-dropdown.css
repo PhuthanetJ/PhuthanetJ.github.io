@@ -1,0 +1,100 @@
+.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.custom-dropdown-toggle {
+    background-color: #f5f6f8;
+    border: 1px solid #dedede;
+    color: #53595f;
+    font-size: 18px;
+    width: 100%;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 20px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.custom-dropdown-toggle:hover,
+.custom-dropdown-toggle:focus {
+    background-color: #e2e6ea;
+    border-color: #80bdff;
+}
+
+.custom-dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.custom-dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.custom-dropdown-menu a:hover:not(.disabled) {
+    background-color: #665AE1;
+    color: white;
+}
+
+.custom-dropdown-menu a.disabled {
+    background-color: #F5F6F8;
+    color: #A3A3A3;
+    pointer-events: none;
+}
+
+.custom-dropdown-search {
+    width: calc(100% - 2rem);
+    margin: 0.5rem 1rem;
+}
+
+.dropdown-arrow {
+    margin-left: auto;
+    font-size: 24px;
+    color: #53595F;
+}
+
+/* Specific styles for the language dropdown */
+.language-dropdown {
+    background-color: white;
+    border: 1px solid #D0D5DD;
+    border-radius: 40px;
+    padding: initial;
+}
+
+.language-dropdown .custom-dropdown-toggle {
+    border: none;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: auto;
+}
+
+.language-dropdown .custom-dropdown-toggle img {
+    margin-right: 5px;
+}
+
+.language-dropdown .custom-dropdown-menu {
+    max-height: max-content;
+}
+
+@media (min-width: 768px) {
+    .language-dropdown.col-md-1 {
+      flex: 0 0 11%;
+      max-width: 11%;
+    }
+  }
