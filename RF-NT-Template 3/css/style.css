@@ -35,8 +35,8 @@ body {
 }
 
 .bg-color {
-  background-color: #f5f1c080;
-} 
+  background-color: #dfb6f880;
+}
 
 .bg-main-content-login {
   border-bottom-right-radius: 60px;
@@ -95,8 +95,7 @@ body {
 
 .content-wrapper {
   background-color: #ffffff;
-  border-radius: 8px;
-  border-bottom-right-radius: 40px;
+  border-radius: 40px;
   padding: 24px;
   max-width: 450px;
 }
@@ -210,7 +209,7 @@ label {
   min-height: 40px !important;
   height: 40px !important;
   padding: 0px;
-  border-radius: 28px;
+  border-radius: 40px;
 }
 
 /* Bottom navigation styles */
@@ -315,7 +314,7 @@ label {
 .btn-custom {
   width: 100%;
   min-height: 40px !important;
-  border-radius: 28px;
+  border-radius: 25px;
   height: 40px;
   padding: 10px 10px;
   font-size: 18px;
@@ -324,7 +323,7 @@ label {
 .btn-custom1 {
   width: 100%;
   min-height: 40px !important;
-  border-radius: 28px;
+  border-radius: 25px;
   height: 40px;
   padding: 2px 2px;
   font-size: small;
@@ -332,7 +331,7 @@ label {
 
 .btn-custom-primary {
   background-color: #f4a022;
-  border-radius: 28px;
+  border-radius: 25px;
   color: white;
   border: 1px solid #f4a022;
   width: 100%;
@@ -348,7 +347,7 @@ label {
   color: #f4a022;
   border: 1px solid #f4a022;
   width: 100%;
-  border-radius: 28px;
+  border-radius: 25px;
 }
 
 .btn-custom-outline:hover {
@@ -383,7 +382,7 @@ label {
   position: relative;
   text-decoration: none;
   background-color: #f4a022;
-  border-radius: 8px;
+  border-radius: 25px;
 }
 
 .accordion .accordion-button.collapsed {
@@ -391,7 +390,7 @@ label {
   border: 1px solid #f4a022;
   text-decoration: none;
   background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border-radius: 25px;
 }
 
 .accordion .accordion-button.collapsed::after {
@@ -529,7 +528,7 @@ hr {
   }
 
   .bg-color {
-    background-color:  #f5f1c080 !important;
+    background-color: #dfb6f880 !important;
   }
 
   .bg-main-content-login {
