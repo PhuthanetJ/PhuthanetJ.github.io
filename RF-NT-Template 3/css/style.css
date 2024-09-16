@@ -35,7 +35,7 @@ body {
 }
 
 .bg-color {
-  background-color: #ffd00080;
+  background-color: #ffd10080;
 }
 
 .bg-main-content-login {
@@ -528,7 +528,7 @@ hr {
   }
 
   .bg-color {
-    background-color: #ffd00030 !important;
+    background-color: #ffd10030 !important;
   }
 
   .bg-main-content-login {
