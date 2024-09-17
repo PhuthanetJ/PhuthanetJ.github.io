@@ -26,6 +26,10 @@ body {
   line-height: auto;
 }
 
+a {
+  color: #665AE1;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -396,6 +400,32 @@ hr {
 .form-group {
   margin-bottom: 0px;
   width: 100%;
+}
+
+.btn-color-primary {
+  background-color: #665AE1 !important;
+  border-color: #665AE1 !important;
+}
+
+.btn-color-secondary {
+  background-color: #53595F !important;
+  border-color: #53595F !important;
+}
+
+.btn-thai-id {
+  height: 40px;
+  background-color: #030650 !important;
+  border-color: #030650 !important;
+  font-size: 14px !important;
+}
+
+.btn-otp {
+  height: 40px !important;
+  margin-bottom: 20px;
+  color: #53595F;
+  background-color: #F4A022 !important;
+  border-color: #F4A022 !important;
+  font-size: 16px;
 }
 
 /* Media queries for responsive design */
