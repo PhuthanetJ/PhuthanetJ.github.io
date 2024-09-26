@@ -83,6 +83,10 @@ label {
   padding: 70px 20px 0px 20px;
 }
 
+.bg-color {
+  background-color: #ccc !important;
+}
+
 .icon-nt {
   max-height: 80px;
   max-width: 300px;
@@ -119,9 +123,7 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid #ccc;
   /* padding: 10px 0; */
-  background-color: #ffffff;
   width: 100%;
   z-index: 3;
   border-radius: 4px;
@@ -147,7 +149,6 @@ label {
 }
 
 .content-body {
-  background-color: #ccc;
   width: 450px;
   font-size: 22px;
   line-height: 0.9;
@@ -469,7 +470,6 @@ hr {
     left: 0;
     width: 100%;
     flex-direction: row;
-    background-color: #ffffff;
     justify-content: space-between;
     max-width: none;
   }
