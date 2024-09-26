@@ -39,7 +39,7 @@ a {
 }
 
 .bg-color {
-  background-color: #ffd10080;
+  background-color: #dfb6f880 !important;
 }
 
 .bg-main-content-login {
@@ -469,13 +469,13 @@ hr {
 }
 
 .btn-color-primary {
-  background-color: #F07026 !important;
-  border-color: #F07026  !important;
+  background-color: #BE79E8 !important;
+  border-color: #BE79E8 !important;
 }
 
 .btn-color-secondary {
-  background-color: #545859 !important;
-  border-color: #545859 !important;
+  background-color: #604766 !important;
+  border-color: #604766 !important;
 }
 
 .btn-thai-id {
@@ -555,10 +555,6 @@ hr {
     display: flex;
     flex: auto;
     justify-content: flex-end;
-  }
-
-  .bg-color {
-    background-color: #ffd10040 !important;
   }
 
   .bg-main-content-login {
