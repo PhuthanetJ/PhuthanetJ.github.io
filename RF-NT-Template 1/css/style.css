@@ -40,13 +40,16 @@ a {
 }
 
 .bg-main-content-login {
-  background-color: #F5F3DD80;
   border-top-left-radius: 60px;
   margin-left: auto !important; /* Align content to the right side */
 }
 
 .bg-half-right {
   min-height: max-content;
+}
+
+.bg-color {
+  background-color: #F5F3DD80 !important;
 }
 
 /* Top bar styles */
@@ -221,7 +224,6 @@ label {
   justify-content: center;
   align-items: center;
   align-self: center;
-  /* background-color: #F5F3DD80; */
   max-width: 450px;
   width: 100%;
   /* height: 100px; */
@@ -229,10 +231,10 @@ label {
 }
 
 .bottom-nav .nav-button-group {
+  background-color: unset;
   display: flex;
   justify-content: center;
   width: 490px;
-  background-color: #FAF9EE;
   /* padding: 10px 0px 10px 0px; */
   position: absolute;
   left: 50%;
@@ -240,13 +242,13 @@ label {
 }
 
 .bottom-nav .nav-button-group-login {
+  background-color: unset;
   display: flex;
   justify-content: center;
   width: 100%;
   height: 100px;
-  background-color: #FAF9EE;
   /* padding: 14px 0px 14px 0px; */
-  border-radius: 8px;
+  border-radius: 8px 8px 0px 0px;
 }
 
 .bottom-nav .nav-item {
@@ -516,7 +518,6 @@ hr {
   }
 
   .bg-wrapper-mobile {
-    background-color: #F5F3DD80;
     padding: 0px 24px 0px 24px;
   }
 
@@ -567,7 +568,6 @@ hr {
   }
 
   .bottom-nav {
-    background-color: #FAF9EE;
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -626,17 +626,11 @@ hr {
     padding: 0px 12px 0px 12px;
   }
 
-  .bg-main-content-login {
-    background-color: white;
-  }
-
   .main-content-right-mobile {
-    background-color: #dfb6f8;
     padding-inline: 0px !important;
   }
 
   .main-content-mobile-radius {
-    background-color: #F5F3DD80;
     height: 40px;
     max-height: 40px;
     border-top-left-radius: 60px;
@@ -665,7 +659,6 @@ hr {
 
   .main-content-left-login {
     padding-inline: 0px;
-    background-color: #F5F3DD80;
   }
 
   .button-extra {
