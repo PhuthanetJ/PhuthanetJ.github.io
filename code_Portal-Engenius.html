@@ -1,0 +1,266 @@
+<head>
+  <title>EnGenius Cloud | Connect</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial;
+      /* background: #FFFFFF; */
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    p {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+
+    button>p {
+      margin: 4px 0px;
+    }
+
+    h4 {
+      margin: 10px 0px 10px 0px
+    }
+
+    .header {
+      position: relative;
+      /*บน ซ้าย ล่าง ขวา  */
+      padding: 0px 16px 20px 25px;
+      height: 100%;
+      width: 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+    }
+
+    .imgLogo {
+      /* position: absolute; */
+      /* position: relative; */
+      background-image: linear-gradient(to right, #00d0e1ff 0%, #007ce1ff 50%, #0f00e1ff 100%);
+      /*บนซ้าย บนขวา ล่างซ้าย ล่างขวา */
+      border-radius: 0px 0px 300px 30px;
+      padding: 8px;
+      width: 100%;
+    }
+
+    .driLogo {
+      height: 120px;
+      width: auto;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      
+    }
+
+    .side {
+      background-color: #347C9840;
+      border-radius: 12px;
+      flex: 60%;
+      min-width: 280px;
+      padding: 16px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+    }
+
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 10px;
+      background-color: #347C9840;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .main form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .form-control {
+      width: 90%;
+      height: 32px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+
+    .driCenter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .textbox {
+      height: auto;
+      align-items: center;
+      padding: 0px 10px 0px 10px;
+      overflow-x: auto;
+      border-radius: 16px;
+
+    }
+
+    .btnContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+    .btn {
+      text-align: center;
+      background: #0247FE;
+      color: #ffffffff;
+      max-width: 80%;
+      min-width: 50%;
+      margin: 10px;
+      border-radius: 24px;
+    }
+
+    .tail {
+      color: #4b4b4b;
+      /* border-top: 2px solid #f1f1f1; */
+      background-color: transparent;
+      padding-left: 10px;
+    }
+
+    #errmsg {
+      color: #D70015;
+      font-size: 12px;
+      margin: 10px 6px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .side {
+        flex: 60%;
+        padding: 10px;
+        border-style: none none none none;
+        border-color: #f1f1f1;
+        border-width: 1px;
+      }
+    }
+  </style>
+
+  <script>
+    function _init() {
+      document.body.style.display = 'none';
+      document.body.offsetHeight;
+      document.body.style.display = '';
+      var year = new Date().getFullYear();
+      document.getElementById("year").innerHTML = year;
+
+      const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+      });
+      const errmsgEl = document.getElementById('errmsg');
+
+      if (params.res === "failed") {
+        switch (params.reason) {
+          case "reject":
+            errmsgEl.textContent = "Invalid credential or you have no privilege.";
+            break;
+          case "timeout":
+            errmsgEl.textContent = "No response from authentication server.";
+            break;
+          case "mtu":
+            errmsgEl.textContent = "Abnormal network error.";
+            break;
+          case "other":
+            errmsgEl.textContent = "Other errors. (5)";
+            break;
+          default:
+            errmsgEl.textContent = "Other errors. (6)";
+            break;
+        }
+
+        errmsgEl.style.display = "block";
+      } else {
+        errmsgEl.style.display = "none";
+      }
+    }
+
+    function validateForm() {
+      const userid = document.getElementById("username").value;
+      const userpw = document.getElementById("password").value;
+      const errmsgEl = document.getElementById('errmsg');
+
+      if (userid == "" || userpw == "") {
+        errmsgEl.textContent = "Invalid credential or you have no privilege.";
+        errmsgEl.style.display = "block";
+
+        return false;
+      }
+    }
+  </script>
+
+</head>
+
+<body onload="_init()" style="height: 100%;">
+
+  <div class="header"
+    style="background-image: url('https://lh3.googleusercontent.com/d/1srUnwbh47H5vSK8yGJZO1axSwSgHsrPx;')">
+    <div class="imgLogo">
+      <img id="logo" class="driLogo" src="https://lh3.googleusercontent.com/d/1O_lXkybx1jj1nKGXk_eSzTU81JHkJxFw"
+        alt="123">
+    </div>
+
+    <div class="row">
+      <div class="side">
+        <h2 id="title">Welcome Portal</h2>
+        <p id="message">Test Portal Engenius.</p>
+      </div>
+      <div class="main">
+        <form id="fmLogin" role="form" method="get" onsubmit="return validateForm()" action="{{actionurl}}">
+          <!-- please do not modify this line {{actionurl_inputs}} -->
+          <h4>User ID</h4>
+          <input type="text" id="username" class="form-control" name="username" value="">
+          <h4>Password</h4>
+          <input type="password" id="password" class="form-control" name="password" value="">
+          <span id="errmsg" style="display: none;"></span>
+
+          <div id="condition" class="driCenter">
+            <h4>การดำเนินการต่อ ถือว่าท่านได้อ่านและยอมรับข้อกำหนดและเงื่อนไขทั้งหมดแล้ว.</h4>
+            <div class="textbox">
+              <p><strong>ข้อกำหนดและเงื่อนไขการใช้งาน</strong></p>
+              <p><strong>เมื่อท่านใช้บริการอินเทอร์เน็ตของเรา ท่านยอมรับและตกลงว่า:</strong></p>
+              <p>- การใช้งานผ่านอินเทอร์เน็ตมีความเสี่ยงด้าน ความปลอดภัย ความเป็นส่วนตัว และการรักษาความลับของข้อมูล</p>
+              <p>- ความเสี่ยงดังกล่าวอาจเกิดขึ้นไม่ว่าจะเชื่อมต่อผ่านระบบ มีสายหรือไร้สาย</p>
+              <p>- ท่านมีหน้าที่ในการปฏิบัติตามกฎหมาย และข้อกำหนดที่เกี่ยวข้องด้วยตนเอง</p>
+            </div>
+          </div>
+          <div class="btnContainer">
+            <button id="button" type="submit" class="btn">
+              <p>Continue to Internet</p>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>  
+  </div>
+  <div class="tail">
+      <p>
+        ©
+        <span id="year">2025</span>
+        RF App
+      </p>
+    </div>
+</body>
