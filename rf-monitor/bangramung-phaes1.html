@@ -6,38 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สถานะ Network Map</title>
     <style>
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            max-width: 1280px;
-            margin: 0 auto;
-            height: 90vh;
-            /* ให้สูงเกือบเต็มหน้าจอ */
-            background: #fff;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            /* จัดทุกอย่างให้อยู่ตรงกลาง */
+            background-color: #f9f9f9;
+        }
+
+        img {
+            max-width: 90%;
             border: 1px solid #ccc;
             border-radius: 6px;
             box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
+        h2 {
+            color: #333;
         }
 
-
-
-        a.button {
+        a {
             display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
+            margin-top: 10px;
+            padding: 8px 15px;
             background: #007bff;
             color: white;
             text-decoration: none;
             border-radius: 4px;
         }
 
-        a.button:hover {
+        a:hover {
             background: #0056b3;
         }
 
@@ -47,31 +45,28 @@
             margin-top: 20px;
         }
     </style>
-
-
 </head>
 
 <body>
     <h2>📊 สถานะ Network Map วันนี้</h2>
+    <iframe width=1024 height=768 frameborder="1"
+        src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98">
+    </iframe>
 
-    <div class="iframe-container">
-        <iframe
-            src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98">
-            style="transform: scale(0.8); transform-origin: 0 0; width:125%; height:125%; border:0;">
-        </iframe>
-    </div>
-
+    <!-- <img src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98" 
+       alt="Network Map"> -->
 
     <p>
         <a href="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98"
-            target="_blank" class="button">
+            target="_blank">
             🔗 คลิกเพื่อดูแบบ Dashboard
         </a>
     </p>
 
-    <p class="note">*Map Network Status PRTG Real-Time</p>
-
-
+    <p class="note">*Map Network Status PRTG Rail-Time</p>
 </body>
 
 </html>
+
+
+
