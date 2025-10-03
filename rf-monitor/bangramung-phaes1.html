@@ -6,71 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>สถานะ Network Map</title>
     <style>
-  .iframe-container {
-    position: relative;
-    width: 100%;
-    max-width: 1024px;   /* จำกัดความกว้างสูงสุด */
-    margin: 0 auto;      /* จัดกลางแนวนอน */
-    padding-bottom: 75%; /* อัตราส่วน 4:3 ของ 1024x768 */
-    height: 0;
-    overflow: hidden;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
-  }
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            height: 90vh;
+            /* ให้สูงเกือบเต็มหน้าจอ */
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+        }
 
-  .iframe-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
 
-  /* ปรับปุ่มให้ responsive ด้วย */
-  a.button {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-  }
 
-  a.button:hover {
-    background: #0056b3;
-  }
 
-  .note {
-    font-size: 12px;
-    color: gray;
-    margin-top: 20px;
-  }
-</style>
+        a.button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        a.button:hover {
+            background: #0056b3;
+        }
+
+        .note {
+            font-size: 12px;
+            color: gray;
+            margin-top: 20px;
+        }
+    </style>
+
+
 </head>
 
 <body>
-<h2>📊 สถานะ Network Map วันนี้</h2>
+    <h2>📊 สถานะ Network Map วันนี้</h2>
 
-<div class="iframe-container">
-  <iframe src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98"></iframe>
-</div>
+    <div class="iframe-container">
+        <iframe
+            src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98">
+            style="transform: scale(0.8); transform-origin: 0 0; width:125%; height:125%; border:0;">
+        </iframe>
+    </div>
 
-<p>
-  <a href="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98" target="_blank" class="button">
-    🔗 คลิกเพื่อดูแบบ Dashboard
-  </a>
-</p>
 
-<p class="note">*Map Network Status PRTG Real-Time</p>
+    <p>
+        <a href="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98"
+            target="_blank" class="button">
+            🔗 คลิกเพื่อดูแบบ Dashboard
+        </a>
+    </p>
+
+    <p class="note">*Map Network Status PRTG Real-Time</p>
+
+
 </body>
 
 </html>
-
-
-
-
-
