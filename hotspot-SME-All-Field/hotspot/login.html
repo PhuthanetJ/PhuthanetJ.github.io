@@ -1,0 +1,414 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+	<title>internet hotspot > login</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="pragma" content="no-cache" />
+	<meta http-equiv="expires" content="-1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="shortcut icon" type="image/png" href="favicon.png" />
+	<link rel="stylesheet" type="text/css" media="all" href="packages/bootstrap/bootstrap.css">
+	<link rel="stylesheet" type="text/css" media="all" href="css/theme.css">
+</head>
+
+<body style="background-image:url(img/bg.jpg);">
+	<section class="login-wrap">
+		<form name="sendin" action="$(link-login-only)" method="post">
+			<input type="hidden" name="username" />
+			<input type="hidden" name="password" />
+			<input type="hidden" name="dst" value="$(link-orig)" />
+			<input type="hidden" name="popup" value="true" />
+			<input type="hidden" name="pfx" value="abc" />
+		</form>
+
+		<script type="text/javascript" src="/md5.js"></script>
+		<script type="text/javascript">
+
+			function doLogin() {
+				if (document.sendin.pfx.value) {
+					document.sendin.username.value = document.sendin.pfx.value + document.login.username.value;
+				} else {
+					document.sendin.username.value = document.login.username.value;
+				}
+				//document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+				document.sendin.password.value = document.login.password.value;
+				document.sendin.submit();
+			}
+
+		</script>
+		<div class="login-box card">
+			<div class="card-body">
+				<a href="$(link-login-only)?target=lv&amp;dst=$(link-orig-esc)" class="text-center">
+					<center>
+						<img src="img/logo.png" alt="Home" height="100" />
+						<center />
+				</a>
+				<div class="row">
+					<div class="col-md-12 text-center">
+
+						$(if error)
+						<div class="mt_err alert alert-danger">$(error)</div>
+						$(endif)
+
+						<div style="display:none;" class="err_div alert alert-danger"></div>
+
+						<!--<p class="mb-0">Please log on to use the hotspot service.</p>-->
+
+						$(if trial == 'yes')
+						<p class="mb-0">
+							Free trial available, <a
+								href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)">click here</a>.
+						</p>
+						$(endif)
+					</div>
+				</div>
+				<form class="form-horizontal" id="loginform" name="login" action="$(link-login-only)" method="post">
+					<input type="hidden" name="dst" value="$(link-orig)" />
+					<input type="hidden" name="popup" value="true" />
+
+					<div class="login_div">
+						<div class="form-group row mt-4">
+							<div class="col-md-12">
+								<input class="form-control" type="text" name="username" value="$(username)" required=""
+									placeholder="ชื่อผู้ใช้งาน / Username" minlength="3">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-12">
+								<input class="form-control" name="password" type="password" required=""
+									placeholder="รหัสผ่าน / Password" minlength="4">
+							</div>
+						</div>
+					</div>
+
+					<div class="freetrail_div" style="display:none;">
+						<div class="form-group row mt-4">
+							<div class="col-md-12">
+								<input class="form-control" type="text" id="fullname" value="" required=""
+									placeholder="ชื่อ-นามสกุล / Fullname" minlength="3">
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<div class="col-md-12">
+								
+								<center>
+									<select class="form-control" name="gender" id="gender" style="color: #999;">	
+										<option>เลือกเพศ</option>
+										<option value="male">ชาย</option>
+										<option value="female">หญิง</option>
+										<option value="LGBTQ">LGBTQ</option>
+									</select>
+								</center>
+							</div>
+						</div>
+
+						<div class="form-group row">
+							<div class="col-md-12">
+								<input class="form-control" type="tel" id="mobile" value="" required=""
+									placeholder="เบอร์มือถือ / Mobile" minlength="10">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-12">
+								<input class="form-control" type="email" id="email" required="" placeholder="Email"
+									minlength="5">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-12">
+								  
+								<center>
+									<select class="form-control" name="province" id="province" style="color: #999;">
+										<option value="province">เลือกจังหวัด</option>
+										<option value="bkk">กรุงเทพมหานคร</option>
+										<option value="kbi">กระบี่</option>
+										<option value="kri">กาญจนบุรี</option>
+										<option value="ksn">กาฬสินธุ์</option>
+										<option value="kpt">กำแพงเพชร</option>
+										<option value="kkn">ขอนแก่น</option>
+										<option value="cti">จันทบุรี</option>
+										<option value="cco">ฉะเชิงเทรา</option>
+										<option value="cbi">ชลบุรี</option>
+										<option value="cnt">ชัยนาท</option>
+										<option value="cpm">ชัยภูมิ</option>
+										<option value="cpn">ชุมพร</option>
+										<option value="cri">เชียงราย</option>
+										<option value="cmi">เชียงใหม่</option>
+										<option value="trg">ตรัง</option>
+										<option value="trt">ตราด</option>
+										<option value="tak">ตาก</option>
+										<option value="nyk">นครนายก</option>
+										<option value="npt">นครปฐม</option>
+										<option value="npm">นครพนม</option>
+										<option value="nma">นครราชสีมา</option>
+										<option value="nst">นครศรีธรรมราช</option>
+										<option value="nsn">นครสวรรค์</option>
+										<option value="nbi">นนทบุรี</option>
+										<option value="nwt">นราธิวาส</option>
+										<option value="nan">น่าน</option>
+										<option value="bkn">บึงกาฬ</option>
+										<option value="brm">บุรีรัมย์</option>
+										<option value="pte">ปทุมธานี</option>
+										<option value="pkn">ประจวบคีรีขันธ์</option>
+										<option value="pri">ปราจีนบุรี</option>
+										<option value="ptn">ปัตตานี</option>
+										<option value="pyo">พะเยา</option>
+										<option value="aya">พระนครศรีอยุธยา</option>
+										<option value="pna">พังงา</option>
+										<option value="plg">พัทลุง</option>
+										<option value="pct">พิจิตร</option>
+										<option value="plk">พิษณุโลก</option>
+										<option value="pbi">เพชรบุรี</option>
+										<option value="pnb">เพชรบูรณ์</option>
+										<option value="pre">แพร่</option>
+										<option value="pkt">ภูเก็ต</option>
+										<option value="mkm">มหาสารคาม</option>
+										<option value="mdh">มุกดาหาร</option>
+										<option value="msn">แม่ฮ่องสอน</option>
+										<option value="yst">ยโสธร</option>
+										<option value="yla">ยะลา</option>
+										<option value="ret">ร้อยเอ็ด</option>
+										<option value="rng">ระนอง</option>
+										<option value="ryg">ระยอง</option>
+										<option value="rbr">ราชบุรี</option>
+										<option value="lri">ลพบุรี</option>
+										<option value="lpg">ลำปาง</option>
+										<option value="lpn">ลำพูน</option>
+										<option value="lei">เลย</option>
+										<option value="ssk">ศรีสะเกษ</option>
+										<option value="snk">สกลนคร</option>
+										<option value="ska">สงขลา</option>
+										<option value="stn">สตูล</option>
+										<option value="spk">สมุทรปราการ</option>
+										<option value="skm">สมุทรสงคราม</option>
+										<option value="skn">สมุทรสาคร</option>
+										<option value="skw">สระแก้ว</option>
+										<option value="sri">สระบุรี</option>
+										<option value="sbr">สิงห์บุรี</option>
+										<option value="sti">สุโขทัย</option>
+										<option value="spb">สุพรรณบุรี</option>
+										<option value="sni">สุราษฎร์ธานี</option>
+										<option value="srn">สุรินทร์</option>
+										<option value="nki">หนองคาย</option>
+										<option value="nbp">หนองบัวลำภู</option>
+										<option value="atg">อ่างทอง</option>
+										<option value="acr">อำนาจเจริญ</option>
+										<option value="udn">อุดรธานี</option>
+										<option value="utt">อุตรดิตถ์</option>
+										<option value="uti">อุทัยธานี</option>
+										<option value="ubn">อุบลราชธานี</option>
+									</select>
+								</center>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-12">
+								<input id="check_term" type="checkbox">
+								<a onclick="goTerm()" href="javascript:void(0)">เงื่อนไขการให้บริการ</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="account_div" style="display: none;text-align: left;">
+						<div class="form-group row">
+							<div class="col-md-12">
+								<label>Username</label>
+								<input id="account_user" class="form-control" readonly="true" type="text"
+									style="border:0px;">
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-12">
+								<label>Password</label>
+								<input id="account_pass" class="form-control" readonly="true" type="text"
+									style="border:0px;">
+							</div>
+						</div>
+						<div class="col-md-12" style="margin-top:6px;padding-left: 0;padding-right: 0;">
+							<button class="btn btn-info btn-lg btn-block text-uppercase" type="button"
+								onclick="toLogin()">ต่อไป</button>
+						</div>
+					</div>
+
+					<div class="term_div" style="display: none;font-size:.7em;text-align: left;">
+						<center>
+							<h5>ข้อกําหนดและเงื่อนไข สำหรับบริการ NT WiFi</h5>
+						</center>
+
+						<p>"บริการ" หมายถึง บริการอินเทอร์เน็ตไร้สาย (WiFi) ผ่านระบบลงทะเบียน ภายใต้ชื่อสัญญาณ (SSID)
+							ที่ผู้ให้บริการกำหนด</p>
+
+						<p>"ผู้ให้บริการ" หมายถึง บริษัท โทรคมนาคมแห่งชาติ จำกัด (มหาชน) (เอ็นที)</p>
+
+						<p>"ผู้ใช้บริการ" หมายถึง ผู้ลงทะเบียนใช้บริการ WiFi
+							บนระบบลงทะเบียนและตรวจสอบสิทธิ์ตามขั้นตอนที่ผู้ให้บริการกำหนดไว้เรียบร้อยแล้ว
+							และได้ใช้บริการ WiFi</p>
+
+						<p>"ข้อมูลคอมพิวเตอร์" หมายถึง ข้อมูล ข้อความ คำสั่ง ชุดคำสั่ง
+							หรือสิ่งอื่นใดบรรดาที่อยู่ในระบบคอมพิวเตอร์ในสภาพที่ระบบคอมพิวเตอร์อาจประมวลผลได้
+							และให้หมายความรวมถึงข้อมูลอิเล็กทรอนิกส์ตามกฎหมายว่าด้วยธุรกรรมทางอิเล็กทรอนิกส์ด้วย</p>
+
+						<p>1. ผู้ใช้บริการรับทราบว่า
+							บริการนี้สามารถใช้ได้เฉพาะภายในขอบเขตพื้นที่ให้บริการที่ปรากฎชื่อสัญญาณ (SSID)
+							ที่ผู้ให้บริการกำหนดเท่านั้น</p>
+						<p>2. ผู้ใช้บริการที่มีความประสงค์จะใช้บริการ ต้องลงทะเบียนกรอกข้อมูลส่วนบุคคลเพื่อขอใช้งาน
+							ผ่านชื่อสัญญาณ (SSID) ที่ผู้ให้บริการกำหนด</p>
+						<p>3. ผู้ใช้บริการสามารถใช้งาน WiFi ได้
+							โดยผู้ให้บริการไม่อนุญาตให้ผู้ใช้บริการเชื่อมต่ออุปกรณ์อื่นใดเพื่อกระจาย
+							หรือส่งต่อสัญญาณของบริการให้แก่บุคคลอื่น</p>
+						<p>4. ผู้ใช้บริการยอมรับว่าข้อมูลส่วนบุคคลของผู้ใช้บริการที่ได้กรอกเพื่อใช้บริการนี้
+							จะถูกส่งผ่านอินเทอร์เน็ตซึ่งเป็นเครือข่ายสาธารณะ
+							โดยผู้ให้บริการจะใช้ความระมัดระวังในการกำหนดมาตรการ
+							มิให้ผู้อื่นสามารถเข้าถึงข้อมูลส่วนบุคคลดังกล่าว อย่างไรก็ตาม
+							ผู้ให้บริการไม่รับผิดชอบต่อความเสียหายใด ๆ ที่เกิดขึ้นจากการที่ผู้อื่นได้เห็น และ/หรือ
+							ใช้ข้อมูลดังกล่าวของผู้ใช้บริการ</p>
+						<p>5. ในการใช้งานอุปกรณ์ใด ๆ (Device) เพื่อเข้าถึงบริการ ผู้ใช้บริการมีข้อควรปฏิบัติดังนี้</p>
+						<p>5.1 ต้องกำหนดรหัสผ่าน (Password) เพื่อล็อกหน้าจอ (Lock Screen) อุปกรณ์ ขณะที่มิได้ใช้งาน
+							เพื่อป้องกันมิให้ผู้อื่นลักลอบเข้าใช้งาน</p>
+						<p>5.2 ต้องตรวจสอบและระมัดระวังในการนำข้อมูลคอมพิวเตอร์มาป้อนลงในอุปกรณ์ทุกครั้ง
+							และต้องติดตั้งโปรแกรมป้องกันไวรัส (Anti-Virus) ที่ทันสมัยอยู่ตลอดเวลา</p>
+						<p>5.3 ต้องปิดอุปกรณ์ และอุปกรณ์ต่อพ่วงทันที เมื่อไม่ได้ใช้งานเป็นเวลานาน หรือเลิกใช้งานแล้ว</p>
+						<p>6.
+							ผู้ใช้บริการต้องดูแลและรับผิดชอบมิให้ตัวแทนและผู้ที่ถือว่าอยู่ในความรับผิดชอบของผู้ใช้บริการกระทำการที่ถือเป็นความผิดตามที่ระบุไว้ดังต่อไปนี้
+							หากมีการละเลยหรือฝ่าฝืน
+							ผู้ใช้บริการต้องรับผิดชอบร่วมกับผู้กระทำความผิดนั้นตามกฎหมายที่เกี่ยวข้องทั้งทางแพ่งและอาญา
+						</p>
+						<p>6.1 เปลี่ยนแปลงแก้ไขข้อมูลคอมพิวเตอร์โดยไม่ได้รับอนุญาตจากผู้ให้บริการ</p>
+						<p>6.2 ลักลอบนำข้อมูลคอมพิวเตอร์ไปเปิดเผย จำหน่าย จ่าย แจก แก่ผู้อื่น
+							ไม่ว่าเพื่อประโยชน์ส่วนตัวหรือเพื่อผู้อื่นโดยไม่ได้รับอนุญาต
+							หรือเป็นเหตุให้ผู้ให้บริการได้รับความเสียหาย</p>
+						<p>6.3 ประมาท เลินเล่อ ไม่ระมัดระวังการใช้งานระบบคอมพิวเตอร์
+							จนเป็นเหตุให้บุคคลอื่นสามารถลักลอบข้อมูลคอมพิวเตอร์ไปเปิดเผย จำหน่าย จ่าย แจก</p>
+						<p>6.4 ใช้รหัสของผู้อื่นเข้าถึงระบบคอมพิวเตอร์ เพื่อทำการอ่าน คัดลอก แก้ไข เปลี่ยนแปลง ลบทิ้ง
+							ทำลายข้อมูลคอมพิวเตอร์ หรือทำธุรกรรมใด ๆ ไม่ว่าเพื่อประโยชน์ส่วนตัวหรือเพื่อผู้อื่น</p>
+						<p>6.5 ก่อกวน หรือทำลายข้อมูลคอมพิวเตอร์ ระบบคอมพิวเตอร์
+							เพื่อสร้างความเสียหายแก่ผู้ให้บริการหรือผู้อื่น</p>
+						<p>6.6 ลักลอบ เฝ้าดู ค้นหาเส้นทางหรือถอดรหัส ข้อมูลอิเล็กทรอนิกส์ โดยใช้เครื่องมือ
+							หรือเทคโนโลยีอื่นใด เพื่อให้ได้มาซึ่งข้อมูลคอมพิวเตอร์ หรือความลับของผู้ให้บริการหรือผู้อื่น
+							โดยจงใจก่อให้เกิดความเสียหายทั้งต่อผู้ให้บริการหรือผู้อื่น</p>
+						<p>6.7 ให้ความช่วยเหลือหรือร่วมมือกับผู้อื่น เพื่อเข้าถึงระบบคอมพิวเตอร์
+							หรือข้อมูลคอมพิวเตอร์เพื่อทำการ อ่าน คัดลอก แก้ไข เปลี่ยนแปลง ลบทิ้ง ทำลายข้อมูลคอมพิวเตอร์
+							หรือทำธุรกรรมใด ๆ ไม่ว่าเพื่อประโยชน์ส่วนตัวหรือผู้อื่น</p>
+						<p>6.8 ลักลอบใช้รหัสในการเข้าถึงระบบคอมพิวเตอร์
+							และเป็นเหตุให้ผู้ให้บริการหรือผู้อื่นได้รับความเสียหาย</p>
+						<p>6.9 ประมาท เลินเล่อ ไม่ระมัดระวังการใช้รหัส
+							หรือยินยอมให้บุคคลอื่นใช้รหัสของตนเองเข้าถึงระบบคอมพิวเตอร์</p>
+						<p>6.10 พยายามเข้าถึงระบบคอมพิวเตอร์ในส่วนที่ไม่มีสิทธิ์ หรือไม่ได้รับอนุญาตให้ใช้งาน</p>
+						<p>6.11 ติดตั้ง มีไว้ในครอบครอง หรือใช้งาน Software ประเภท Hacking Tools</p>
+						<p>6.12 ลักลอบเข้าถึงระบบคอมพิวเตอร์ ไม่ว่าด้วยวิธีการ โดยมิชอบ</p>
+						<p>6.13 กระทำความผิดใด ๆ
+							ตามฐานความผิดที่ระบุไว้ในพระราชบัญญัติว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์ พ.ศ. 2550
+							และพระราชบัญญัติว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์ พ.ศ. 2560 ฉบับที่ 2
+							และกฎหมายอื่นที่เกี่ยวข้อง</p>
+						<p>7. ผู้ใช้บริการตกลงใช้บริการตามเงื่อนไขการให้บริการนี้เท่านั้น
+							โดยผู้ใช้บริการต้องไม่กระทำการใด ๆ ที่ไม่เหมาะสม หรือขัดต่อกฎหมาย ศีลธรรม วัฒนธรรม
+							และขนบธรรมเนียมประเพณีอันดีงาม หรือขัดต่อหลักเกณฑ์ ระเบียบ ข้อบังคับ หรือคำสั่งใด ๆ
+							ที่ใช้บังคับอยู่ในขณะนั้นผ่านบริการนี้ หากผู้ใช้บริการฝ่าฝืนเงื่อนไขข้อนี้
+							ผู้ให้บริการมีสิทธิ์ระงับการใช้บริการได้ทันที ทั้งนี้
+							ผู้ให้บริการขอสงวนสิทธิ์ในการยกเลิกการให้บริการนี้ ในกรณีที่มีการเปลี่ยนแปลงกฎ ระเบียบ
+							คำสั่ง และ/หรือกระทรวง และ/หรือนโยบายของรัฐ ที่เกี่ยวข้อง</p>
+						<p>8. ผู้ให้บริการสงวนสิทธิ์ในการแก้ไข เปลี่ยนแปลง หรือยกเลิกข้อกำหนดและเงื่อนไขใด ๆ
+							ของการให้บริการนี้ได้ โดยไม่ต้องแจ้งให้ผู้ใช้บริการทราบล่วงหน้า</p>
+						<p>9. ผู้ให้บริการสงวนสิทธิ์จำกัดความเร็วในการให้บริการผ่านโครงข่ายไร้สาย ภายใต้ SSID
+							ที่ผู้ให้บริการกำหนด สำหรับการใช้งาน Bit Torrent, Streaming, การ Upload/Download
+							ไฟล์ประเภทที่มีภาพและ/หรือเสียงขนาดใหญ่ หรือการใช้งานอื่นใดในทำนองเดียวกัน ซึ่งย่อมเป็นไปตาม
+							Fair Usage Policy ของผู้ให้บริการ โดยคำนึงถึงประโยชน์ของผู้ใช้บริการส่วนรวมเป็นสำคัญ</p>
+						<p>10.
+							ผู้ให้บริการจะใช้ความระมัดระวังตามสมควรเพื่อรักษาความปลอดภัยสำหรับการให้บริการผ่านโครงข่าย
+							ไร้สาย ภายใต้ SSID ที่ผู้ให้บริการกำหนด อย่างไรก็ตาม ผู้ใช้บริการต้องใช้ความระมัดระวัง
+							หรือใช้มาตรการรักษาความปลอดภัยส่วนบุคคลเพื่อความปลอดภัยของอุปกรณ์การใช้งาน
+							หรืออุปกรณ์ไร้สายอื่น ๆ จากผู้ลักลอบ หรือจากไวรัส
+						<p>
+						<p>11. ผู้ให้บริการสงวนสิทธิ์ ไม่รับผิดชอบต่อความเสียหายหรือสูญหายของข้อมูล และ/หรือ
+							ความเสียหายอันเนื่องมาจากความล่าช้า หรือเหตุขัดข้องของการให้บริการข้อมูล
+							หรือการล้มเหลวของการเข้าสู่ระบบ การดาวน์โหลดข้อมูล หรือเนื้อหาที่เป็นอันตรายจากอินเทอร์เน็ต
+							ทั้งนี้ ผู้ใช้บริการจะต้องรับผิดชอบเองแต่เพียงผู้เดียว
+							และจะต้องแน่ใจว่าเนื้อหาหรือข้อมูลที่ดาวน์โหลดนั้นมาจากแหล่งข้อมูลที่ เชื่อถือได้</p>
+						<p>12. ผู้ให้บริการสงวนสิทธิ์แก้ไข เปลี่ยนแปลง ระงับ หรือยกเลิกการให้บริการ หากผู้ให้บริการ
+							พิจารณาเห็นว่ามีการทุจริต หรือมีการปลอมแปลงเอกสารเพื่อรับข้อเสนอการใช้บริการ
+							หรือนำบริการนี้ไปใช้ในทางที่ผิดกฎหมาย หรือกระทำการใดที่ผิดกฎหมาย
+							หรือการไม่ดำเนินการตามที่ระบุไว้ในข้อกำหนดและเงื่อนไขการให้บริการนี้</p>
+						<p>13. นโยบายสิทธิส่วนบุคคล</p>
+						<p>13.1 เมื่อผู้ใช้บริการ ได้ทำการลงทะเบียนใช้บริการ WiFi ตามขั้นตอนที่ผู้ให้บริการกำหนดนั้น
+							ถือได้ว่าผู้ใช้บริการยินยอมให้ผู้ให้บริการ
+							จัดเก็บรวบรวมข้อมูลส่วนบุคคลของผู้ใช้บริการเพียงเท่าที่จำเป็น ได้แก่ ชื่อ นามสกุล
+							เบอร์โทรศัพท์ อีเมล์ หมายเลขบัตรประชาชน/หมายเลขหนังสือเดินทาง</p>
+						<p>13.2 ผู้ให้บริการ มีนโยบายในการเคารพสิทธิส่วนบุคคลของผู้ใช้บริการ ซึ่งทางผู้ให้บริการ
+							จะไม่ตรวจสอบ แก้ไข หรือเปิดเผยข้อมูลของผู้ใช้บริการ เว้นแต่ ผู้ให้บริการ
+							ได้รับความยินยอมจากผู้ใช้บริการหรือเห็นว่ามีความจำเป็นที่จะต้องทำตามบทบัญญัติแห่งกฎหมาย
+							หรือตามคำพิพากษา คำสั่งศาล หรือองค์กรอื่นใด ที่มีอำนาจตามกฎหมาย</p>
+						<p>13.3 เงื่อนไขการใช้บริการฉบับนี้ ใช้บังคับกับบริการนี้เท่านั้น</p>
+						<p>13.4 สิทธิของผู้ใช้บริการในฐานะเจ้าของข้อมูลส่วนบุคคล
+							เป็นไปตามที่กฎหมายว่าด้วยการคุ้มครองข้อมูลส่วนบุคคลกำหนดไว้ ได้แก่</p>
+						<p>13.4.1 สิทธิในการถอนความยินยอม</p>
+						<p>13.4.2 สิทธิในการขอเข้าถึงข้อมูลส่วนบุคคล</p>
+						<p>13.4.3 สิทธิในการให้โอนย้ายข้อมูลส่วนบุคคลง</p>
+						<p>13.4.4 สิทธิในการคัดค้านการเก็บรวบรวม การใช้ และการเปิดเผยข้อมูลส่วนบุคคล</p>
+						<p>13.4.5 สิทธิในการลบหรือทำลาย หรือทำให้เป็นข้อมูลที่ไม่สามารถระบุตัวบุคคล</p>
+						<p>13.4.6 สิทธิในการระงับการใช้ข้อมูลส่วนบุคคล</p>
+						<p>13.4.7 สิทธิในการแก้ไขข้อมูลส่วนบุคคลให้ถูกต้อง</p>
+						<p>13.4.8 สิทธิในการร้องเรียนกรณีที่ผู้ให้บริการฝ่าฝืนหรือไม่ปฏิบัติตามกฎหมายที่เกี่ยวข้อง</p>
+						<p>13.5 หากผู้ใช้บริการไม่ยินยอมหรือแจ้งยกเลิกการให้ความยินยอมให้เก็บรวบรวม ใช้ เปิดเผยข้อมูล
+							หรือแจ้งความประสงค์ให้ลบ ทำลาย
+							หรือทำให้ข้อมูลส่วนบุคคลเป็นข้อมูลที่ไม่สามารถระบุตัวบุคคลที่เป็นเจ้าของข้อมูลส่วนบุคคล
+							หรือระงับการใช้ข้อมูลส่วนบุคคล ตามข้อ 13.4
+							ผู้ให้บริการสงวนสิทธิไม่ให้บริการหรือระงับการให้บริการในทันที</p>
+						<p>14. สอบถามวิธีการใช้งาน/แจ้งปัญหา หรือแจ้งขอใช้สิทธิตามข้อ 13.4 ได้ที่ NT Contact Center 1888
+							ตลอด 24 ชั่วโมง</p>
+						<p>15. สามารถดูรายละเอียดเพิ่มเติมเกี่ยวกับบริการได้ที่ www.ntplc.co.th</p>
+
+						<div class="col-md-12" style="margin-top:6px;">
+							<button class="btn btn-info btn-lg btn-block text-uppercase" type="button"
+								onclick="backTerm()">ยอมรับ</button>
+						</div>
+					</div>
+
+					<div class="form-group row text-center mt-4">
+						<div class="login_div" style="width:100%;">
+							<div class="col-md-12 login_div">
+								<button id="login_btn" class="btn btn-info btn-lg btn-block text-uppercase"
+									type="button" onclick="doLogin()">เข้าสู่ระบบ</button>
+							</div>
+							<div id="go_freetrail_btn" class="col-md-12 login_div" style="margin-top:6px;">
+								<button class="btn btn-info btn-lg btn-block text-uppercase" type="button"
+									onclick="go_freetrail()">ลงทะเบียน</button>
+							</div>
+						</div>
+						<div class="freetrail_div" style="width:100%;">
+							<div class="col-md-12 freetrail_div" style="margin-top:6px;display: none;">
+								<button id="do_freetrail_btn" class="btn btn-info btn-lg btn-block text-uppercase"
+									type="button" disabled="true"
+									onclick="freetrail('testportal1')">ยืนยัน</button>
+							</div>
+							<div class="col-md-12 freetrail_div" style="margin-top:6px;display: none;">
+								<button class="btn btn-info btn-lg btn-block text-uppercase" type="button"
+									onclick="toLogin()">ยกเลิก</button>
+							</div>
+						</div>
+					</div>
+					<div class="form-group row mb-0 text-center">
+						<div class="col-md-12">
+							<!--<p class="text-muted mb-0"><b>Free WiFi by CAT</b></p>-->
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+
+	<script type="text/javascript">
+		//< !-
+			document.login.username.focus();
+		//-->
+	</script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="packages/bootstrap/libraries/tether.js"></script>
+	<script type="text/javascript" src="packages/bootstrap/libraries/popper.js"></script>
+	<script type="text/javascript" src="packages/bootstrap/bootstrap.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</body>
+
+</html>

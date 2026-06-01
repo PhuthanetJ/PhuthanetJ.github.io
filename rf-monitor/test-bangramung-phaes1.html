@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRTG Network Map</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+      text-align: center; /* ให้ h2 / ปุ่มอยู่ตรงกลาง */
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    /* Container ครอบ iframe */
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      max-width: 1280px;   /* จำกัดไม่ให้กว้างเกินไป */
+      margin: 0 auto;      /* จัดกลางแนวนอน */
+      height: 80vh;        /* สูง ~80% ของหน้าจอ */
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      background: #fff;
+    }
+
+    .iframe-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ปุ่ม */
+    a.button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    a.button:hover {
+      background: #0056b3;
+    }
+
+    .note {
+      font-size: 12px;
+      color: gray;
+      margin-top: 15px;
+    }
+
+    /* ซ่อน iframe มือถือ บน Desktop */
+    .mobile-map {
+      display: none;
+    }
+
+    /* ซ่อน iframe คอม บน Mobile */
+    .desktop-map {
+      display: block;
+    }
+
+    /* เมื่อหน้าจอกว้าง <= 768px ให้สลับ */
+    @media (max-width: 768px) {
+      .mobile-map {
+        display: block;
+        margin: 0 auto;
+      }
+      .desktop-map {
+        display: none;
+      }
+  </style>
+</head>
+<body>
+  <h2>📊 สถานะ Network Map วันนี้</h2>
+
+  <div class="iframe-container desktop-map">
+    <iframe src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98"></iframe>
+  </div>
+
+  <!-- สำหรับ Mobile -->
+  <iframe class="mobile-map" width="480" height="768" frameborder="1"
+    src="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2453&mapid=223D1960-6EEB-4B5E-82E6-AF9F65A6B307">
+  </iframe>
+
+  <p>
+    <a href="https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98" target="_blank" class="button">
+      🔗 คลิกเพื่อดูแบบ Dashboard
+    </a>
+  </p>
+
+  <p class="note">*Map Network Status PRTG Real-Time</p>
+</body>
+</html>
+
