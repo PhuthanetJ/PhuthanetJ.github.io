@@ -60,11 +60,18 @@ p {
   color: #53595F;
 }
 
+
+
 label {
   font-family: "NT", sans-serif;
   font-size: 18px;
   font-weight: 400;
   color: #53595f;
+}
+
+.label-Header {
+  font-weight: 700 !important;
+  color: #665AE1;
 }
 
 #left-banner {
