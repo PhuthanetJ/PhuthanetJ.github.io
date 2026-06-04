@@ -16,10 +16,12 @@
         <div class="wrapper container-fluid p-0" style="background-image: url(./img/background.png);">
             <!-- Top Bar -->
             <div class="top-bar d-flex flex-row justify-content-between align-items-start p-2">
+                <!-- Logo -->
                 <div class="d-flex flex-column col-6 col-md-3">
                     <img src="img/NT1.png" alt="Icon" class="icon-nt">
-                    <img src="img/NT2.png" alt="Icon" class="icon-nt">
+                    <!-- <img src="img/NT2.png" alt="Icon" class="icon-nt"> -->
                 </div>
+                <!-- Language Dropdown Menu -->
                 <div class="custom-dropdown language-dropdown align-self-start col-6 col-md-1">
                     <button class="btn btn-light custom-dropdown-toggle" type="button" id="languageDropdown">
                         <img class="mr-2" src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย
@@ -39,33 +41,28 @@
                     </div>
                 </div>
             </div>
-
+            <!-- Main Content -->
             <div class="row no-gutters main-container">
                 <!-- Left Banner -->
                 <div class="col-md-7 d-md-block" id="left-banner">
                     <!-- <img src="img/backgroud.jpg" alt="Banner Image" class="img-fluid w-100 h-100" style="object-fit: cover;"> -->
                 </div>
-
-                <!-- Main Content -->
                 <div class="col-md-5 d-flex flex-column" id="main-content">
-
-                    <!-- Promo Banner -->
+                    <!-- Promo1 Banner -->
                     <div class="my-3 text-center">
                         <img src="img/promo.png" alt="Promotion Banner" class="img-fluid w-100 promo">
                     </div>
 
-                    <!-- Content Header -->
-                    <h1 class="mb-4 text-center font-weight-bold" style="color: #665AE1;">การแก้ไขปัญหา</h1>
-
+                    <!-- Content Start -->
                     <div class="main-content">
-                        <!-- Center Content Start -->
                         <div class="content-body bg-color">
-                            <p>ตรวจสอบระดับความแรงของสัญญาน CAT WiFi อย่างน้อย 2 ขีดหรือไม่
-                                กรณีต่ำกว่านั้นอาจจะพบปัญหาในการเข้าใช้งานไปที่ Settings > Wi-Fi</p>
-                            <p>สถานะ ในการเชือมต่อกับ CAT WiFi ต้องมีสถานะ "เชื่อมต่อแล้ว" (Connected) ไปที่ Settings >
-                                Wi-Fi</p>
-                            <p>แต่ถ้าไม่พบ สถานะ ดังกล่าว ลองตรวจสอบอีกครั้งโดยคลิกที่ปุ่ม Start > เลือกที่ Connect To >
-                                เลือกที่Show all connections</p>
+                            <!-- Content Header -->
+                            <div><h1 class="mb-4 text-center font-weight-bold label-Header">การแก้ไขปัญหา</h1></div>
+                            <div class="body-long-content">
+                                <p>หากพบปัญหาในการเชื่อมต่อกับ CAT WiFi กรุณาตรวจสอบตามขั้นตอนดังนี้</p>
+                                <p>ตรวจสอบว่าคุณเชื่อมต่อกับเครือข่าย CAT WiFi หรือไม่ ไปที่ Settings > Wi-Fi ถ้าไม่พบเครือข่าย CAT WiFi ให้ลองรีสตาร์ทอุปกรณ์ของคุณและตรวจสอบอีกครั้งกรณีต่ำกว่านั้นอาจจะพบปัญหาในการเข้าใช้งานไปที่ Settings > Wi-Fi</p>
+                                <p>สถานะ ในการเชือมต่อกับ CAT WiFi ต้องมีสถานะ "เชื่อมต่อแล้ว" (Connected) ไปที่ Settings > Wi-Fi</p>
+                            </div>
                             <div class="text-center ">
                                 <div class="d-flex flex-column align-items-center mt-4" style="height: 40px;"
                                     onclick="window.location.href='login.html'">
@@ -75,14 +72,13 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Center Content End -->
                     </div>
+                    <!-- Content End -->
 
                     <!-- Promo2 Banner -->
                     <div class="promo-mb mobile my-3 text-center">
                         <img src="img/promo2.png" alt="Promotion Banner" class="img-fluid w-100 promo" style="max-width: 450px;">
                     </div>
-
                     <!-- Bottom Navigation -->
                     <div class="mt-auto bottom-nav bg-color">
                         <a href="error.html" class="nav-item">

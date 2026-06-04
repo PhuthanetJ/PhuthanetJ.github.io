@@ -16,9 +16,12 @@
         <div class="wrapper container-fluid p-0" style="background-image: url(./img/background.png);">
             <!-- Top Bar -->
             <div class="top-bar d-flex flex-row justify-content-between align-items-start p-2">
+                <!-- Logo -->
                 <div class="d-flex flex-column col-6 col-md-3">
-                    <img src="img/NT2.png" alt="Icon" class="icon-nt">
+                    <img src="img/NT1.png" alt="Icon" class="icon-nt">
+                    <!-- <img src="img/NT2.png" alt="Icon" class="icon-nt"> -->
                 </div>
+                <!-- Language Dropdown Menu -->
                 <div class="custom-dropdown language-dropdown align-self-start col-6 col-md-1">
                     <button class="btn btn-light custom-dropdown-toggle" type="button" id="languageDropdown">
                         <img class="mr-2" src="img/flag-th.png" alt="Thai Flag" width="20" height="15"> ไทย
@@ -39,69 +42,67 @@
                 </div>
             </div>
 
+            <!-- Main Content -->
             <div class="row no-gutters main-container">
                 <!-- Left Banner -->
                 <div class="col-md-7 d-md-block" id="left-banner">
                     <!-- <img src="img/backgroud.jpg" alt="Banner Image" class="img-fluid w-100 h-100" style="object-fit: cover;"> -->
                 </div>
-
-                <!-- Main Content -->
                 <div class="col-md-5 d-flex flex-column" id="main-content">
-
-                    <!-- Promo Banner -->
+                    <!-- Promo1 Banner -->
                     <div class="my-3 text-center">
                         <img src="img/promo.png" alt="Promotion Banner" class="img-fluid w-100 promo">
                     </div>
 
-                    <!-- Form Content Start -->
+                    <!-- Content Start -->
                     <div class="main-content">
                         <div class="content-body bg-color">
-                    <form onsubmit="return register(event)">
-                        <div class="form-row">
-                            <div class="form-group col-12">
-                                <!-- Content Header -->
-                                <h1 class="a mb-4 text-center justify-content-center d-flex flex-column align-items-center font-weight-bold">ลงทะเบียน</h1>
-                            </div>
-                            <div class="form-group col-12">
-                                <label for="full-name">ชื่อ - นามสกุล</label>
-                                <input type="text" id="full-name" class="form-control custom-input"
-                                    placeholder="ชื่อ - นามสกุล">
-                            </div>
-                            <div class="form-group col-12">
-                                <label for="id-number">เลขบัตรประจำตัวประชาชน</label>
-                                <input type="number" id="id-number" class="form-control custom-input"
-                                    placeholder="เลขประจำตัวประชาชน 13 หลัก">
-                            </div>
-                            <div class="form-group col-12">
-                                <label for="birth-date">วัน/เดือน/ปี เกิด</label>
-                                <div class="calendar-input">
-                                    <input type="text" id="birth-date" class="form-control custom-input date-type"
-                                        placeholder="กรุณาเลือก" onfocus="(this.type='date')">
-                                    <span class="calendar-icon"></span>
+                            <form onsubmit="return register(event)">
+                                <div class="form-row">
+                                    <!-- Content Header -->
+                                    <div class="form-group col-12">
+                                        <h1 class="a mb-4 text-center justify-content-center d-flex flex-column align-items-center font-weight-bold">ลงทะเบียน</h1>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="full-name">ชื่อ - นามสกุล</label>
+                                        <input type="text" id="full-name" class="form-control custom-input"
+                                            placeholder="ชื่อ - นามสกุล">
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="id-number">เลขบัตรประจำตัวประชาชน</label>
+                                        <input type="number" id="id-number" class="form-control custom-input"
+                                            placeholder="เลขบัตรประจำตัวประชาชน">
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="birth-date">วัน/เดือน/ปี เกิด</label>
+                                        <div class="calendar-input">
+                                            <input type="text" id="birth-date" class="form-control custom-input date-type"
+                                                placeholder="วัน/เดือน/ปี เกิด" onfocus="(this.type='date')">
+                                            <span class="calendar-icon"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="email">อีเมล์</label>
+                                        <input type="email" id="email" class="form-control custom-input"
+                                            placeholder="อีเมล์">
+                                    </div>
+                                    <div class="form-group col-12">
+                                        <label for="phone">เบอร์มือถือ</label>
+                                        <input type="number" id="phone" class="form-control custom-input"
+                                            placeholder="เบอร์มือถือ">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group col-12">
-                                <label for="email">อีเมล์</label>
-                                <input type="email" id="email" class="form-control custom-input"
-                                    placeholder="อีเมล์">
-                            </div>
-                            <div class="form-group col-12">
-                                <label for="phone">เบอร์มือถือ</label>
-                                <input type="number" id="phone" class="form-control custom-input"
-                                    placeholder="เบอร์มือถือ">
-                            </div>
-                        </div>
-                        <div class="form-row justify-content-center mt-3">
-                            <div class="col-12 center-elements">
-                                <button type="submit" class="btn btn-primary btn-color-primary col-12" onclick="window.location.href='waitVerify.html'">
-                                    ลงทะเบียน
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                                <div class="form-row justify-content-center mt-3">
+                                    <div class="col-12 center-elements">
+                                        <button type="submit" class="btn btn-primary btn-color-primary col-12" onclick="window.location.href='waitVerify.html'">
+                                            ลงทะเบียน
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <!-- Form Content End -->
+                    <!-- Content End -->
 
                     <!-- Promo2 Banner -->
                     <div class="promo-mb mobile my-3 text-center">

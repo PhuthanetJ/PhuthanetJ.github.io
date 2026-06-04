@@ -49,8 +49,8 @@ a {
   height: auto;
 }
 
-h1 {
-  color: #665ae1; /* Adjusted color */
+.label-Header{
+  color: #665AE1;
   font-size: 22pt;
   margin-bottom: 20px;
   font-weight: 700; /* Make it bold */
@@ -457,7 +457,7 @@ hr {
 
 .form-check-label {
   color: black;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .btn-color-primary {
@@ -500,6 +500,12 @@ hr {
     padding: 20px 24px 0px 24px;
     border-top-left-radius: 24px;
     border-top-right-radius: 24px;
+  }
+  .label-Header{
+    color: #665AE1;
+    font-size: 18pt;
+    margin-bottom: 20px;
+    font-weight: 400; /* Make it bold */
   }
 
   .top-bar {
@@ -555,3 +561,10 @@ hr {
   }
   
 }
+
+
+/* custom-input */
+
+
+/* custom-dropdown */
+
