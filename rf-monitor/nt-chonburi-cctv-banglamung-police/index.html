@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="color-scheme" content="dark">
+
+  <title>NT-ชลบุรี-CCTV-อบจ-สถานีตำรวจภูธรบางละมุง</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo" aria-label="NT">NT</div>
+
+        <div class="brand-copy">
+          <div class="brand-title-row">
+            <h1>Network Operations Dashboard</h1>
+            <span class="live-badge">
+              <span class="live-dot" aria-hidden="true"></span>
+              LIVE
+            </span>
+          </div>
+
+          <p>PRTG Network Map · ภาพรวมสถานะอุปกรณ์และโครงข่าย</p>
+        </div>
+      </div>
+
+      <div class="topbar-widgets">
+        <div class="info-widget" title="สถานะการโหลดหน้า PRTG Map">
+          <span class="info-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12.5a11 11 0 0 1 14 0"></path>
+              <path d="M8.5 16a6 6 0 0 1 7 0"></path>
+              <path d="M12 20h.01"></path>
+            </svg>
+          </span>
+          <span class="info-copy">
+            <small>Map Connection</small>
+            <strong id="connectionText">กำลังเชื่อมต่อ</strong>
+          </span>
+        </div>
+
+        <div class="info-widget clock-widget">
+          <span class="info-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
+          </span>
+          <span class="info-copy">
+            <small>เวลาปัจจุบัน</small>
+            <strong id="datetime">กำลังโหลด...</strong>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="map-panel" id="mapPanel" aria-label="PRTG Network Map Dashboard">
+        <div class="panel-toolbar">
+          <div class="panel-heading">
+            <span class="map-status is-loading" id="mapStatus">
+              <span class="map-status-dot" aria-hidden="true"></span>
+              <span id="mapStatusText">กำลังโหลด PRTG Map</span>
+            </span>
+
+            <div class="panel-title">
+              <strong>สถานะ Network วันนี้</strong>
+              <span>CCTV B.M.P.S. (Banglamung Police Station)</span>
+            </div>
+          </div>
+
+          <div class="panel-actions" aria-label="คำสั่งสำหรับ Network Map">
+            <button class="toolbar-button" id="refreshBtn" type="button" title="รีเฟรช Network Map">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M20 6v5h-5"></path>
+                <path d="M4 18v-5h5"></path>
+                <path d="M6.1 9a7 7 0 0 1 11.4-2.4L20 9"></path>
+                <path d="M17.9 15a7 7 0 0 1-11.4 2.4L4 15"></path>
+              </svg>
+              <span>รีเฟรช</span>
+            </button>
+
+            <a class="toolbar-button" id="openMapBtn" href="#" target="_blank" rel="noopener noreferrer" title="เปิด PRTG Map ในแท็บใหม่">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M14 4h6v6"></path>
+                <path d="M10 14 20 4"></path>
+                <path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"></path>
+              </svg>
+              <span>เปิด Map</span>
+            </a>
+
+            <button class="toolbar-button" id="fullscreenBtn" type="button" title="แสดงเต็มหน้าจอ">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M8 3H3v5"></path>
+                <path d="M16 3h5v5"></path>
+                <path d="M8 21H3v-5"></path>
+                <path d="M16 21h5v-5"></path>
+              </svg>
+              <span>เต็มจอ</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="map-stage" id="mapStage">
+          <!--
+            PRTG Map ตั้งค่าไว้ที่ 1024 x 768
+            JavaScript จะรักษาสัดส่วนเดิมและขยายให้ใหญ่ที่สุด โดยไม่เกินพื้นที่หน้าจอ
+          -->
+          <div class="map-frame" id="mapFrame">
+            <iframe
+              id="prtgMap"
+              title="PRTG Public Network Map"
+              allowfullscreen
+              loading="eager"
+              referrerpolicy="no-referrer-when-downgrade"
+              sandbox="allow-same-origin allow-scripts allow-popups allow-forms">
+            </iframe>
+          </div>
+
+          <div class="loading-overlay" id="loadingOverlay" aria-live="polite">
+            <div class="loading-content">
+              <div class="loading-rings" aria-hidden="true">
+                <span></span>
+                <span></span>
+              </div>
+              <strong>กำลังโหลดข้อมูลจาก PRTG</strong>
+              <small>กำลังเชื่อมต่อ Network Map กรุณารอสักครู่</small>
+            </div>
+          </div>
+
+          <div class="help-overlay is-hidden" id="helpOverlay">
+            <div class="help-card">
+              <div class="help-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3 2.8 19h18.4L12 3Z"></path>
+                  <path d="M12 9v4"></path>
+                  <path d="M12 17h.01"></path>
+                </svg>
+              </div>
+
+              <h2>PRTG Map ใช้เวลาโหลดนานกว่าปกติ</h2>
+              <p>
+                ตรวจสอบ VPN, Firewall และ SSL Certificate ของ
+                <strong>rfcctv.fortiddns.com:8443</strong>
+                หาก Browser แสดงคำเตือน Certificate ให้เปิด PRTG ในแท็บใหม่และยืนยันก่อนหนึ่งครั้ง
+              </p>
+
+              <div class="help-actions">
+                <a class="primary-button" id="certificateBtn" href="#" target="_blank" rel="noopener noreferrer">
+                  เปิดหน้า PRTG
+                </a>
+                <button class="secondary-button" id="retryBtn" type="button">ลองใหม่</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stage-footer" aria-hidden="true">
+            <span>Map Size: 1024 × 768</span>
+            <span class="stage-footer-divider"></span>
+            <span id="scaleText">Scale: 100% · Fit Available Space</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
+<!-- Create By James Phuthanet -->
