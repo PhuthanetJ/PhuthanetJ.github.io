@@ -1,5 +1,5 @@
 /* =========================================================
-   NT PRTG Network Operations Dashboard Create By James Phuthanet
+   NT PRTG Network Operations Dashboard
    ไฟล์นี้ควบคุม URL, เวลา, การรีเฟรช และการจัดขนาด Map
    ========================================================= */
 
@@ -22,8 +22,11 @@ const MAP_PADDING = 24;
 // รีเฟรช Map อัตโนมัติทุก 5 นาที
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
-// ถ้าโหลดเกินเวลานี้ จะแสดงคำแนะนำเรื่อง Network และ Certificate
+// ถ้าโหลด iframe เกินเวลานี้ จะแสดงคำแนะนำเรื่อง Network และ Certificate
 const LOAD_TIMEOUT_MS = 20 * 1000;
+
+// เวลาสูงสุดสำหรับตรวจสอบว่า PRTG Origin ติดต่อได้หรือไม่
+const CONNECTION_PROBE_TIMEOUT_MS = 8 * 1000;
 
 const elements = {
   prtgMap: document.getElementById("prtgMap"),
@@ -32,6 +35,9 @@ const elements = {
   mapPanel: document.getElementById("mapPanel"),
   loadingOverlay: document.getElementById("loadingOverlay"),
   helpOverlay: document.getElementById("helpOverlay"),
+  helpTitle: document.getElementById("helpTitle"),
+  helpMessage: document.getElementById("helpMessage"),
+  redirectNotice: document.getElementById("redirectNotice"),
   mapStatus: document.getElementById("mapStatus"),
   mapStatusText: document.getElementById("mapStatusText"),
   connectionText: document.getElementById("connectionText"),
@@ -47,6 +53,9 @@ const elements = {
 
 let loadTimeoutId = null;
 let toastTimeoutId = null;
+
+// ป้องกัน iframe load event รายงาน Ready ก่อนผ่านการตรวจสอบปลายทาง
+let connectionProbePassed = false;
 
 /**
  * แสดงวันที่และเวลาปัจจุบันเป็นภาษาไทยและปี พ.ศ.
@@ -170,34 +179,112 @@ function fitMapToViewport() {
     `Scale: ${Math.round(scale * 100)}% · ${Math.round(renderedWidth)} × ${Math.round(renderedHeight)}px`;
 }
 
+
 /**
- * โหลด PRTG Map ใหม่
- * ไม่เติม Timestamp ต่อท้าย URL เพราะ PRTG บางเวอร์ชันอ่าน mapid ผิด
+ * ตรวจสอบการเข้าถึง PRTG ก่อนโหลด iframe
+ *
+ * ใช้ mode: "no-cors" เพราะ PRTG อยู่คนละ Origin
+ * หาก TLS/Certificate, VPN, Firewall หรือ Network มีปัญหา Promise จะ reject
+ *
+ * หมายเหตุ:
+ * - ผลลัพธ์สำเร็จหมายถึง Browser ติดต่อปลายทางได้
+ * - ไม่ได้อ่าน HTTP Status หรือข้อมูลภายใน PRTG เพราะเป็น Cross-Origin
+ *
+ * @returns {Promise<boolean>} true เมื่อ Browser ติดต่อ PRTG ได้
+ */
+async function probePrtgConnection() {
+  const controller = new AbortController();
+
+  const timeoutId = window.setTimeout(() => {
+    controller.abort();
+  }, CONNECTION_PROBE_TIMEOUT_MS);
+
+  try {
+    await fetch(PRTG_MAP_URL, {
+      method: "GET",
+      mode: "no-cors",
+      cache: "no-store",
+      credentials: "omit",
+      redirect: "follow",
+      signal: controller.signal
+    });
+
+    return true;
+  } catch (error) {
+    console.warn("PRTG connection probe failed:", error);
+    return false;
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+/**
+ * แสดงหน้าจอแจ้งเตือนและปุ่ม Redirect เมื่อ PRTG ติดต่อไม่ได้
+ * @param {string} title หัวข้อแจ้งเตือน
+ * @param {string} message รายละเอียดปัญหา
+ */
+function showConnectionFailure(title, message) {
+  window.clearTimeout(loadTimeoutId);
+
+  elements.loadingOverlay.classList.add("is-hidden");
+  elements.helpOverlay.classList.remove("is-hidden");
+  elements.helpTitle.textContent = title;
+  elements.helpMessage.innerHTML = message;
+
+  setMapState("error", "PRTG Connection Failed");
+  showToast("ไม่สามารถเชื่อมต่อ PRTG — กรุณา Redirect ไปยืนยัน Certificate");
+}
+
+/**
+ * ตรวจสอบปลายทางและโหลด PRTG Map ใหม่
+ *
+ * ไม่ใช้ iframe load event อย่างเดียว เพราะ Chrome จะยิง load
+ * แม้ภายใน iframe จะแสดงหน้า ERR_CERT_AUTHORITY_INVALID หรือ Network Error
+ *
  * @param {boolean} showMessage ให้แสดง Toast ระหว่างรีเฟรชหรือไม่
  */
-function loadMap(showMessage = false) {
+async function loadMap(showMessage = false) {
   window.clearTimeout(loadTimeoutId);
+
+  connectionProbePassed = false;
 
   elements.helpOverlay.classList.add("is-hidden");
   elements.loadingOverlay.classList.remove("is-hidden");
-  setMapState("loading", "กำลังโหลด PRTG Map");
+  setMapState("loading", "กำลังตรวจสอบ PRTG");
 
-  // ใช้ about:blank คั่นก่อนโหลด URL เดิม เพื่อบังคับ iframe รีเฟรช
+  // ล้าง iframe เดิมก่อน เพื่อไม่ให้ค้างหน้า Error เก่า
   elements.prtgMap.src = "about:blank";
 
-  window.setTimeout(() => {
-    elements.prtgMap.src = PRTG_MAP_URL;
-    fitMapToViewport();
-  }, 80);
-
   if (showMessage) {
-    showToast("กำลังรีเฟรช Network Map");
+    showToast("กำลังตรวจสอบการเชื่อมต่อ PRTG");
   }
 
+  // ตรวจ TLS/Certificate, VPN, Firewall และการเข้าถึง Server ก่อน
+  const isReachable = await probePrtgConnection();
+
+  if (!isReachable) {
+    showConnectionFailure(
+      "ไม่สามารถเชื่อมต่อ PRTG Map ได้",
+      `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ไม่สำเร็จ
+       อาจเกิดจาก SSL Certificate ยังไม่ได้รับการยืนยัน, VPN ไม่เชื่อมต่อ,
+       Firewall บล็อก หรือ PRTG Server ไม่พร้อมใช้งาน`
+    );
+    return;
+  }
+
+  connectionProbePassed = true;
+  setMapState("loading", "กำลังโหลด PRTG Map");
+
+  // เมื่อ Probe ผ่านแล้วจึงโหลด Public Map เข้า iframe
+  elements.prtgMap.src = PRTG_MAP_URL;
+  fitMapToViewport();
+
   loadTimeoutId = window.setTimeout(() => {
-    elements.loadingOverlay.classList.add("is-hidden");
-    elements.helpOverlay.classList.remove("is-hidden");
-    setMapState("error", "โหลด Map นานกว่าปกติ");
+    showConnectionFailure(
+      "PRTG Map ใช้เวลาโหลดนานกว่าปกติ",
+      `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ได้
+       แต่หน้า Public Map ยังโหลดไม่เสร็จ กรุณาตรวจสอบ PRTG Service และ Public Map Access`
+    );
   }, LOAD_TIMEOUT_MS);
 }
 
@@ -221,7 +308,11 @@ async function toggleFullscreen() {
 // คำว่า Ready จึงหมายถึง iframe จบขั้นตอน Load ไม่ได้ยืนยันว่า Sensor ทุกตัว Up
 
 elements.prtgMap.addEventListener("load", () => {
-  if (elements.prtgMap.getAttribute("src") !== PRTG_MAP_URL) {
+  // about:blank หรือ iframe ที่ยังไม่ผ่าน Connection Probe ห้ามรายงาน Ready
+  if (
+    elements.prtgMap.getAttribute("src") !== PRTG_MAP_URL ||
+    !connectionProbePassed
+  ) {
     return;
   }
 
@@ -239,6 +330,10 @@ elements.retryBtn.addEventListener("click", () => loadMap(true));
 elements.fullscreenBtn.addEventListener("click", toggleFullscreen);
 elements.openMapBtn.href = PRTG_MAP_URL;
 elements.certificateBtn.href = PRTG_ORIGIN_URL;
+
+elements.certificateBtn.addEventListener("click", () => {
+  showToast("กำลัง Redirect ไปหน้า PRTG เพื่อยืนยัน Certificate");
+});
 
 // คำนวณ Scale ใหม่เมื่อ Browser, Mobile Rotation หรือ Fullscreen เปลี่ยน
 const mapResizeObserver = new ResizeObserver(() => fitMapToViewport());

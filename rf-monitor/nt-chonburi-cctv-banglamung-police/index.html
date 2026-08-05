@@ -6,7 +6,9 @@
   <meta name="theme-color" content="#07111f">
   <meta name="color-scheme" content="dark">
 
-  <title>NT-ชลบุรี-CCTV-อบจ-สถานีตำรวจภูธรบางละมุง</title>
+  <title>NT Network Operations Dashboard</title>
+
+  <!-- แยก CSS ออกจาก HTML เพื่อให้ดูแลและแก้ไขได้ง่าย -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -68,8 +70,8 @@
             </span>
 
             <div class="panel-title">
-              <strong>สถานะ Network วันนี้</strong>
-              <span>CCTV B.M.P.S. (Banglamung Police Station)</span>
+              <strong>Network Status</strong>
+              <span>ขยายใหญ่ที่สุด · รักษาสัดส่วน · ไม่สูงเกินหน้าจอ</span>
             </div>
           </div>
 
@@ -142,16 +144,22 @@
                 </svg>
               </div>
 
-              <h2>PRTG Map ใช้เวลาโหลดนานกว่าปกติ</h2>
-              <p>
-                ตรวจสอบ VPN, Firewall และ SSL Certificate ของ
+              <h2 id="helpTitle">ไม่สามารถเชื่อมต่อ PRTG Map ได้</h2>
+              <p id="helpMessage">
+                Browser ไม่สามารถเชื่อมต่อ
                 <strong>rfcctv.fortiddns.com:8443</strong>
-                หาก Browser แสดงคำเตือน Certificate ให้เปิด PRTG ในแท็บใหม่และยืนยันก่อนหนึ่งครั้ง
+                ได้ อาจเกิดจาก SSL Certificate ยังไม่ได้รับการยืนยัน, VPN ไม่เชื่อมต่อ,
+                Firewall บล็อก หรือ PRTG Server ไม่พร้อมใช้งาน
               </p>
+
+              <div class="redirect-notice" id="redirectNotice">
+                <strong>ขั้นตอนแก้ไข</strong>
+                <span>กด “Redirect ไป PRTG” แล้วผ่านหน้า Certificate จากนั้นกลับมาที่ Dashboard และกดรีเฟรช</span>
+              </div>
 
               <div class="help-actions">
                 <a class="primary-button" id="certificateBtn" href="#" target="_blank" rel="noopener noreferrer">
-                  เปิดหน้า PRTG
+                  Redirect ไป PRTG
                 </a>
                 <button class="secondary-button" id="retryBtn" type="button">ลองใหม่</button>
               </div>
@@ -170,7 +178,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <!-- แยก JavaScript ออกจาก HTML เพื่อให้แก้ URL และพฤติกรรมได้สะดวก -->
   <script src="app.js" defer></script>
 </body>
 </html>
-<!-- Create By James Phuthanet -->
