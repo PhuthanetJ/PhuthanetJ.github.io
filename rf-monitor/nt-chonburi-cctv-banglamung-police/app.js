@@ -1,5 +1,5 @@
 /* =========================================================
-   NT PRTG Network Operations Dashboard
+   NT PRTG Network Operations Dashboard Create By James Phuthanet
    ไฟล์นี้ควบคุม URL, เวลา, การรีเฟรช และการจัดขนาด Map
    ========================================================= */
 
