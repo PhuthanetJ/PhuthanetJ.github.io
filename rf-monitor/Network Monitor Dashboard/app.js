@@ -303,10 +303,8 @@ function fitMapToViewport() {
 
   // Element นี้ถูกถอดออกจาก Footer ในเวอร์ชัน Refresh Only
   if (elements.scaleText) {
-    if (elements.scaleText) {
     elements.scaleText.textContent =
       `Scale: ${Math.round(scale * 100)}% · ${Math.round(renderedWidth)} × ${Math.round(renderedHeight)}px`;
-  }
   }
 }
 
@@ -429,7 +427,8 @@ async function loadMap(showMessage = false) {
 function changeSelectedMap() {
   const selectedKey = elements.mapSelect.value;
 
-  if (!PRTG_MAPS[selectedKey]) {
+  // ตรวจสอบ Key จาก Object รายการ Map ที่ประกาศจริง
+  if (!Monitor_MAPS[selectedKey]) {
     showToast("ไม่พบ Network Map ที่เลือก");
     return;
   }
