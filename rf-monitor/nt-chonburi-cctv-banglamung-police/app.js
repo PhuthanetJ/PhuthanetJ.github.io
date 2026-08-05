@@ -279,7 +279,7 @@ async function loadMap(showMessage = false) {
 
   if (!isReachable) {
     showConnectionFailure(
-      "ไม่สามารถเชื่อมต่อ PRTG Map ได้",
+      "ไม่สามารถเชื่อมต่อ Monitor Map ได้",
       `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ไม่สำเร็จ
        อาจเกิดจาก SSL Certificate ยังไม่ได้รับการยืนยัน, VPN ไม่เชื่อมต่อ,
        Firewall บล็อก หรือ PRTG Server ไม่พร้อมใช้งาน`
@@ -288,7 +288,7 @@ async function loadMap(showMessage = false) {
   }
 
   connectionProbePassed = true;
-  setMapState("loading", "กำลังโหลด PRTG Map");
+  setMapState("loading", "กำลังโหลด Monitor Map");
 
   // เมื่อ Probe ผ่านแล้วจึงโหลด Public Map เข้า iframe
   elements.prtgMap.src = PRTG_MAP_URL;
@@ -296,7 +296,7 @@ async function loadMap(showMessage = false) {
 
   loadTimeoutId = window.setTimeout(() => {
     showConnectionFailure(
-      "PRTG Map ใช้เวลาโหลดนานกว่าปกติ",
+      "Monitor Map ใช้เวลาโหลดนานกว่าปกติ",
       `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ได้
        แต่หน้า Public Map ยังโหลดไม่เสร็จ กรุณาตรวจสอบ PRTG Service และ Public Map Access`
     );
