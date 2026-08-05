@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#08111f">
-  <title>NT Network Operations Dashboard</title>
+  <title>NT Network Operations Dashboard - Centered Map</title>
 
   <style>
     :root {
@@ -309,12 +309,124 @@
       background-size: 28px 28px;
     }
 
+    /* กล่อง Map ขนาดจริงตาม PRTG Map Settings: 1024 x 768 */
+    .map-canvas {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1024px;
+      height: 768px;
+      overflow: hidden;
+      background: #fff;
+      transform: translate(-50%, -50%) scale(var(--map-scale, 1));
+      transform-origin: center center;
+      will-change: transform;
+    }
+
     #prtgMap {
       display: block;
-      width: 100%;
-      height: 100%;
+      width: 1024px;
+      height: 768px;
       border: 0;
       background: #fff;
+    }
+
+    .connection-gate {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: #e2e8f0;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(56, 189, 248, 0.12), transparent 35%),
+        rgba(7, 16, 30, 0.96);
+      backdrop-filter: blur(10px);
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      z-index: 7;
+    }
+
+    .connection-gate.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .gate-card {
+      width: min(620px, 100%);
+      padding: 26px;
+      text-align: center;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 18px;
+      background: rgba(15, 27, 46, 0.9);
+      box-shadow: var(--shadow);
+    }
+
+    .gate-icon {
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 15px;
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      border-radius: 17px;
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .gate-icon svg {
+      width: 29px;
+      height: 29px;
+    }
+
+    .gate-card h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .gate-card p {
+      margin: 10px auto 0;
+      max-width: 530px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.65;
+    }
+
+    .gate-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .gate-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 15px;
+      color: #e0f2fe;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      border-radius: 11px;
+      background: rgba(2, 132, 199, 0.15);
+    }
+
+    .gate-btn.secondary {
+      color: #cbd5e1;
+      border-color: var(--border);
+      background: rgba(15, 27, 46, 0.85);
+    }
+
+    .gate-note {
+      display: block;
+      margin-top: 14px;
+      color: #94a3b8;
+      font-size: 0.72rem;
     }
 
     .loading-screen {
@@ -544,7 +656,7 @@
               <span class="dot"></span>
               <span id="mapStatusText">Loading PRTG Map</span>
             </span>
-            <strong>ภาพรวมอุปกรณ์และโครงข่าย</strong>
+            <strong>ภาพรวมอุปกรณ์และโครงข่าย · Fit Screen + Center</strong>
           </div>
 
           <div class="actions">
@@ -579,15 +691,41 @@
           </div>
         </div>
 
-        <div class="map-stage">
-          <iframe
-            id="prtgMap"
-            title="PRTG Public Network Map"
-            allowfullscreen
-            loading="eager"
-            referrerpolicy="no-referrer-when-downgrade"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms">
-          </iframe>
+        <div class="map-stage" id="mapStage">
+          <div class="map-canvas" id="mapCanvas">
+            <iframe
+              id="prtgMap"
+              title="PRTG Public Network Map"
+              allowfullscreen
+              loading="eager"
+              referrerpolicy="no-referrer-when-downgrade"
+              sandbox="allow-same-origin allow-scripts allow-popups allow-forms">
+            </iframe>
+          </div>
+
+          <div class="connection-gate hidden" id="connectionGate">
+            <div class="gate-card">
+              <div class="gate-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3 2.8 19h18.4L12 3Z" />
+                  <path d="M12 9v4" />
+                  <path d="M12 17h.01" />
+                </svg>
+              </div>
+              <h2>Browser ยังไม่เชื่อถือ Certificate ของ PRTG</h2>
+              <p>
+                ต้องเปิดหน้า PRTG ในแท็บใหม่แล้วกด Advanced → Proceed ก่อนหนึ่งครั้งใน Browser นี้
+                หรือแก้ถาวรด้วย Certificate ที่ออกให้ชื่อ rfcctv.fortiddns.com จาก CA ที่เครื่องเชื่อถือ
+              </p>
+              <div class="gate-actions">
+                <a class="gate-btn" id="certificateBtn" href="#" target="_blank" rel="noopener noreferrer">
+                  เปิด PRTG เพื่อยืนยัน Certificate
+                </a>
+                <button class="gate-btn secondary" id="retryBtn" type="button">ลองเชื่อมต่อใหม่</button>
+              </div>
+              <small class="gate-note">หน้า HTML ไม่สามารถข้ามคำเตือน Certificate แทนผู้ใช้ได้ เพราะ Browser บล็อกไว้ที่ระดับความปลอดภัย</small>
+            </div>
+          </div>
 
           <div class="loading-screen" id="loadingScreen">
             <div class="loading-box">
@@ -610,8 +748,27 @@
     // รีเฟรช Map อัตโนมัติทุก 5 นาที
     const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
+    // URL สำหรับเปิดหน้า PRTG เพื่อให้ Browser ยืนยัน Certificate
+    const PRTG_ORIGIN_URL = new URL("/index.htm", PRTG_MAP_URL).href;
+
+    // ใช้ไฟล์เล็กบน Origin เดียวกันเพื่อตรวจว่า Browser ยอมรับ Certificate แล้วหรือยัง
+    const PRTG_PROBE_URL = new URL("/favicon.ico", PRTG_MAP_URL).href;
+
+    // ขนาด Map ต้องตรงกับค่าใน PRTG Map Settings
+    // Map Width = 1024, Map Height = 768
+    // ให้คงค่า "Do not automatically scale map view" ใน PRTG
+    // หน้า Dashboard จะย่อ/ขยายและจัดกึ่งกลางให้เอง เพื่อป้องกันการ Scale ซ้ำ
+    const PRTG_MAP_WIDTH = 1024;
+    const PRTG_MAP_HEIGHT = 768;
+    const MAP_PADDING = 16;
+
     const prtgMap = document.getElementById("prtgMap");
+    const mapStage = document.getElementById("mapStage");
+    const mapCanvas = document.getElementById("mapCanvas");
     const loadingScreen = document.getElementById("loadingScreen");
+    const connectionGate = document.getElementById("connectionGate");
+    const certificateBtn = document.getElementById("certificateBtn");
+    const retryBtn = document.getElementById("retryBtn");
     const mapStatus = document.getElementById("mapStatus");
     const mapStatusText = document.getElementById("mapStatusText");
     const connectionText = document.getElementById("connectionText");
@@ -665,24 +822,80 @@
     }
 
     function buildMapUrl() {
-      const url = new URL(PRTG_MAP_URL);
-      // ป้องกัน browser cache เมื่อกดรีเฟรชหรือรีเฟรชอัตโนมัติ
-      url.searchParams.set("_dashboard_ts", Date.now().toString());
-      return url.toString();
+      // ห้ามเติม Query String ต่อท้าย URL นี้
+      // PRTG Public Map บางเวอร์ชันจะตีความค่า mapid รวมกับพารามิเตอร์ใหม่
+      // และตอบกลับเป็นหน้า Error ดังที่พบกับ _dashboard_ts
+      return PRTG_MAP_URL;
     }
 
-    function loadMap(showMessage = false) {
+    function fitMapToViewport() {
+      // คำนวณ Scale จากพื้นที่ที่มีจริง เพื่อให้ Map 1024x768 แสดงครบทั้งภาพ
+      // จากนั้นวาง Map ไว้กึ่งกลางทั้งแนวนอนและแนวตั้ง
+      const availableWidth = Math.max(1, mapStage.clientWidth - MAP_PADDING * 2);
+      const availableHeight = Math.max(1, mapStage.clientHeight - MAP_PADDING * 2);
+
+      const scaleX = availableWidth / PRTG_MAP_WIDTH;
+      const scaleY = availableHeight / PRTG_MAP_HEIGHT;
+      const scale = Math.min(scaleX, scaleY);
+
+      mapCanvas.style.setProperty("--map-scale", scale.toFixed(4));
+    }
+
+    async function probePrtgCertificate() {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 8000);
+
+      try {
+        // no-cors ใช้ตรวจระดับ Network/TLS เท่านั้น ไม่ได้อ่านข้อมูลตอบกลับ
+        await fetch(PRTG_PROBE_URL, {
+          method: "GET",
+          mode: "no-cors",
+          cache: "no-store",
+          signal: controller.signal
+        });
+        return true;
+      } catch (error) {
+        return false;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    function showCertificateGate() {
+      loadingScreen.classList.add("hidden");
+      connectionGate.classList.remove("hidden");
+      setMapState("error", "Certificate Not Trusted");
+      connectionText.textContent = "รอยืนยัน Certificate";
+    }
+
+    async function loadMap(showMessage = false) {
       clearTimeout(loadingTimeout);
+      connectionGate.classList.add("hidden");
       loadingScreen.classList.remove("hidden");
+      setMapState("loading", "Checking PRTG Connection");
+
+      // ล้างหน้าเก่าก่อน เพื่อไม่ให้ค้างเป็น Error page ของ Chrome
+      prtgMap.src = "about:blank";
+
+      const certificateAccepted = await probePrtgCertificate();
+      if (!certificateAccepted) {
+        showCertificateGate();
+        if (showMessage) {
+          showToast("Browser ยังไม่ยอมรับ Certificate ของ PRTG");
+        }
+        return;
+      }
+
+      connectionGate.classList.add("hidden");
       setMapState("loading", "Loading PRTG Map");
       prtgMap.src = buildMapUrl();
+      fitMapToViewport();
 
       if (showMessage) {
         showToast("กำลังรีเฟรช Network Map");
       }
 
       // iframe แบบ Cross-Origin ตรวจ HTTP status โดยตรงไม่ได้
-      // จึงแจ้งเตือนเมื่อใช้เวลาโหลดเกิน 20 วินาที
       loadingTimeout = setTimeout(() => {
         setMapState("error", "Loading takes too long");
         connectionText.textContent = "โหลดช้ากว่าปกติ";
@@ -692,12 +905,25 @@
     }
 
     prtgMap.addEventListener("load", () => {
+      // ไม่ประมวลผล load event ของ about:blank ที่ใช้คั่นระหว่าง Refresh
+      if (prtgMap.getAttribute("src") !== PRTG_MAP_URL) return;
+
       clearTimeout(loadingTimeout);
       loadingScreen.classList.add("hidden");
-      setMapState("", "PRTG Map Online");
+      setMapState("", "PRTG Map Ready");
+      fitMapToViewport();
     });
 
+    certificateBtn.href = PRTG_ORIGIN_URL;
+    retryBtn.addEventListener("click", () => loadMap(true));
     refreshBtn.addEventListener("click", () => loadMap(true));
+
+    // เมื่อกลับจากแท็บที่กด Proceed แล้ว ให้ลองเชื่อมต่อใหม่อัตโนมัติ
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && !connectionGate.classList.contains("hidden")) {
+        window.setTimeout(() => loadMap(), 500);
+      }
+    });
 
     fullscreenBtn.addEventListener("click", async () => {
       try {
@@ -715,7 +941,14 @@
       fullscreenBtn.title = document.fullscreenElement
         ? "ออกจากโหมดเต็มหน้าจอ"
         : "แสดงเต็มหน้าจอ";
+
+      window.setTimeout(fitMapToViewport, 100);
     });
+
+    // ปรับ Scale ใหม่เมื่อขนาด Browser, Mobile Rotation หรือ Fullscreen เปลี่ยน
+    const resizeObserver = new ResizeObserver(() => fitMapToViewport());
+    resizeObserver.observe(mapStage);
+    window.addEventListener("resize", fitMapToViewport);
 
     window.addEventListener("online", () => {
       showToast("Internet กลับมาเชื่อมต่อแล้ว");
@@ -733,6 +966,7 @@
     openMapBtn.href = PRTG_MAP_URL;
 
     updateDateTime();
+    fitMapToViewport();
     setInterval(updateDateTime, 1000);
     setInterval(() => loadMap(), AUTO_REFRESH_MS);
     loadMap();
