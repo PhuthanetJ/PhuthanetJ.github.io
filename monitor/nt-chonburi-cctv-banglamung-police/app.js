@@ -1,31 +1,56 @@
 /* =========================================================
-   NT PRTG Network Operations Dashboard Create By James Phuthanet
-   ไฟล์นี้ควบคุม URL, เวลา, การรีเฟรช และการจัดขนาด Map
+   NT Monitor Network Operations Dashboard Create By James Phuthanet
+   รองรับ Dropdown เลือกแสดงหลาย Monitor Public Map
    ========================================================= */
 
 "use strict";
 
-// URL ของ PRTG Public Map
-const PRTG_MAP_URL =
-  "https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98";
+/**
+ * รายการ Monitor Map
+ *
+ * เพิ่ม Map ใหม่ได้โดยเพิ่ม Object ใน Monitor_MAPS และเพิ่ม <option>
+ * ใน index.html ให้ value ตรงกับ key ของ Object
+ */
+const Monitor_MAPS = {
+  banglamung: {
+    name: "CCTV อบจ-สภ.บางละมุง",
+    description: "nt-cctv-banglamung-police-station",
+    url: "https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98",
+    width: 1024,
+    height: 768
+  },
 
-// หน้า PRTG หลัก ใช้สำหรับเปิดไปยืนยัน SSL Certificate ใน Browser
-const PRTG_ORIGIN_URL = new URL("/index.htm", PRTG_MAP_URL).href;
+  pao_center: {
+    name: "CCTV อบจ.ชลบุรี-รวมศูนย์",
+    description: "nt-cctv-chonburi-pao-center",
+    url: "https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2506&mapid=26815356-D3C7-4522-91C0-80DB58E8FF69",
+    width: 1024,
+    height: 768
+  }
+};
 
-// ขนาดนี้ต้องตรงกับ PRTG > Map Settings
-const PRTG_MAP_WIDTH = 1024;
-const PRTG_MAP_HEIGHT = 768;
+// Map ที่แสดงตอนเปิดหน้าเว็บครั้งแรก
+let activeMapKey = "banglamung";
+
+// URL ที่ iframe กำลังรอโหลด ใช้ป้องกัน Event จาก Map เก่า
+let expectedMapUrl = "";
+
+// หมายเลขลำดับการโหลด ป้องกันการสลับ Dropdown เร็วแล้วผลเก่าทับผลใหม่
+let loadSequence = 0;
 
 // เว้นพื้นที่รอบ Map เพื่อไม่ให้ภาพชนขอบ Panel
 const MAP_PADDING = 24;
 
-// รีเฟรช Map อัตโนมัติทุก 5 นาที
-const AUTO_REFRESH_MS = 5 * 60 * 1000;
+// รีเฟรช Map อัตโนมัติทุก 2 นาที
+const AUTO_REFRESH_MS = 2 * 60 * 1000;
 
-// ถ้าโหลด iframe เกินเวลานี้ จะแสดงคำแนะนำเรื่อง Network และ Certificate
+// อัปเดตตัวนับถอยหลังทุก 1 วินาที
+const AUTO_REFRESH_TICK_MS = 1000;
+
+// ถ้าโหลด iframe เกินเวลานี้ ให้แสดงคำแนะนำ
 const LOAD_TIMEOUT_MS = 20 * 1000;
 
-// เวลาสูงสุดสำหรับตรวจสอบว่า PRTG Origin ติดต่อได้หรือไม่
+// เวลาสูงสุดสำหรับ Probe การเชื่อมต่อ
 const CONNECTION_PROBE_TIMEOUT_MS = 8 * 1000;
 
 const elements = {
@@ -35,6 +60,7 @@ const elements = {
   mapPanel: document.getElementById("mapPanel"),
   loadingOverlay: document.getElementById("loadingOverlay"),
   helpOverlay: document.getElementById("helpOverlay"),
+  helpCard: document.querySelector("#helpOverlay .help-card"),
   helpTitle: document.getElementById("helpTitle"),
   helpMessage: document.getElementById("helpMessage"),
   redirectNotice: document.getElementById("redirectNotice"),
@@ -43,6 +69,11 @@ const elements = {
   connectionText: document.getElementById("connectionText"),
   datetime: document.getElementById("datetime"),
   scaleText: document.getElementById("scaleText"),
+  mapSizeText: document.getElementById("mapSizeText"),
+  autoRefreshCountdown: document.getElementById("autoRefreshCountdown"),
+  currentMapName: document.getElementById("currentMapName"),
+  currentMapDescription: document.getElementById("currentMapDescription"),
+  mapSelect: document.getElementById("mapSelect"),
   refreshBtn: document.getElementById("refreshBtn"),
   retryBtn: document.getElementById("retryBtn"),
   certificateBtn: document.getElementById("certificateBtn"),
@@ -53,12 +84,189 @@ const elements = {
 
 let loadTimeoutId = null;
 let toastTimeoutId = null;
-
-// ป้องกัน iframe load event รายงาน Ready ก่อนผ่านการตรวจสอบปลายทาง
 let connectionProbePassed = false;
 
+// เวลาที่จะรีเฟรช Map รอบถัดไป
+let nextAutoRefreshAt = Date.now() + AUTO_REFRESH_MS;
+
+// ป้องกันการสั่ง Auto Refresh ซ้ำระหว่างรอบเดียวกัน
+let autoRefreshRunning = false;
+
+// ตรวจครั้งเดียวตอนเปิดหน้าเว็บว่าอยู่ใน LINE In-App Browser หรือไม่
+const IS_LINE_BROWSER = /(?:^|\s|;)Line\/[\d.]+|LIFF/i.test(
+  navigator.userAgent || ""
+);
+
+// ตรวจว่าเป็นอุปกรณ์ Android หรือไม่
+const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
+
 /**
- * แสดงวันที่และเวลาปัจจุบันเป็นภาษาไทยและปี พ.ศ.
+ * สร้าง Android Intent URL เพื่อเปิดด้วย Google Chrome
+ *
+ * @param {string} targetUrl URL ที่ต้องการเปิด
+ * @returns {string} Intent URL
+ */
+function buildChromeIntentUrl(targetUrl) {
+  const target = new URL(targetUrl, window.location.href);
+  const scheme = target.protocol.replace(":", "");
+  const intentTarget =
+    `${target.host}${target.pathname}${target.search}${target.hash}`;
+
+  return (
+    `intent://${intentTarget}` +
+    `#Intent;scheme=${scheme};` +
+    "package=com.android.chrome;" +
+    `S.browser_fallback_url=${encodeURIComponent(target.href)};` +
+    "end"
+  );
+}
+
+/**
+ * เปิด URL ด้วย Browser ภายนอก
+ *
+ * Android จะพยายามเปิด Google Chrome โดยตรง
+ * iOS ไม่อนุญาตให้เว็บบังคับ Safari จึงเปิด URL ตามกลไกของระบบ
+ *
+ * @param {string} targetUrl URL ที่ต้องการเปิด
+ */
+function openInExternalBrowser(targetUrl) {
+  const absoluteUrl = new URL(targetUrl, window.location.href).href;
+
+  if (IS_ANDROID) {
+    window.location.href = buildChromeIntentUrl(absoluteUrl);
+    return;
+  }
+
+  window.location.href = absoluteUrl;
+}
+
+/**
+ * แสดงข้อความเฉพาะเมื่อเปิดจาก LINE In-App Browser
+ *
+ * ไม่โหลด iframe หรือ fetch ไปยัง PRTG ภายใน LINE
+ * เพราะ LINE WebView ไม่สามารถข้าม SSL Certificate Warning ได้
+ */
+function showLineBrowserNotice() {
+  const activeMap = getActiveMap();
+
+  window.clearTimeout(loadTimeoutId);
+  connectionProbePassed = false;
+  expectedMapUrl = "";
+
+  elements.prtgMap.src = "about:blank";
+  elements.loadingOverlay.classList.add("is-hidden");
+  elements.helpOverlay.classList.remove("is-hidden");
+  elements.helpCard?.classList.add("is-line-browser");
+
+  setMapState("error", "LINE Browser ไม่รองรับ");
+
+  elements.helpTitle.textContent = "กรุณาเปิดด้วย Google Chrome";
+  elements.helpMessage.innerHTML =
+    "LINE In-App Browser ไม่สามารถยืนยัน SSL Certificate ของ " +
+    "<strong>rfcctv.fortiddns.com:8443</strong> ได้ " +
+    "ระบบจึงหยุดโหลด Network Map เพื่อไม่ให้แสดงหน้าขาวหรือค้าง";
+
+  if (elements.redirectNotice) {
+    elements.redirectNotice.innerHTML =
+      "<strong>วิธีใช้งาน</strong>" +
+      "<span>เปิด Dashboard ด้วย Chrome ก่อน " +
+      "หาก Chrome ยังเตือน Certificate ให้กดเปิด PRTG ด้วย Chrome " +
+      "และยืนยัน Advanced → Proceed จากนั้นกลับมาที่ Dashboard</span>";
+  }
+
+  // ปุ่มหลัก: เปิด Dashboard หน้าเดิมด้วย Chrome
+  elements.certificateBtn.textContent = "เปิด Dashboard ด้วย Chrome";
+  elements.certificateBtn.href = "#";
+  elements.certificateBtn.removeAttribute("target");
+  elements.certificateBtn.removeAttribute("rel");
+
+  // ปุ่มรอง: เปิด PRTG Map ที่เลือกด้วย Chrome
+  elements.retryBtn.textContent = "เปิด PRTG ด้วย Chrome";
+  elements.retryBtn.dataset.lineAction = "open-prtg";
+
+  // ปุ่ม Open Map บน Toolbar ให้ชี้ไปยัง Map ปัจจุบัน
+  elements.openMapBtn.href = activeMap.url;
+
+  if (elements.autoRefreshCountdown) {
+    elements.autoRefreshCountdown.textContent = "--:--";
+  }
+}
+
+/**
+ * คืนค่า Config ของ Map ที่กำลังเลือก
+ */
+function getActiveMap() {
+  return Monitor_MAPS[activeMapKey];
+}
+
+/**
+ * คืนค่า Origin URL ของ Monitor Map สำหรับหน้า Certificate
+ *
+ * @param {string} mapUrl URL ของ Public Map
+ */
+function getMonitorOriginUrl(mapUrl) {
+  return new URL("/index.htm", mapUrl).href;
+}
+
+/**   
+ * แปลงเวลาที่เหลือเป็นรูปแบบ MM:SS
+ *
+ * @param {number} milliseconds เวลาที่เหลือหน่วยมิลลิวินาที
+ * @returns {string} เวลาในรูปแบบ MM:SS
+ */
+function formatCountdown(milliseconds) {
+  const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+/**
+ * เริ่มนับรอบรีเฟรชอัตโนมัติใหม่
+ */
+function resetAutoRefreshCountdown() {
+  nextAutoRefreshAt = Date.now() + AUTO_REFRESH_MS;
+  updateAutoRefreshCountdown();
+}
+
+/**
+ * อัปเดตตัวนับและสั่งรีเฟรชเมื่อเวลาครบ
+ *
+ * ใช้ Timestamp จริงแทนการลบทีละวินาที
+ * จึงยังแม่นยำเมื่อ Browser ลดการทำงานของ Timer ในแท็บที่ไม่ได้เปิดอยู่
+ */
+function updateAutoRefreshCountdown() {
+  const remainingMs = nextAutoRefreshAt - Date.now();
+  const counterContainer = elements.autoRefreshCountdown.closest(
+    ".auto-refresh-counter"
+  );
+
+  elements.autoRefreshCountdown.textContent = formatCountdown(remainingMs);
+
+  if (remainingMs > 0) {
+    counterContainer.classList.remove("is-due");
+    return;
+  }
+
+  counterContainer.classList.add("is-due");
+
+  if (autoRefreshRunning) {
+    return;
+  }
+
+  // ตั้ง Deadline รอบใหม่ทันที เพื่อไม่ให้ Trigger ซ้ำ
+  autoRefreshRunning = true;
+  nextAutoRefreshAt = Date.now() + AUTO_REFRESH_MS;
+  elements.autoRefreshCountdown.textContent = formatCountdown(AUTO_REFRESH_MS);
+
+  loadMap(false).finally(() => {
+    autoRefreshRunning = false;
+  });
+}
+
+/**
+ * แสดงวันที่และเวลาปัจจุบัน
  */
 function updateDateTime() {
   const now = new Date();
@@ -73,7 +281,6 @@ function updateDateTime() {
   const isMobile = window.matchMedia("(max-width: 620px)").matches;
 
   if (isMobile) {
-    // มือถือ: วันที่แบบย่อ + เวลา เพื่อประหยัดพื้นที่ Header
     const mobileDateText = now.toLocaleDateString("th-TH-u-ca-buddhist", {
       day: "numeric",
       month: "short",
@@ -84,7 +291,6 @@ function updateDateTime() {
     return;
   }
 
-  // Desktop: วันที่แบบเต็ม + เวลา
   const desktopDateText = now.toLocaleDateString("th-TH-u-ca-buddhist", {
     weekday: "long",
     year: "numeric",
@@ -96,11 +302,13 @@ function updateDateTime() {
 }
 
 /**
- * แสดงข้อความแจ้งเตือนแบบชั่วคราวที่มุมขวาล่าง
- * @param {string} message ข้อความที่ต้องการแสดง
+ * แสดง Toast ชั่วคราว
+ *
+ * @param {string} message ข้อความแจ้งเตือน
  */
 function showToast(message) {
   window.clearTimeout(toastTimeoutId);
+
   elements.toast.textContent = message;
   elements.toast.classList.add("is-visible");
 
@@ -110,9 +318,10 @@ function showToast(message) {
 }
 
 /**
- * เปลี่ยนสถานะ Badge และข้อความเชื่อมต่อใน Header
- * @param {"loading"|"error"|"ready"} state สถานะปัจจุบัน
- * @param {string} text ข้อความบน Badge
+ * เปลี่ยนสถานะ Badge และ Header
+ *
+ * @param {"loading"|"error"|"ready"} state สถานะ
+ * @param {string} text ข้อความ
  */
 function setMapState(state, text) {
   elements.mapStatus.className = "map-status";
@@ -131,16 +340,32 @@ function setMapState(state, text) {
 }
 
 /**
- * ขยาย PRTG Map ให้ใหญ่ที่สุดเท่าที่พื้นที่ Map Stage อนุญาต
- *
- * หลักการ:
- * - รักษาสัดส่วนเดิม 1024 × 768
- * - คำนวณ Scale จากทั้งความกว้างและความสูง
- * - เลือก Scale ที่น้อยกว่า เพื่อให้ Map ไม่ล้นพื้นที่
- * - ผลลัพธ์คือ Map กว้างที่สุดเท่าที่ทำได้ ภายใต้ข้อจำกัดเรื่องความสูง
+ * อัปเดตข้อความและ Link ตาม Map ที่เลือก
+ */
+function updateSelectedMapUi() {
+  const activeMap = getActiveMap();
+
+  elements.currentMapName.textContent = activeMap.name;
+  elements.currentMapDescription.textContent = activeMap.description;
+  // Element นี้ถูกถอดออกจาก Footer ในเวอร์ชัน Refresh Only
+  if (elements.mapSizeText) {
+    elements.mapSizeText.textContent =
+      `Map Size: ${activeMap.width} × ${activeMap.height}`;
+  }
+
+  elements.openMapBtn.href = activeMap.url;
+  elements.certificateBtn.href = getMonitorOriginUrl(activeMap.url);
+
+  elements.prtgMap.title = activeMap.name;
+  document.title = `${activeMap.name} · NT Network Operations Dashboard`;
+}
+
+/**
+ * ขยาย Map ให้ใหญ่ที่สุด โดยรักษาสัดส่วนและไม่ล้นพื้นที่
  */
 function fitMapToViewport() {
-  // พื้นที่ใช้งานจริงหลังหัก Padding รอบ Map
+  const activeMap = getActiveMap();
+
   const availableWidth = Math.max(
     1,
     elements.mapStage.clientWidth - MAP_PADDING * 2
@@ -151,34 +376,18 @@ function fitMapToViewport() {
     elements.mapStage.clientHeight - MAP_PADDING * 2
   );
 
-  // Scale สูงสุดที่ความกว้างอนุญาต
-  const scaleByWidth = availableWidth / PRTG_MAP_WIDTH;
+  const scaleByWidth = availableWidth / activeMap.width;
+  const scaleByHeight = availableHeight / activeMap.height;
+  const scale = Math.min(scaleByWidth, scaleByHeight);
 
-  // Scale สูงสุดที่ความสูงอนุญาต
-  const scaleByHeight = availableHeight / PRTG_MAP_HEIGHT;
+  const renderedWidth = activeMap.width * scale;
+  const renderedHeight = activeMap.height * scale;
 
-  /*
-   * เลือกค่าที่น้อยกว่า:
-   * - ถ้าความสูงเป็นข้อจำกัด Map จะไม่สูงเกินพื้นที่
-   * - ถ้าความกว้างเป็นข้อจำกัด Map จะไม่ล้นด้านข้าง
-   * - ใช้ Scale เดียวทั้งสองแกน จึงไม่เกิดภาพบิดเบี้ยว
-   */
-  const scale = Math.min(
-    scaleByWidth,
-    scaleByHeight
-  );
-
-  // ขนาดที่แสดงจริงหลัง Scale
-  const renderedWidth = PRTG_MAP_WIDTH * scale;
-  const renderedHeight = PRTG_MAP_HEIGHT * scale;
-
-  // ส่ง Scale เดียวให้ CSS
   document.documentElement.style.setProperty(
     "--map-scale",
     scale.toFixed(4)
   );
 
-  // กำหนดขนาดกรอบภายนอกให้ตรงกับภาพหลัง Scale
   document.documentElement.style.setProperty(
     "--map-render-width",
     `${renderedWidth.toFixed(2)}px`
@@ -189,25 +398,24 @@ function fitMapToViewport() {
     `${renderedHeight.toFixed(2)}px`
   );
 
-  // แสดงรายละเอียดขนาดจริงที่มุมล่าง
-  elements.scaleText.textContent =
-    `Scale: ${Math.round(scale * 100)}% · ${Math.round(renderedWidth)} × ${Math.round(renderedHeight)}px`;
+  // เปลี่ยนขนาดต้นฉบับ iframe ตาม Config ของ Map
+  elements.prtgMap.style.width = `${activeMap.width}px`;
+  elements.prtgMap.style.height = `${activeMap.height}px`;
+
+  // Element นี้ถูกถอดออกจาก Footer ในเวอร์ชัน Refresh Only
+  if (elements.scaleText) {
+    elements.scaleText.textContent =
+      `Scale: ${Math.round(scale * 100)}% · ${Math.round(renderedWidth)} × ${Math.round(renderedHeight)}px`;
+  }
 }
 
-
 /**
- * ตรวจสอบการเข้าถึง PRTG ก่อนโหลด iframe
+ * ตรวจสอบการเข้าถึง URL ของ Monitor Map ก่อนโหลด iframe
  *
- * ใช้ mode: "no-cors" เพราะ PRTG อยู่คนละ Origin
- * หาก TLS/Certificate, VPN, Firewall หรือ Network มีปัญหา Promise จะ reject
- *
- * หมายเหตุ:
- * - ผลลัพธ์สำเร็จหมายถึง Browser ติดต่อปลายทางได้
- * - ไม่ได้อ่าน HTTP Status หรือข้อมูลภายใน PRTG เพราะเป็น Cross-Origin
- *
- * @returns {Promise<boolean>} true เมื่อ Browser ติดต่อ PRTG ได้
+ * @param {string} mapUrl URL ที่ต้องการตรวจ
+ * @returns {Promise<boolean>}
  */
-async function probePrtgConnection() {
+async function probeMonitorConnection(mapUrl) {
   const controller = new AbortController();
 
   const timeoutId = window.setTimeout(() => {
@@ -215,7 +423,7 @@ async function probePrtgConnection() {
   }, CONNECTION_PROBE_TIMEOUT_MS);
 
   try {
-    await fetch(PRTG_MAP_URL, {
+    await fetch(mapUrl, {
       method: "GET",
       mode: "no-cors",
       cache: "no-store",
@@ -234,9 +442,10 @@ async function probePrtgConnection() {
 }
 
 /**
- * แสดงหน้าจอแจ้งเตือนและปุ่ม Redirect เมื่อ PRTG ติดต่อไม่ได้
- * @param {string} title หัวข้อแจ้งเตือน
- * @param {string} message รายละเอียดปัญหา
+ * แสดงหน้าจอแจ้งเตือนเมื่อ Monitor Map ติดต่อไม่ได้
+ *
+ * @param {string} title หัวข้อ
+ * @param {string} message รายละเอียด
  */
 function showConnectionFailure(title, message) {
   window.clearTimeout(loadTimeoutId);
@@ -246,65 +455,102 @@ function showConnectionFailure(title, message) {
   elements.helpTitle.textContent = title;
   elements.helpMessage.innerHTML = message;
 
-  setMapState("error", "Moonitor Map Connection Failed");
-  showToast("ไม่สามารถเชื่อมต่อ Moonitor Map — กรุณา Redirect ไปยืนยัน Certificate");
+  setMapState("error", "Monitor Connection Failed");
+  showToast("ไม่สามารถเชื่อมต่อ Monitor Map — กรุณายืนยัน Certificate");
 }
 
 /**
- * ตรวจสอบปลายทางและโหลด PRTG Map ใหม่
+ * โหลด Map ที่เลือกใน Dropdown
  *
- * ไม่ใช้ iframe load event อย่างเดียว เพราะ Chrome จะยิง load
- * แม้ภายใน iframe จะแสดงหน้า ERR_CERT_AUTHORITY_INVALID หรือ Network Error
- *
- * @param {boolean} showMessage ให้แสดง Toast ระหว่างรีเฟรชหรือไม่
+ * @param {boolean} showMessage แสดง Toast หรือไม่
  */
 async function loadMap(showMessage = false) {
-  window.clearTimeout(loadTimeoutId);
+  const requestSequence = ++loadSequence;
+  const activeMap = getActiveMap();
+  const requestedUrl = activeMap.url;
+  const requestedName = activeMap.name;
+  const requestedHost = new URL(requestedUrl).host;
 
+  window.clearTimeout(loadTimeoutId);
   connectionProbePassed = false;
+  expectedMapUrl = requestedUrl;
 
   elements.helpOverlay.classList.add("is-hidden");
   elements.loadingOverlay.classList.remove("is-hidden");
-  setMapState("loading", "กำลังตรวจสอบ Monitor Map");
+  setMapState("loading", `กำลังตรวจสอบ ${requestedName}`);
 
-  // ล้าง iframe เดิมก่อน เพื่อไม่ให้ค้างหน้า Error เก่า
+  // ล้างหน้าเก่าก่อนโหลด Map ใหม่
   elements.prtgMap.src = "about:blank";
 
   if (showMessage) {
-    showToast("กำลังตรวจสอบการเชื่อมต่อ Monitor Map");
+    showToast(`กำลังโหลด ${requestedName}`);
   }
 
-  // ตรวจ TLS/Certificate, VPN, Firewall และการเข้าถึง Server ก่อน
-  const isReachable = await probePrtgConnection();
+  const isReachable = await probeMonitorConnection(requestedUrl);
+
+  // ถ้าระหว่างรอผู้ใช้เปลี่ยน Map แล้ว ให้ยกเลิกผลลัพธ์ชุดเก่า
+  if (requestSequence !== loadSequence) {
+    return;
+  }
 
   if (!isReachable) {
     showConnectionFailure(
-      "ไม่สามารถเชื่อมต่อ Monitor Map ได้",
-      `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ไม่สำเร็จ
+      `ไม่สามารถเชื่อมต่อ ${requestedName} ได้`,
+      `Browser ติดต่อ <strong>${requestedHost}</strong> ไม่สำเร็จ
        อาจเกิดจาก SSL Certificate ยังไม่ได้รับการยืนยัน, VPN ไม่เชื่อมต่อ,
-       Firewall บล็อก หรือ Server ไม่พร้อมใช้งาน`
+       Firewall บล็อก หรือ Monitor Server ไม่พร้อมใช้งาน`
     );
     return;
   }
 
   connectionProbePassed = true;
-  setMapState("loading", "กำลังโหลด Monitor Map");
+  setMapState("loading", `กำลังโหลด ${requestedName}`);
 
-  // เมื่อ Probe ผ่านแล้วจึงโหลด Public Map เข้า iframe
-  elements.prtgMap.src = PRTG_MAP_URL;
+  elements.prtgMap.src = requestedUrl;
   fitMapToViewport();
 
   loadTimeoutId = window.setTimeout(() => {
+    if (requestSequence !== loadSequence) {
+      return;
+    }
+
     showConnectionFailure(
-      "Monitor Map ใช้เวลาโหลดนานกว่าปกติ",
-      `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ได้
-       แต่หน้า Public Map ยังโหลดไม่เสร็จ กรุณาตรวจสอบ Service และ Public Map Access`
+      `${requestedName} ใช้เวลาโหลดนานกว่าปกติ`,
+      `Browser ติดต่อ <strong>${requestedHost}</strong> ได้
+       แต่หน้า Public Map ยังโหลดไม่เสร็จ กรุณาตรวจสอบ Monitor Service และ Public Map Access`
     );
   }, LOAD_TIMEOUT_MS);
 }
 
 /**
- * เข้า/ออก Fullscreen เฉพาะ Panel ของ Network Map
+ * เปลี่ยน Map จาก Dropdown
+ */
+function changeSelectedMap() {
+  const selectedKey = elements.mapSelect.value;
+
+  // ตรวจสอบ Key จาก Object รายการ Map ที่ประกาศจริง
+  if (!Monitor_MAPS[selectedKey]) {
+    showToast("ไม่พบ Network Map ที่เลือก");
+    return;
+  }
+
+  activeMapKey = selectedKey;
+  updateSelectedMapUi();
+  fitMapToViewport();
+
+  // LINE Browser แสดง Notice และไม่โหลด iframe
+  if (IS_LINE_BROWSER) {
+    showLineBrowserNotice();
+    return;
+  }
+
+  // เริ่มนับ 5 นาทีใหม่สำหรับ Map ที่เพิ่งเลือก
+  resetAutoRefreshCountdown();
+  loadMap(true);
+}
+
+/**
+ * เข้า/ออก Fullscreen เฉพาะ Map Panel
  */
 async function toggleFullscreen() {
   try {
@@ -318,39 +564,71 @@ async function toggleFullscreen() {
   }
 }
 
-// เมื่อ iframe โหลดเสร็จ ให้ซ่อน Loading และจัด Map กึ่งกลางใหม่
-// หมายเหตุ: iframe คนละ Domain จึงตรวจ HTTP Status ภายในโดยตรงไม่ได้
-// คำว่า Ready จึงหมายถึง iframe จบขั้นตอน Load ไม่ได้ยืนยันว่า Sensor ทุกตัว Up
-
+// iframe โหลดเสร็จ
 elements.prtgMap.addEventListener("load", () => {
-  // about:blank หรือ iframe ที่ยังไม่ผ่าน Connection Probe ห้ามรายงาน Ready
   if (
-    elements.prtgMap.getAttribute("src") !== PRTG_MAP_URL ||
+    elements.prtgMap.getAttribute("src") !== expectedMapUrl ||
     !connectionProbePassed
   ) {
     return;
   }
 
   window.clearTimeout(loadTimeoutId);
+
   elements.loadingOverlay.classList.add("is-hidden");
   elements.helpOverlay.classList.add("is-hidden");
-  setMapState("ready", "CCTV-อบจ-สภ.บางละมุง Ready");
+
+  setMapState("ready", `${getActiveMap().name} Ready`);
   fitMapToViewport();
 });
 
-// ปุ่มและ Link ต่าง ๆ
+// Event ของ Dropdown และปุ่ม
+elements.mapSelect.addEventListener("change", changeSelectedMap);
 
-elements.refreshBtn.addEventListener("click", () => loadMap(true));
-elements.retryBtn.addEventListener("click", () => loadMap(true));
-elements.fullscreenBtn.addEventListener("click", toggleFullscreen);
-elements.openMapBtn.href = PRTG_MAP_URL;
-elements.certificateBtn.href = PRTG_ORIGIN_URL;
+elements.refreshBtn.addEventListener("click", () => {
+  if (IS_LINE_BROWSER) {
+    showLineBrowserNotice();
+    return;
+  }
 
-elements.certificateBtn.addEventListener("click", () => {
-  showToast("กำลัง Redirect ไปหน้า Monitor Map เพื่อยืนยัน Certificate");
+  resetAutoRefreshCountdown();
+  loadMap(true);
 });
 
-// คำนวณ Scale ใหม่เมื่อ Browser, Mobile Rotation หรือ Fullscreen เปลี่ยน
+elements.retryBtn.addEventListener("click", event => {
+  if (IS_LINE_BROWSER) {
+    event.preventDefault();
+    openInExternalBrowser(getActiveMap().url);
+    return;
+  }
+
+  resetAutoRefreshCountdown();
+  loadMap(true);
+});
+
+elements.fullscreenBtn.addEventListener("click", toggleFullscreen);
+
+elements.certificateBtn.addEventListener("click", event => {
+  if (IS_LINE_BROWSER) {
+    event.preventDefault();
+    openInExternalBrowser(window.location.href);
+    return;
+  }
+
+  showToast("กำลังเปิดหน้า Monitor Map เพื่อยืนยัน Certificate");
+});
+
+// เมื่อเปิด Map จาก LINE ให้ส่งไป Chrome แทน LINE WebView
+elements.openMapBtn.addEventListener("click", event => {
+  if (!IS_LINE_BROWSER) {
+    return;
+  }
+
+  event.preventDefault();
+  openInExternalBrowser(getActiveMap().url);
+});
+
+// คำนวณใหม่เมื่อพื้นที่เปลี่ยน
 const mapResizeObserver = new ResizeObserver(() => fitMapToViewport());
 mapResizeObserver.observe(elements.mapStage);
 
@@ -367,26 +645,49 @@ document.addEventListener("fullscreenchange", () => {
   window.setTimeout(fitMapToViewport, 120);
 });
 
-// แสดงสถานะ Offline/Online ของ Browser
+// สถานะ Network ของ Browser
 window.addEventListener("offline", () => {
   window.clearTimeout(loadTimeoutId);
+
   elements.loadingOverlay.classList.add("is-hidden");
   elements.helpOverlay.classList.remove("is-hidden");
+
   setMapState("error", "Browser Offline");
   elements.connectionText.textContent = "ไม่มี Internet";
+
   showToast("อุปกรณ์นี้ไม่มีการเชื่อมต่อ Network");
 });
 
 window.addEventListener("online", () => {
   showToast("Network กลับมาเชื่อมต่อแล้ว");
+
+  if (IS_LINE_BROWSER) {
+    showLineBrowserNotice();
+    return;
+  }
+
+  resetAutoRefreshCountdown();
   loadMap();
 });
 
 // เริ่มต้นหน้า Dashboard
+elements.mapSelect.value = activeMapKey;
+updateSelectedMapUi();
 updateDateTime();
 fitMapToViewport();
-loadMap();
 
-// อัปเดตเวลาทุก 1 วินาที และรีเฟรช Map อัตโนมัติตามรอบที่กำหนด
+if (IS_LINE_BROWSER) {
+  // LINE WebView: ไม่โหลด PRTG iframe และไม่เริ่มตัวนับ Auto Refresh
+  showLineBrowserNotice();
+} else {
+  resetAutoRefreshCountdown();
+  loadMap();
+}
+
+// อัปเดตนาฬิกาทุก 1 วินาที
 window.setInterval(updateDateTime, 1000);
-window.setInterval(() => loadMap(), AUTO_REFRESH_MS);
+
+// ตัวนับ Auto Refresh ใช้เฉพาะ Browser ปกติ
+if (!IS_LINE_BROWSER) {
+  window.setInterval(updateAutoRefreshCountdown, AUTO_REFRESH_TICK_MS);
+}

@@ -118,7 +118,7 @@ a:focus-visible {
   letter-spacing: -0.04em;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 17px;
-  background: linear-gradient(145deg, #e0f7ff 0%, #c0a648 34%, #f7d353 65%, #f8d247 100%);
+  background: linear-gradient(145deg, #e0f7ff 0%, #e0f7ff 0%, #c0a648 34%, #f7d353 65%, #f8d247 100%);
   box-shadow:
     0 12px 30px rgba(37, 99, 235, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.65);
@@ -415,6 +415,72 @@ a:focus-visible {
   font-weight: 700;
 }
 
+
+/* =========================
+   Network Map Selector
+   ========================= */
+
+.map-selector {
+  display: flex;
+  align-items: center;
+  flex: 0 1 310px;
+  min-width: 190px;
+  gap: 9px;
+  margin-left: auto;
+}
+
+.map-selector > span {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.69rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.map-selector select {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 36px 0 12px;
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 650;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  background-color: rgba(10, 26, 45, 0.88);
+  background-image:
+    linear-gradient(45deg, transparent 50%, #7dd3fc 50%),
+    linear-gradient(135deg, #7dd3fc 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 17px,
+    calc(100% - 12px) 17px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    border-color 0.16s ease,
+    background-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.map-selector select:hover {
+  border-color: rgba(56, 189, 248, 0.42);
+  background-color: rgba(15, 38, 64, 0.94);
+}
+
+.map-selector select:focus-visible {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
+}
+
+.map-selector option {
+  color: #0f172a;
+  background: #f8fafc;
+}
+
 /* =========================
    Map Stage
    ========================= */
@@ -499,25 +565,25 @@ a:focus-visible {
   right: 18px;
   bottom: 14px;
   z-index: 4;
+
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 9px;
-  color: rgba(203, 213, 225, 0.76);
-  font-size: 0.65rem;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+
+  padding: 7px 11px;
+
+  color: rgba(203, 213, 225, 0.82);
+  font-size: 0.68rem;
+
+  border: 1px solid rgba(148, 163, 184, 0.14);
   border-radius: 999px;
-  background: rgba(5, 15, 28, 0.66);
+
+  background: rgba(5, 15, 28, 0.72);
+
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
-.stage-footer-divider {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--brand);
-}
+
 
 /* =========================
    Loading และ Help Overlay
@@ -691,6 +757,104 @@ a:focus-visible {
   line-height: 1.55;
 }
 
+
+/* =========================
+   Auto Refresh Countdown
+   ========================= */
+
+.auto-refresh-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted-strong);
+  white-space: nowrap;
+}
+
+.auto-refresh-counter strong {
+  min-width: 34px;
+  color: #e0f2fe;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.auto-refresh-label {
+  color: rgba(203, 213, 225, 0.72);
+}
+
+.auto-refresh-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.42);
+  animation: refresh-countdown-pulse 2s ease-out infinite;
+}
+
+@keyframes refresh-countdown-pulse {
+  70% {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+.auto-refresh-counter.is-due strong {
+  color: #fde68a;
+}
+
+.auto-refresh-counter.is-due .auto-refresh-pulse {
+  background: var(--warning);
+}
+
+
+/* =========================
+   LINE In-App Browser Notice
+   ========================= */
+
+.help-card.is-line-browser .help-icon {
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.28);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.help-card.is-line-browser .redirect-notice {
+  border-color: rgba(34, 197, 94, 0.26);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.help-card.is-line-browser .redirect-notice strong {
+  color: #bbf7d0;
+}
+
+.help-card.is-line-browser .help-actions {
+  align-items: stretch;
+}
+
+.help-card.is-line-browser .primary-button,
+.help-card.is-line-browser .secondary-button {
+  min-width: 180px;
+}
+
+@media (max-width: 620px) {
+  .help-card.is-line-browser {
+    padding: 22px 18px;
+  }
+
+  .help-card.is-line-browser .help-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .help-card.is-line-browser .primary-button,
+  .help-card.is-line-browser .secondary-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 /* =========================
    Toast
    ========================= */
@@ -729,6 +893,15 @@ a:focus-visible {
     --toolbar-height: 58px;
   }
 
+  .map-selector {
+    flex-basis: 220px;
+    min-width: 150px;
+  }
+
+  .map-selector > span {
+    display: none;
+  }
+
   .topbar {
     padding: 10px 13px;
   }
@@ -759,7 +932,43 @@ a:focus-visible {
 @media (max-width: 620px) {
   :root {
     --header-height: 82px;
-    --toolbar-height: 54px;
+    --toolbar-height: 98px;
+  }
+
+  .panel-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 40px 36px;
+    align-items: center;
+    gap: 6px 8px;
+    padding: 7px 8px;
+  }
+
+  .panel-heading {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .panel-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .map-selector {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .map-selector select {
+    height: 36px;
+    font-size: 0.72rem;
+    border-radius: 10px;
+    background-position:
+      calc(100% - 17px) 15px,
+      calc(100% - 12px) 15px;
   }
 
   .brand {
@@ -862,6 +1071,12 @@ a:focus-visible {
   .stage-footer {
     right: 10px;
     bottom: 9px;
+    max-width: calc(100% - 20px);
+    padding: 7px 10px;
+  }
+
+  .auto-refresh-counter strong {
+    font-size: 0.7rem;
   }
 }
 

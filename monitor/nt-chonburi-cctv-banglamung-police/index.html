@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#07111f">
   <meta name="color-scheme" content="dark">
 
-  <title>NT-ชลบุรี-CCTV-อบจ-สถานีตำรวจภูธรบางละมุง</title>
+  <title>Network Monitor Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,14 +17,14 @@
 
         <div class="brand-copy">
           <div class="brand-title-row">
-            <h1>Network Operations Dashboard</h1>
+            <h1>Network Monitor Dashboard</h1>
             <span class="live-badge">
               <span class="live-dot" aria-hidden="true"></span>
               LIVE
             </span>
           </div>
 
-          <p>Network Monitor · ภาพรวมสถานะอุปกรณ์และโครงข่าย</p>
+          <p>Monitor Network Map · ภาพรวมสถานะอุปกรณ์และโครงข่าย</p>
         </div>
       </div>
 
@@ -68,10 +68,18 @@
             </span>
 
             <div class="panel-title">
-              <strong>สถานะ Network วันนี้</strong>
-              <span>CCTV B.M.P.S. (Banglamung Police Station)</span>
+              <strong id="currentMapName">CCTV อบจ-สภ.บางละมุง</strong>
+              <span id="currentMapDescription">CCTV อบจ.ชลบุรี-รวมศูนย์</span>
             </div>
           </div>
+
+          <label class="map-selector" for="mapSelect">
+            <span>เลือก Network Map</span>
+            <select id="mapSelect" aria-label="เลือก Monitor Network Map">
+              <option value="banglamung">CCTV อบจ-สภ.บางละมุง</option>
+              <option value="pao_center">CCTV อบจ.ชลบุรี-รวมศูนย์</option>
+            </select>
+          </label>
 
           <div class="panel-actions" aria-label="คำสั่งสำหรับ Network Map">
             <button class="toolbar-button" id="refreshBtn" type="button" title="รีเฟรช Network Map">
@@ -107,7 +115,7 @@
 
         <div class="map-stage" id="mapStage">
           <!--
-            PRTG Map ตั้งค่าไว้ที่ 1024 x 768
+            Monitor Map ตั้งค่าไว้ที่ 1024 x 768
             JavaScript จะรักษาสัดส่วนเดิมและขยายให้ใหญ่ที่สุด โดยไม่เกินพื้นที่หน้าจอ
           -->
           <div class="map-frame" id="mapFrame">
@@ -127,12 +135,12 @@
                 <span></span>
                 <span></span>
               </div>
-              <strong>กำลังโหลดข้อมูลจาก Map</strong>
+              <strong>กำลังโหลดข้อมูลจาก Monitor Map</strong>
               <small>กำลังเชื่อมต่อ Network Map กรุณารอสักครู่</small>
             </div>
           </div>
 
-          <div class="help-overlay is-hidden" id="helpOverlay">
+          <div class="help-overlay is-hidden" id="helpOverlay" aria-live="polite">
             <div class="help-card">
               <div class="help-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -142,32 +150,45 @@
                 </svg>
               </div>
 
-              <h2 id="helpTitle">ไม่สามารถเชื่อมต่อ Map ได้</h2>
+              <h2 id="helpTitle">ไม่สามารถเชื่อมต่อ Monitor Map ได้</h2>
               <p id="helpMessage">
                 Browser ไม่สามารถเชื่อมต่อ
                 <strong>rfcctv.fortiddns.com:8443</strong>
                 ได้ อาจเกิดจาก SSL Certificate ยังไม่ได้รับการยืนยัน, VPN ไม่เชื่อมต่อ,
-                Firewall บล็อก หรือ Server ไม่พร้อมใช้งาน
+                Firewall บล็อก หรือ Monitor Server ไม่พร้อมใช้งาน
               </p>
 
               <div class="redirect-notice" id="redirectNotice">
                 <strong>ขั้นตอนแก้ไข</strong>
-                <span>กด “Redirect ไป Map” แล้วผ่านหน้า Certificate จากนั้นกลับมาที่ Dashboard และกดรีเฟรช</span>
+                <span>กด “Redirect ไป Monitor Map” แล้วผ่านหน้า Certificate จากนั้นกลับมาที่ Dashboard และกดรีเฟรช</span>
               </div>
 
               <div class="help-actions">
                 <a class="primary-button" id="certificateBtn" href="#" target="_blank" rel="noopener noreferrer">
-                  Redirect ไป Map
+                  Redirect ไป Monitor Map
                 </a>
                 <button class="secondary-button" id="retryBtn" type="button">ลองใหม่</button>
               </div>
             </div>
           </div>
 
-          <div class="stage-footer" aria-hidden="true">
-            <span>Map Size: 1024 × 768</span>
-            <span class="stage-footer-divider"></span>
-            <span id="scaleText">Scale: 100% · Fit Available Space</span>
+          <div
+            class="stage-footer"
+            aria-label="ตัวนับรีเฟรช Map อัตโนมัติ"
+          >
+            <span
+              class="auto-refresh-counter"
+              title="เวลาที่เหลือก่อนรีเฟรช Map อัตโนมัติ"
+            >
+              <span
+                class="auto-refresh-pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="auto-refresh-label">รีเฟรชใน</span>
+
+              <strong id="autoRefreshCountdown">05:00</strong>
+            </span>
           </div>
         </div>
       </section>
