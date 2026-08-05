@@ -226,7 +226,7 @@ async function probePrtgConnection() {
 
     return true;
   } catch (error) {
-    console.warn("PRTG connection probe failed:", error);
+    console.warn("Monitor Map connection probe failed:", error);
     return false;
   } finally {
     window.clearTimeout(timeoutId);
@@ -246,8 +246,8 @@ function showConnectionFailure(title, message) {
   elements.helpTitle.textContent = title;
   elements.helpMessage.innerHTML = message;
 
-  setMapState("error", "PRTG Connection Failed");
-  showToast("ไม่สามารถเชื่อมต่อ PRTG — กรุณา Redirect ไปยืนยัน Certificate");
+  setMapState("error", "Moonitor Map Connection Failed");
+  showToast("ไม่สามารถเชื่อมต่อ Moonitor Map — กรุณา Redirect ไปยืนยัน Certificate");
 }
 
 /**
@@ -265,13 +265,13 @@ async function loadMap(showMessage = false) {
 
   elements.helpOverlay.classList.add("is-hidden");
   elements.loadingOverlay.classList.remove("is-hidden");
-  setMapState("loading", "กำลังตรวจสอบ PRTG");
+  setMapState("loading", "กำลังตรวจสอบ Monitor Map");
 
   // ล้าง iframe เดิมก่อน เพื่อไม่ให้ค้างหน้า Error เก่า
   elements.prtgMap.src = "about:blank";
 
   if (showMessage) {
-    showToast("กำลังตรวจสอบการเชื่อมต่อ PRTG");
+    showToast("กำลังตรวจสอบการเชื่อมต่อ Monitor Map");
   }
 
   // ตรวจ TLS/Certificate, VPN, Firewall และการเข้าถึง Server ก่อน
@@ -282,7 +282,7 @@ async function loadMap(showMessage = false) {
       "ไม่สามารถเชื่อมต่อ Monitor Map ได้",
       `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ไม่สำเร็จ
        อาจเกิดจาก SSL Certificate ยังไม่ได้รับการยืนยัน, VPN ไม่เชื่อมต่อ,
-       Firewall บล็อก หรือ PRTG Server ไม่พร้อมใช้งาน`
+       Firewall บล็อก หรือ Server ไม่พร้อมใช้งาน`
     );
     return;
   }
@@ -298,7 +298,7 @@ async function loadMap(showMessage = false) {
     showConnectionFailure(
       "Monitor Map ใช้เวลาโหลดนานกว่าปกติ",
       `Browser ติดต่อ <strong>rfcctv.fortiddns.com:8443</strong> ได้
-       แต่หน้า Public Map ยังโหลดไม่เสร็จ กรุณาตรวจสอบ PRTG Service และ Public Map Access`
+       แต่หน้า Public Map ยังโหลดไม่เสร็จ กรุณาตรวจสอบ Service และ Public Map Access`
     );
   }, LOAD_TIMEOUT_MS);
 }
@@ -347,7 +347,7 @@ elements.openMapBtn.href = PRTG_MAP_URL;
 elements.certificateBtn.href = PRTG_ORIGIN_URL;
 
 elements.certificateBtn.addEventListener("click", () => {
-  showToast("กำลัง Redirect ไปหน้า PRTG เพื่อยืนยัน Certificate");
+  showToast("กำลัง Redirect ไปหน้า Monitor Map เพื่อยืนยัน Certificate");
 });
 
 // คำนวณ Scale ใหม่เมื่อ Browser, Mobile Rotation หรือ Fullscreen เปลี่ยน
