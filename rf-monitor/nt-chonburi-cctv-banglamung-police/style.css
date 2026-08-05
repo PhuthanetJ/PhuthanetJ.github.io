@@ -118,7 +118,7 @@ a:focus-visible {
   letter-spacing: -0.04em;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 17px;
-  background: linear-gradient(145deg, #e0f7ff 0%, #67d8ff 34%, #1ca7ed 65%, #2563eb 100%);
+  background: linear-gradient(145deg, #e0f7ff 0%, #c0a648 34%, #f7d353 65%, #f8d247 100%);
   box-shadow:
     0 12px 30px rgba(37, 99, 235, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.65);
