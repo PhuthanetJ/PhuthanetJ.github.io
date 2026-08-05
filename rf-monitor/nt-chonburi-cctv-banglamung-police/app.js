@@ -334,7 +334,7 @@ elements.prtgMap.addEventListener("load", () => {
   window.clearTimeout(loadTimeoutId);
   elements.loadingOverlay.classList.add("is-hidden");
   elements.helpOverlay.classList.add("is-hidden");
-  setMapState("ready", "PRTG Map Ready");
+  setMapState("ready", "CCTV-อบจ-สถานีตำรวจภูธรบางละมุง Ready");
   fitMapToViewport();
 });
 
