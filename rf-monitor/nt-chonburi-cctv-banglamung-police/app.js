@@ -63,13 +63,6 @@ let connectionProbePassed = false;
 function updateDateTime() {
   const now = new Date();
 
-  const dateText = now.toLocaleDateString("th-TH-u-ca-buddhist", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  });
-
   const timeText = now.toLocaleTimeString("th-TH", {
     hour12: false,
     hour: "2-digit",
@@ -77,7 +70,29 @@ function updateDateTime() {
     second: "2-digit"
   });
 
-  elements.datetime.textContent = `${dateText} · ${timeText}`;
+  const isMobile = window.matchMedia("(max-width: 620px)").matches;
+
+  if (isMobile) {
+    // มือถือ: วันที่แบบย่อ + เวลา เพื่อประหยัดพื้นที่ Header
+    const mobileDateText = now.toLocaleDateString("th-TH-u-ca-buddhist", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+
+    elements.datetime.textContent = `${mobileDateText} · ${timeText}`;
+    return;
+  }
+
+  // Desktop: วันที่แบบเต็ม + เวลา
+  const desktopDateText = now.toLocaleDateString("th-TH-u-ca-buddhist", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+
+  elements.datetime.textContent = `${desktopDateText} · ${timeText}`;
 }
 
 /**
@@ -339,7 +354,10 @@ elements.certificateBtn.addEventListener("click", () => {
 const mapResizeObserver = new ResizeObserver(() => fitMapToViewport());
 mapResizeObserver.observe(elements.mapStage);
 
-window.addEventListener("resize", fitMapToViewport);
+window.addEventListener("resize", () => {
+  fitMapToViewport();
+  updateDateTime();
+});
 
 document.addEventListener("fullscreenchange", () => {
   elements.fullscreenBtn.title = document.fullscreenElement

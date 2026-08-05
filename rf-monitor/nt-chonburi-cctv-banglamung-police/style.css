@@ -118,9 +118,9 @@ a:focus-visible {
   letter-spacing: -0.04em;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 17px;
-  background: linear-gradient(145deg, #e0f7ff 0%, #c0a648 34%, #f7d353 65%, #f8d247 100%);
+  background: linear-gradient(145deg, #e0f7ff 0%, #67d8ff 34%, #1ca7ed 65%, #2563eb 100%);
   box-shadow:
-    0 12px 30px #ffffff,
+    0 12px 30px rgba(37, 99, 235, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
@@ -668,6 +668,29 @@ a:focus-visible {
   background: rgba(9, 24, 42, 0.76);
 }
 
+
+.redirect-notice {
+  display: grid;
+  gap: 4px;
+  margin: 14px 0 18px;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.09);
+}
+
+.redirect-notice strong {
+  color: #fde68a;
+  font-size: 0.76rem;
+}
+
+.redirect-notice span {
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
 /* =========================
    Toast
    ========================= */
@@ -716,9 +739,9 @@ a:focus-visible {
     border-radius: 15px;
   }
 
-  .clock-widget {
+  /* .clock-widget {
     display: none;
-  }
+  } */
 
   .dashboard {
     padding: 9px;
@@ -735,7 +758,7 @@ a:focus-visible {
 
 @media (max-width: 620px) {
   :root {
-    --header-height: 68px;
+    --header-height: 82px;
     --toolbar-height: 54px;
   }
 
@@ -751,8 +774,8 @@ a:focus-visible {
   }
 
   .brand h1 {
-    max-width: 55vw;
-    font-size: 0.93rem;
+    max-width: 48vw;
+    font-size: 0.88rem;
   }
 
   .brand p,
@@ -770,6 +793,47 @@ a:focus-visible {
   .info-copy strong {
     margin: 0;
     font-size: 0.68rem;
+  }
+
+  /* เรียงสถานะ Connection และ Date/Time เป็นสองบรรทัด */
+  .topbar-widgets {
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  /* กล่อง Connection แสดงแบบกระชับ */
+  .topbar-widgets .info-widget {
+    min-height: 30px;
+    padding: 4px 9px;
+    border-radius: 11px;
+  }
+
+  /* กล่องวันที่และเวลาไม่ต้องมีพื้นหลังซ้ำ */
+  .clock-widget {
+    display: flex;
+    min-height: 0 !important;
+    padding: 0 4px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /* ให้วันที่และเวลาอ่านได้ชัดและไม่ตัดบรรทัด */
+  .clock-widget .info-copy {
+    display: block;
+  }
+
+  .clock-widget .info-copy strong,
+  .clock-widget #datetime {
+    display: block;
+    margin: 0;
+    color: var(--muted-strong);
+    font-size: 0.61rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   .panel-toolbar {
