@@ -41,8 +41,8 @@ let loadSequence = 0;
 // เว้นพื้นที่รอบ Map เพื่อไม่ให้ภาพชนขอบ Panel
 const MAP_PADDING = 24;
 
-// รีเฟรช Map อัตโนมัติทุก 5 นาที
-const AUTO_REFRESH_MS = 5 * 60 * 1000;
+// รีเฟรช Map อัตโนมัติทุก 2 นาที
+const AUTO_REFRESH_MS = 2 * 60 * 1000;
 
 // อัปเดตตัวนับถอยหลังทุก 1 วินาที
 const AUTO_REFRESH_TICK_MS = 1000;
