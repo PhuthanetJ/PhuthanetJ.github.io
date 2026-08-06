@@ -222,41 +222,6 @@
 
     @keyframes pulse { to { opacity: .45; } }
 
-    .notice {
-      position: absolute;
-      inset: 0;
-      z-index: 10;
-      display: none;
-      place-items: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at center, rgba(46, 139, 255, 0.14), transparent 45%),
-        #06101f;
-    }
-
-    .notice.show { display: grid; }
-
-    .notice-card {
-      width: min(620px, 100%);
-      padding: 28px;
-      text-align: center;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .notice-icon { font-size: 44px; }
-    .notice h2 { margin: 14px 0 8px; font-size: 22px; }
-    .notice p { margin: 0 auto 18px; color: var(--muted); line-height: 1.65; }
-
-    .notice-actions {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
     .clock {
       color: var(--muted);
       font-variant-numeric: tabular-nums;
@@ -318,25 +283,11 @@
       <iframe
         id="monitorFrame"
         title="CCTV Monitor"
+        width="1024"
+        height="768"
+        frameborder="1"
         allow="fullscreen"
-        referrerpolicy="no-referrer"
       ></iframe>
-
-      <div class="notice" id="protocolNotice" role="alert">
-        <div class="notice-card">
-          <div class="notice-icon" aria-hidden="true">⚠️</div>
-          <h2>เบราว์เซอร์อาจบล็อก HTTP ภายในหน้า HTTPS</h2>
-          <p>
-            หน้า Monitor ใช้ <strong>http://</strong> แต่เว็บนี้กำลังเปิดผ่าน <strong>https://</strong>
-            จึงอาจติดนโยบาย Mixed Content ของเบราว์เซอร์ กรุณาเปิด Monitor ในแท็บใหม่
-            หรือให้บริการหน้า Dashboard นี้ผ่าน HTTP ภายในเครือข่ายเดียวกัน
-          </p>
-          <div class="notice-actions">
-            <a class="btn primary" id="noticeOpenBtn" href="#" target="_blank" rel="noopener noreferrer">เปิด Monitor ในแท็บใหม่</a>
-            <button class="btn" id="tryEmbedBtn" type="button">ลองแสดงในหน้านี้</button>
-          </div>
-        </div>
-      </div>
 
       <div class="status-bar" aria-live="polite">
         <span class="dot loading" id="statusDot"></span>
@@ -364,12 +315,9 @@
     const siteSelect = document.getElementById('siteSelect');
     const monitorFrame = document.getElementById('monitorFrame');
     const openBtn = document.getElementById('openBtn');
-    const noticeOpenBtn = document.getElementById('noticeOpenBtn');
     const reloadBtn = document.getElementById('reloadBtn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     const viewer = document.getElementById('viewer');
-    const protocolNotice = document.getElementById('protocolNotice');
-    const tryEmbedBtn = document.getElementById('tryEmbedBtn');
     const statusDot = document.getElementById('statusDot');
     const statusText = document.getElementById('statusText');
     const clock = document.getElementById('clock');
@@ -382,24 +330,19 @@
       statusText.textContent = message;
     }
 
-    function isMixedContent(siteUrl) {
-      return window.location.protocol === 'https:' && siteUrl.startsWith('http://');
-    }
-
     function updateQueryString(key) {
       const url = new URL(window.location.href);
       url.searchParams.set('site', key);
       history.replaceState(null, '', url);
     }
 
-    function loadSite(key, forceEmbed = false) {
+    function loadSite(key) {
       if (!SITES[key]) key = 'central';
 
       currentKey = key;
       const site = SITES[key];
       siteSelect.value = key;
       openBtn.href = site.url;
-      noticeOpenBtn.href = site.url;
       document.title = `${site.name} | CCTV Monitor`;
       localStorage.setItem('cctv-monitor-site', key);
       updateQueryString(key);
@@ -407,18 +350,11 @@
       clearTimeout(loadTimer);
       setStatus('loading', `กำลังโหลด: ${site.name}`);
 
-      if (isMixedContent(site.url) && !forceEmbed) {
-        monitorFrame.removeAttribute('src');
-        protocolNotice.classList.add('show');
-        setStatus('error', 'HTTP ถูกบล็อกภายใต้ HTTPS — ใช้ปุ่มเปิดเต็มหน้า');
-        return;
-      }
-
-      protocolNotice.classList.remove('show');
+      // เปลี่ยน URL ของ iframe โดยตรงตามรายการใน Dropdown
       monitorFrame.src = site.url;
 
       loadTimer = setTimeout(() => {
-        setStatus('error', 'โหลดนานผิดปกติ — ตรวจสอบเครือข่ายหรือเปิดเต็มหน้า');
+        setStatus('error', 'โหลดนานผิดปกติ — ตรวจสอบเครือข่ายหรือกดเปิดเต็มหน้า');
       }, 15000);
     }
 
@@ -430,15 +366,10 @@
     siteSelect.addEventListener('change', () => loadSite(siteSelect.value));
 
     reloadBtn.addEventListener('click', () => {
-      const site = SITES[currentKey];
-      if (isMixedContent(site.url)) {
-        loadSite(currentKey, true);
-      } else {
-        monitorFrame.src = site.url;
-      }
+      // ใส่ URL เดิมกลับเข้า iframe เพื่อบังคับโหลดใหม่
+      monitorFrame.src = SITES[currentKey].url;
+      setStatus('loading', `กำลังโหลดใหม่: ${SITES[currentKey].name}`);
     });
-
-    tryEmbedBtn.addEventListener('click', () => loadSite(currentKey, true));
 
     fullscreenBtn.addEventListener('click', async () => {
       try {
