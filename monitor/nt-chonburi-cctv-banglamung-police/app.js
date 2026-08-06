@@ -15,7 +15,7 @@ const Monitor_MAPS = {
   banglamung: {
     name: "CCTV อบจ-สภ.บางละมุง",
     description: "nt-cctv-banglamung-police-station",
-    url: "https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98",
+    url: "http://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98",
     width: 1024,
     height: 768
   },
@@ -23,7 +23,7 @@ const Monitor_MAPS = {
   pao_center: {
     name: "CCTV อบจ.ชลบุรี-รวมศูนย์",
     description: "nt-cctv-chonburi-pao-center",
-    url: "https://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2506&mapid=26815356-D3C7-4522-91C0-80DB58E8FF69",
+    url: "http://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2506&mapid=26815356-D3C7-4522-91C0-80DB58E8FF69",
     width: 1024,
     height: 768
   }
