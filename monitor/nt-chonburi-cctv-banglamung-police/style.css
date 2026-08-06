@@ -809,52 +809,6 @@ a:focus-visible {
   background: var(--warning);
 }
 
-
-/* =========================
-   LINE In-App Browser Notice
-   ========================= */
-
-.help-card.is-line-browser .help-icon {
-  color: #86efac;
-  border-color: rgba(34, 197, 94, 0.28);
-  background: rgba(34, 197, 94, 0.1);
-}
-
-.help-card.is-line-browser .redirect-notice {
-  border-color: rgba(34, 197, 94, 0.26);
-  background: rgba(34, 197, 94, 0.08);
-}
-
-.help-card.is-line-browser .redirect-notice strong {
-  color: #bbf7d0;
-}
-
-.help-card.is-line-browser .help-actions {
-  align-items: stretch;
-}
-
-.help-card.is-line-browser .primary-button,
-.help-card.is-line-browser .secondary-button {
-  min-width: 180px;
-}
-
-@media (max-width: 620px) {
-  .help-card.is-line-browser {
-    padding: 22px 18px;
-  }
-
-  .help-card.is-line-browser .help-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .help-card.is-line-browser .primary-button,
-  .help-card.is-line-browser .secondary-button {
-    width: 100%;
-    min-width: 0;
-  }
-}
-
 /* =========================
    Toast
    ========================= */

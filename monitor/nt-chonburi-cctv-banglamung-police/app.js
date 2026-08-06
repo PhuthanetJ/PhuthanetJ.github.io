@@ -41,8 +41,8 @@ let loadSequence = 0;
 // เว้นพื้นที่รอบ Map เพื่อไม่ให้ภาพชนขอบ Panel
 const MAP_PADDING = 24;
 
-// รีเฟรช Map อัตโนมัติทุก 3 นาที
-const AUTO_REFRESH_MS = 3 * 60 * 1000;
+// รีเฟรช Map อัตโนมัติทุก 2 นาที
+const AUTO_REFRESH_MS = 2 * 60 * 1000;
 
 // อัปเดตตัวนับถอยหลังทุก 1 วินาที
 const AUTO_REFRESH_TICK_MS = 1000;
@@ -92,61 +92,19 @@ let nextAutoRefreshAt = Date.now() + AUTO_REFRESH_MS;
 // ป้องกันการสั่ง Auto Refresh ซ้ำระหว่างรอบเดียวกัน
 let autoRefreshRunning = false;
 
-// ตรวจครั้งเดียวตอนเปิดหน้าเว็บว่าอยู่ใน LINE In-App Browser หรือไม่
-const IS_LINE_BROWSER = /(?:^|\s|;)Line\/[\d.]+|LIFF/i.test(
-  navigator.userAgent || ""
-);
-
-// ตรวจว่าเป็นอุปกรณ์ Android หรือไม่
-const IS_ANDROID = /Android/i.test(navigator.userAgent || "");
-
 /**
- * สร้าง Android Intent URL เพื่อเปิดด้วย Google Chrome
+ * ตรวจว่า Dashboard เปิดผ่าน HTTPS หรือไม่
  *
- * @param {string} targetUrl URL ที่ต้องการเปิด
- * @returns {string} Intent URL
+ * HTTP Map ไม่สามารถฝังในหน้า HTTPS ได้ เพราะ Browser บล็อก Mixed Content
  */
-function buildChromeIntentUrl(targetUrl) {
-  const target = new URL(targetUrl, window.location.href);
-  const scheme = target.protocol.replace(":", "");
-  const intentTarget =
-    `${target.host}${target.pathname}${target.search}${target.hash}`;
-
-  return (
-    `intent://${intentTarget}` +
-    `#Intent;scheme=${scheme};` +
-    "package=com.android.chrome;" +
-    `S.browser_fallback_url=${encodeURIComponent(target.href)};` +
-    "end"
-  );
+function isDashboardHttps() {
+  return window.location.protocol === "https:";
 }
 
 /**
- * เปิด URL ด้วย Browser ภายนอก
- *
- * Android จะพยายามเปิด Google Chrome โดยตรง
- * iOS ไม่อนุญาตให้เว็บบังคับ Safari จึงเปิด URL ตามกลไกของระบบ
- *
- * @param {string} targetUrl URL ที่ต้องการเปิด
+ * แสดงคำแนะนำเมื่อเปิด Dashboard ผ่าน HTTPS
  */
-function openInExternalBrowser(targetUrl) {
-  const absoluteUrl = new URL(targetUrl, window.location.href).href;
-
-  if (IS_ANDROID) {
-    window.location.href = buildChromeIntentUrl(absoluteUrl);
-    return;
-  }
-
-  window.location.href = absoluteUrl;
-}
-
-/**
- * แสดงข้อความเฉพาะเมื่อเปิดจาก LINE In-App Browser
- *
- * ไม่โหลด iframe หรือ fetch ไปยัง PRTG ภายใน LINE
- * เพราะ LINE WebView ไม่สามารถข้าม SSL Certificate Warning ได้
- */
-function showLineBrowserNotice() {
+function showHttpHostingRequired() {
   const activeMap = getActiveMap();
 
   window.clearTimeout(loadTimeoutId);
@@ -156,40 +114,30 @@ function showLineBrowserNotice() {
   elements.prtgMap.src = "about:blank";
   elements.loadingOverlay.classList.add("is-hidden");
   elements.helpOverlay.classList.remove("is-hidden");
-  elements.helpCard?.classList.add("is-line-browser");
 
-  setMapState("error", "LINE Browser ไม่รองรับ");
+  setMapState("error", "HTTP Hosting Required");
 
-  elements.helpTitle.textContent = "กรุณาเปิดด้วย Google Chrome";
+  elements.helpTitle.textContent =
+    "Dashboard ต้องเปิดผ่าน HTTP";
+
   elements.helpMessage.innerHTML =
-    "LINE In-App Browser ไม่สามารถยืนยัน SSL Certificate ของ " +
-    "<strong>rfcctv.fortiddns.com:8443</strong> ได้ " +
-    "ระบบจึงหยุดโหลด Network Map เพื่อไม่ให้แสดงหน้าขาวหรือค้าง";
+    "PRTG Map ใช้ <strong>http://rfcctv.fortiddns.com:8443</strong> " +
+    "แต่หน้า Dashboard นี้เปิดผ่าน <strong>HTTPS</strong> " +
+    "Browser จึงบล็อกการแสดงผลแบบ Mixed Content";
 
   if (elements.redirectNotice) {
     elements.redirectNotice.innerHTML =
       "<strong>วิธีใช้งาน</strong>" +
-      "<span>เปิด Dashboard ด้วย Chrome ก่อน " +
-      "หาก Chrome ยังเตือน Certificate ให้กดเปิด PRTG ด้วย Chrome " +
-      "และยืนยัน Advanced → Proceed จากนั้นกลับมาที่ Dashboard</span>";
+      "<span>นำไฟล์ชุดนี้ไปวางบน Web Server ที่เปิดด้วย HTTP " +
+      "เช่น http://IP-SERVER/network-monitor/ แล้วเปิด URL ดังกล่าวแทน GitHub Pages</span>";
   }
 
-  // ปุ่มหลัก: เปิด Dashboard หน้าเดิมด้วย Chrome
-  elements.certificateBtn.textContent = "เปิด Dashboard ด้วย Chrome";
-  elements.certificateBtn.href = "#";
-  elements.certificateBtn.removeAttribute("target");
-  elements.certificateBtn.removeAttribute("rel");
+  elements.certificateBtn.textContent = "เปิด Map โดยตรง";
+  elements.certificateBtn.href = activeMap.url;
+  elements.certificateBtn.target = "_blank";
+  elements.certificateBtn.rel = "noopener noreferrer";
 
-  // ปุ่มรอง: เปิด PRTG Map ที่เลือกด้วย Chrome
-  elements.retryBtn.textContent = "เปิด PRTG ด้วย Chrome";
-  elements.retryBtn.dataset.lineAction = "open-prtg";
-
-  // ปุ่ม Open Map บน Toolbar ให้ชี้ไปยัง Map ปัจจุบัน
-  elements.openMapBtn.href = activeMap.url;
-
-  if (elements.autoRefreshCountdown) {
-    elements.autoRefreshCountdown.textContent = "--:--";
-  }
+  elements.retryBtn.textContent = "ลองใหม่";
 }
 
 /**
@@ -416,6 +364,16 @@ function fitMapToViewport() {
  * @returns {Promise<boolean>}
  */
 async function probeMonitorConnection(mapUrl) {
+  const parsedMapUrl = new URL(mapUrl, window.location.href);
+
+  // หน้า HTTPS ห้ามเรียก HTTP Resource
+  if (
+    window.location.protocol === "https:" &&
+    parsedMapUrl.protocol === "http:"
+  ) {
+    return false;
+  }
+
   const controller = new AbortController();
 
   const timeoutId = window.setTimeout(() => {
@@ -456,7 +414,7 @@ function showConnectionFailure(title, message) {
   elements.helpMessage.innerHTML = message;
 
   setMapState("error", "Monitor Connection Failed");
-  showToast("ไม่สามารถเชื่อมต่อ Monitor Map — กรุณายืนยัน Certificate");
+  showToast("ไม่สามารถเชื่อมต่อ Monitor Map — ตรวจสอบว่า Dashboard เปิดผ่าน HTTP");
 }
 
 /**
@@ -465,6 +423,12 @@ function showConnectionFailure(title, message) {
  * @param {boolean} showMessage แสดง Toast หรือไม่
  */
 async function loadMap(showMessage = false) {
+  // ห้ามโหลด HTTP Map จากหน้า HTTPS เพราะถูก Browser บล็อก
+  if (isDashboardHttps()) {
+    showHttpHostingRequired();
+    return;
+  }
+
   const requestSequence = ++loadSequence;
   const activeMap = getActiveMap();
   const requestedUrl = activeMap.url;
@@ -538,12 +502,6 @@ function changeSelectedMap() {
   updateSelectedMapUi();
   fitMapToViewport();
 
-  // LINE Browser แสดง Notice และไม่โหลด iframe
-  if (IS_LINE_BROWSER) {
-    showLineBrowserNotice();
-    return;
-  }
-
   // เริ่มนับ 5 นาทีใหม่สำหรับ Map ที่เพิ่งเลือก
   resetAutoRefreshCountdown();
   loadMap(true);
@@ -586,46 +544,19 @@ elements.prtgMap.addEventListener("load", () => {
 elements.mapSelect.addEventListener("change", changeSelectedMap);
 
 elements.refreshBtn.addEventListener("click", () => {
-  if (IS_LINE_BROWSER) {
-    showLineBrowserNotice();
-    return;
-  }
-
   resetAutoRefreshCountdown();
   loadMap(true);
 });
 
-elements.retryBtn.addEventListener("click", event => {
-  if (IS_LINE_BROWSER) {
-    event.preventDefault();
-    openInExternalBrowser(getActiveMap().url);
-    return;
-  }
-
+elements.retryBtn.addEventListener("click", () => {
   resetAutoRefreshCountdown();
   loadMap(true);
 });
 
 elements.fullscreenBtn.addEventListener("click", toggleFullscreen);
 
-elements.certificateBtn.addEventListener("click", event => {
-  if (IS_LINE_BROWSER) {
-    event.preventDefault();
-    openInExternalBrowser(window.location.href);
-    return;
-  }
-
+elements.certificateBtn.addEventListener("click", () => {
   showToast("กำลังเปิดหน้า Monitor Map เพื่อยืนยัน Certificate");
-});
-
-// เมื่อเปิด Map จาก LINE ให้ส่งไป Chrome แทน LINE WebView
-elements.openMapBtn.addEventListener("click", event => {
-  if (!IS_LINE_BROWSER) {
-    return;
-  }
-
-  event.preventDefault();
-  openInExternalBrowser(getActiveMap().url);
 });
 
 // คำนวณใหม่เมื่อพื้นที่เปลี่ยน
@@ -660,12 +591,6 @@ window.addEventListener("offline", () => {
 
 window.addEventListener("online", () => {
   showToast("Network กลับมาเชื่อมต่อแล้ว");
-
-  if (IS_LINE_BROWSER) {
-    showLineBrowserNotice();
-    return;
-  }
-
   resetAutoRefreshCountdown();
   loadMap();
 });
@@ -676,18 +601,16 @@ updateSelectedMapUi();
 updateDateTime();
 fitMapToViewport();
 
-if (IS_LINE_BROWSER) {
-  // LINE WebView: ไม่โหลด PRTG iframe และไม่เริ่มตัวนับ Auto Refresh
-  showLineBrowserNotice();
+if (isDashboardHttps()) {
+  // GitHub Pages และ Hosting แบบ HTTPS ไม่สามารถฝัง HTTP Map ได้
+  showHttpHostingRequired();
 } else {
   resetAutoRefreshCountdown();
   loadMap();
 }
 
-// อัปเดตนาฬิกาทุก 1 วินาที
+// อัปเดตนาฬิกาและตัวนับรีเฟรชทุก 1 วินาที
 window.setInterval(updateDateTime, 1000);
-
-// ตัวนับ Auto Refresh ใช้เฉพาะ Browser ปกติ
-if (!IS_LINE_BROWSER) {
+if (!isDashboardHttps()) {
   window.setInterval(updateAutoRefreshCountdown, AUTO_REFRESH_TICK_MS);
 }

@@ -1,72 +1,66 @@
-# V1.0.1
-# PRTG Dashboard — Maximum Fit Create By James Phuthanet
+# Network Monitor Dashboard V3 — HTTP Ready
 
-เวอร์ชันนี้รักษาสัดส่วนเดิมของ PRTG Map และขยายให้ใหญ่ที่สุดเท่าที่พื้นที่หน้าจออนุญาต
+เวอร์ชันนี้ใช้ PRTG Public Map ผ่าน HTTP ตาม URL ที่ทดสอบแล้วว่าใช้งานได้
 
-## พฤติกรรม
-
-- รักษาสัดส่วน 1024 × 768
-- ไม่ยืดหรือบีบภาพแยกแกน
-- ความสูงไม่เกินพื้นที่ Map Stage
-- ความกว้างไม่เกินพื้นที่ Map Stage
-- จัด Map อยู่กึ่งกลางทั้งแนวนอนและแนวตั้ง
-- ไม่มี Scroll แนวตั้งหรือแนวนอน
-- คำนวณใหม่เมื่อ Resize Browser หรือเข้า Fullscreen
-
-## สูตรคำนวณ
-
-```javascript
-const scaleByWidth = availableWidth / 1024;
-const scaleByHeight = availableHeight / 768;
-const scale = Math.min(scaleByWidth, scaleByHeight);
-```
-
-การเลือกค่าที่น้อยกว่าทำให้ Map มีขนาดใหญ่ที่สุด โดยไม่ล้นขอบด้านใดด้านหนึ่ง
-
-## ค่า PRTG Map
-
-- Map Width: 1024
-- Map Height: 768
-- Automatic Scaling: Do not automatically scale map view
-
-
-# V1.0.2
-# Network Monitor Dashboard — LINE Browser Fix
-
-เวอร์ชันนี้แก้กรณีเปิด Dashboard หรือ PRTG Map จาก LINE In-App Browser แล้วพบหน้าขาวหรือข้อความว่าเปิดหน้าไม่ได้
-
-## การทำงานใน LINE
-
-ระบบตรวจ User-Agent ของ LINE แล้ว:
-
-- ไม่เรียก `fetch()` ไปยัง PRTG
-- ไม่โหลด PRTG ใน `iframe`
-- ไม่เริ่ม Auto Refresh
-- แสดงหน้าแจ้งเตือนแทน
-- มีปุ่ม `เปิด Dashboard ด้วย Chrome`
-- มีปุ่ม `เปิด PRTG ด้วย Chrome`
-- ปุ่ม `เปิด Map` บน Toolbar จะพยายามเปิด Chrome โดยตรง
-
-## การทำงานใน Chrome/Browser ปกติ
-
-ทำงานเหมือนเดิม:
-
-- Dropdown เลือก Map
-- ตรวจสอบ PRTG
-- แสดง Map ใน iframe
-- รีเฟรชอัตโนมัติ
-- ตัวนับถอยหลัง
-- Fullscreen
-
-## หมายเหตุสำคัญ
-
-ไฟล์นี้เป็น Workaround สำหรับ LINE Browser เท่านั้น
-
-การแก้ถาวรยังต้องติดตั้ง SSL Certificate ที่เชื่อถือได้ให้:
+## URL ของ Map
 
 ```text
-rfcctv.fortiddns.com
+http://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98
 ```
 
-เพราะ JavaScript ไม่สามารถข้าม `NET::ERR_CERT_AUTHORITY_INVALID` แทนผู้ใช้ได้
+```text
+http://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2506&mapid=26815356-D3C7-4522-91C0-80DB58E8FF69
+```
 
+## ข้อกำหนดสำคัญ
+
+Dashboard ต้องเปิดผ่าน HTTP เช่น:
+
+```text
+http://192.168.1.10:8080/
+```
+
+ห้ามเปิดผ่าน GitHub Pages หรือ HTTPS URL เพราะ Browser จะบล็อก HTTP Map เป็น Mixed Content
+
+## ทดสอบบน Windows
+
+ดับเบิลคลิก:
+
+```text
+start-http-server.bat
+```
+
+จากนั้นเปิด:
+
+```text
+http://localhost:8080/
+```
+
+เครื่องอื่นใน LAN เปิดด้วย:
+
+```text
+http://IP-เครื่องที่รัน:8080/
+```
+
+## เปิดด้วย PowerShell
+
+```powershell
+cd "C:\path\to\Network Monitor Dashboard"
+python -m http.server 8080 --bind 0.0.0.0
+```
+
+## Production
+
+นำ `index.html`, `style.css` และ `app.js` ไปวางบน Apache, Nginx หรือ IIS
+ที่ให้บริการผ่าน HTTP
+
+ตัวอย่าง:
+
+```text
+http://monitor-server/network-monitor/
+```
+
+## หมายเหตุด้านความปลอดภัย
+
+HTTP ไม่มีการเข้ารหัสข้อมูลระหว่างผู้ใช้และ Server
+เหมาะสำหรับ Network ภายในหรือการใช้งานชั่วคราว
