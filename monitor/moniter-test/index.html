@@ -4,405 +4,850 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark" />
-  <title>CCTV Monitor | อบจ.ชลบุรี</title>
+  <title>CCTV Monitor Dashboard | อบจ.ชลบุรี</title>
+
   <style>
     :root {
-      --bg: #07101f;
-      --panel: rgba(15, 28, 48, 0.92);
-      --panel-2: #101f35;
-      --line: rgba(148, 163, 184, 0.22);
-      --text: #eaf2ff;
-      --muted: #93a4bc;
-      --primary: #2e8bff;
-      --primary-hover: #57a4ff;
-      --success: #3ddc97;
-      --warning: #ffbf47;
-      --danger: #ff647c;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
-      --radius: 16px;
+      --bg: #06101e;
+      --header: #071426;
+      --panel: #0c1d32;
+      --panel-2: #10243d;
+      --line: rgba(123, 160, 205, 0.22);
+      --text: #eef5ff;
+      --muted: #91a5bf;
+      --primary: #2e8cff;
+      --primary-hover: #55a3ff;
+      --success: #42e29a;
+      --warning: #ffc857;
+      --danger: #ff6874;
+      --radius: 17px;
+      --map-width: 1024;
+      --map-height: 768;
     }
 
     * { box-sizing: border-box; }
 
-    html, body {
+    html,
+    body {
       width: 100%;
-      height: 100%;
+      min-width: 320px;
+      min-height: 100%;
       margin: 0;
       overflow: hidden;
       font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(46, 139, 255, 0.18), transparent 32%),
-        linear-gradient(145deg, #050b15, var(--bg));
       color: var(--text);
+      background: var(--bg);
     }
 
-    button, select, a { font: inherit; }
+    button,
+    select,
+    a { font: inherit; }
 
-    .app {
+    button,
+    a { -webkit-tap-highlight-color: transparent; }
+
+    .dashboard {
+      width: 100vw;
       height: 100vh;
+      min-height: 560px;
       display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 12px;
-      padding: 12px;
+      grid-template-rows: 80px minmax(0, 1fr);
+      background:
+        radial-gradient(circle at 85% 0%, rgba(0, 184, 255, 0.10), transparent 30%),
+        linear-gradient(180deg, #071426 0, #06101e 100%);
     }
 
-    .toolbar {
-      min-height: 76px;
-      display: grid;
-      grid-template-columns: minmax(250px, 1fr) minmax(300px, 560px) auto;
+    /* ===== Header ===== */
+    .topbar {
+      display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 12px 14px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 14px;
+      background: rgba(4, 16, 31, 0.96);
+      border-bottom: 1px solid var(--line);
     }
 
     .brand {
+      min-width: 0;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+    }
+
+    .nt-logo {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 52px;
+      display: grid;
+      place-items: center;
+      color: #05101e;
+      background: linear-gradient(145deg, #fff9bd, #f2bd25);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: 18px 8px 18px 8px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+      font-weight: 900;
+      font-size: 17px;
+    }
+
+    .brand-copy { min-width: 0; }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       min-width: 0;
     }
 
-    .brand-mark {
-      width: 44px;
-      height: 44px;
-      flex: 0 0 44px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: linear-gradient(135deg, #1769ff, #28b9ff);
-      box-shadow: 0 8px 24px rgba(46, 139, 255, 0.35);
-      font-size: 23px;
-    }
-
-    .brand h1 {
+    .title-row h1 {
       margin: 0;
-      font-size: 18px;
-      line-height: 1.2;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.2;
     }
 
-    .brand p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .site-control {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
+    .live-badge {
+      flex: 0 0 auto;
+      display: inline-flex;
       align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      color: #8ff4c4;
+      background: rgba(38, 199, 125, 0.12);
+      border: 1px solid rgba(38, 199, 125, 0.35);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px rgba(66, 226, 154, 0.9);
+    }
+
+    .brand-copy p {
+      margin: 5px 0 0;
+      overflow: hidden;
+      color: var(--muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .header-widgets {
+      display: flex;
+      align-items: stretch;
+      justify-content: flex-end;
       gap: 10px;
     }
 
-    .site-control label {
+    .info-widget {
+      min-width: 150px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: rgba(12, 29, 50, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .info-widget.clock-widget { min-width: 300px; }
+
+    .widget-icon {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: grid;
+      place-items: center;
+      color: #25baf5;
+      background: rgba(37, 186, 245, 0.10);
+      border-radius: 11px;
+      font-size: 17px;
+    }
+
+    .widget-copy small {
+      display: block;
+      margin-bottom: 2px;
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 10px;
+    }
+
+    .widget-copy strong {
+      display: block;
+      color: var(--text);
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    /* ===== Main panel ===== */
+    .content {
+      min-height: 0;
+      padding: 14px 6px 6px;
+    }
+
+    .monitor-card {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr);
+      overflow: hidden;
+      background: rgba(7, 21, 38, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.25);
+    }
+
+    .toolbar {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 9px 16px;
+      background: rgba(13, 33, 55, 0.96);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .monitor-info {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .status-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      color: #a3f7ce;
+      background: rgba(42, 205, 133, 0.11);
+      border: 1px solid rgba(42, 205, 133, 0.32);
+      border-radius: 999px;
+      white-space: nowrap;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-pill.loading {
+      color: #ffe09a;
+      background: rgba(255, 200, 87, 0.10);
+      border-color: rgba(255, 200, 87, 0.34);
+    }
+
+    .status-pill.error {
+      color: #ffb0b6;
+      background: rgba(255, 104, 116, 0.11);
+      border-color: rgba(255, 104, 116, 0.34);
+    }
+
+    .status-pill .dot {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 9px currentColor;
+    }
+
+    .site-meta { min-width: 0; }
+
+    .site-meta strong,
+    .site-meta span {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 
+    .site-meta strong {
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .site-meta span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .toolbar-actions {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .select-label {
+      color: var(--muted);
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
     select {
-      width: 100%;
-      min-height: 44px;
-      padding: 0 42px 0 14px;
+      width: min(270px, 26vw);
+      min-width: 210px;
+      height: 42px;
+      padding: 0 38px 0 13px;
       color: var(--text);
-      background: var(--panel-2);
+      background: #0c2037;
       border: 1px solid var(--line);
-      border-radius: 11px;
+      border-radius: 12px;
       outline: none;
       cursor: pointer;
     }
 
+    select:hover,
     select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(46, 139, 255, 0.18);
+      border-color: rgba(46, 140, 255, 0.75);
+      box-shadow: 0 0 0 3px rgba(46, 140, 255, 0.12);
     }
 
-    option { background: #102039; }
-
-    .actions {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-    }
+    option { background: #0c2037; }
 
     .btn {
-      min-height: 42px;
+      height: 42px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 7px;
-      padding: 0 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
+      padding: 0 14px;
       color: var(--text);
-      background: #12233b;
+      background: #10223a;
+      border: 1px solid var(--line);
+      border-radius: 12px;
       text-decoration: none;
-      cursor: pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
       white-space: nowrap;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .15s ease;
     }
 
     .btn:hover {
-      background: #18304f;
-      border-color: rgba(87, 164, 255, 0.55);
+      background: #17304f;
+      border-color: rgba(46, 140, 255, 0.65);
       transform: translateY(-1px);
     }
 
-    .btn.primary {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
+    .btn:active { transform: translateY(0); }
 
-    .btn.primary:hover { background: var(--primary-hover); }
-
-    .viewer {
+    /* ===== Map viewport ===== */
+    .map-panel {
       position: relative;
       min-height: 0;
       overflow: hidden;
-      background: #02060d;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      background-color: #061321;
+      background-image:
+        linear-gradient(rgba(79, 129, 177, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 129, 177, 0.08) 1px, transparent 1px),
+        radial-gradient(circle at 50% 45%, rgba(24, 104, 167, 0.13), transparent 45%);
+      background-size: 30px 30px, 30px 30px, auto;
     }
 
-    .viewer iframe {
-      width: 100%;
-      height: 100%;
+    .map-viewport {
+      position: absolute;
+      inset: 12px 12px 12px;
+      overflow: hidden;
+      border: 1px solid rgba(117, 162, 204, 0.10);
+      border-radius: 20px;
+    }
+
+    .map-stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1024px;
+      height: 768px;
+      overflow: hidden;
+      background: #fff;
+      border-radius: 9px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.38);
+      transform: translate(-50%, -50%) scale(1);
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    #monitorFrame {
+      display: block;
+      width: 1024px;
+      height: 768px;
+      margin: 0;
       border: 0;
       background: #fff;
     }
 
-    .status-bar {
+    .map-loading {
       position: absolute;
-      z-index: 5;
-      left: 12px;
-      bottom: 12px;
+      inset: 0;
+      z-index: 4;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      background: rgba(6, 19, 33, 0.66);
+      backdrop-filter: blur(3px);
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+
+    .map-loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loading-card {
       display: flex;
       align-items: center;
-      gap: 9px;
-      max-width: calc(100% - 24px);
-      padding: 8px 11px;
-      color: #dce9fb;
-      background: rgba(5, 12, 23, 0.82);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      border-radius: 999px;
-      backdrop-filter: blur(10px);
-      pointer-events: none;
-      font-size: 12px;
+      gap: 12px;
+      padding: 14px 18px;
+      color: var(--text);
+      background: rgba(12, 32, 55, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.30);
     }
 
-    .dot {
-      width: 9px;
-      height: 9px;
-      flex: 0 0 9px;
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.18);
+      border-top-color: var(--primary);
       border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 0 4px rgba(61, 220, 151, 0.14);
+      animation: spin .8s linear infinite;
     }
 
-    .dot.loading {
-      background: var(--warning);
-      box-shadow: 0 0 0 4px rgba(255, 191, 71, 0.14);
-      animation: pulse 1s infinite alternate;
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .refresh-countdown {
+      position: absolute;
+      right: 18px;
+      bottom: 15px;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 11px;
+      color: #b8cae0;
+      background: rgba(5, 18, 32, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 11px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
-    .dot.error {
-      background: var(--danger);
-      box-shadow: 0 0 0 4px rgba(255, 100, 124, 0.14);
+    .refresh-countdown .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #21baff;
+      box-shadow: 0 0 9px rgba(33, 186, 255, 0.9);
     }
 
-    @keyframes pulse { to { opacity: .45; } }
-
-    .clock {
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
+    .map-scale {
+      position: absolute;
+      left: 18px;
+      bottom: 15px;
+      z-index: 5;
+      padding: 7px 11px;
+      color: #9db2ca;
+      background: rgba(5, 18, 32, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 11px;
     }
 
-    @media (max-width: 950px) {
-      html, body { overflow: auto; }
-      .app { min-height: 100vh; height: auto; grid-template-rows: auto minmax(600px, 1fr); }
-      .toolbar { grid-template-columns: 1fr; }
-      .actions { justify-content: stretch; flex-wrap: wrap; }
-      .actions .btn { flex: 1 1 140px; }
+    /* Fullscreen */
+    .map-panel:fullscreen,
+    .map-panel:-webkit-full-screen {
+      width: 100vw;
+      height: 100vh;
+      background-color: #061321;
     }
 
-    @media (max-width: 560px) {
-      .app { padding: 8px; gap: 8px; grid-template-rows: auto minmax(520px, 1fr); }
-      .toolbar { padding: 12px; }
-      .site-control { grid-template-columns: 1fr; gap: 6px; }
-      .brand p { display: none; }
-      .btn .label { display: none; }
-      .btn { flex: 1 1 56px !important; }
-      .status-bar { border-radius: 12px; }
+    .map-panel:fullscreen .map-viewport,
+    .map-panel:-webkit-full-screen .map-viewport {
+      inset: 14px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1120px) {
+      .header-widgets .connection-widget { display: none; }
+      .toolbar { gap: 10px; }
+      .select-label { display: none; }
+      .btn .button-text { display: none; }
+      .btn { width: 42px; padding: 0; }
+    }
+
+    @media (max-width: 820px) {
+      html,
+      body { overflow: auto; }
+
+      .dashboard {
+        min-height: 720px;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .topbar { padding: 10px; }
+      .header-widgets { display: none; }
+      .content { padding: 8px 4px 4px; }
+      .monitor-card { grid-template-rows: auto minmax(0, 1fr); }
+
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 10px;
+      }
+
+      .monitor-info { width: 100%; }
+      .status-pill { display: none; }
+      .site-meta { width: 100%; }
+
+      .toolbar-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 42px 42px 42px;
+      }
+
+      select {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .map-viewport { inset: 8px; }
+      .map-scale { display: none; }
+      .refresh-countdown { right: 12px; bottom: 11px; }
+    }
+
+    @media (max-width: 520px) {
+      .dashboard { min-height: 660px; }
+      .nt-logo { width: 46px; height: 46px; flex-basis: 46px; }
+      .live-badge { display: none; }
+      .brand-copy p { font-size: 11px; }
+      .site-meta strong { font-size: 12px; }
+      .toolbar-actions { grid-template-columns: minmax(0, 1fr) 40px 40px 40px; }
+      .btn { width: 40px; height: 40px; }
+      select { height: 40px; font-size: 12px; }
     }
   </style>
 </head>
+
 <body>
-  <main class="app">
-    <header class="toolbar">
+  <main class="dashboard">
+    <header class="topbar">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">◉</div>
-        <div>
-          <h1>CCTV Monitor — อบจ.ชลบุรี</h1>
-          <p>ศูนย์รวมการเข้าถึงระบบเฝ้าระวัง</p>
+        <div class="nt-logo" aria-hidden="true">NT</div>
+        <div class="brand-copy">
+          <div class="title-row">
+            <h1>CCTV Monitor Dashboard</h1>
+            <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+          </div>
+          <p>Monitor Network Map · ภาพรวมสถานะอุปกรณ์และโครงข่าย</p>
         </div>
       </div>
 
-      <div class="site-control">
-        <label for="siteSelect">เลือกจุด Monitor</label>
-        <select id="siteSelect" aria-label="เลือกจุด Monitor">
-          <option value="central">CCTV อบจ.ชลบุรี — รวมศูนย์</option>
-          <option value="banglamung">CCTV อบจ. — สภ.บางละมุง</option>
-        </select>
-      </div>
+      <div class="header-widgets">
+        <div class="info-widget connection-widget">
+          <div class="widget-icon" aria-hidden="true">⌁</div>
+          <div class="widget-copy">
+            <small>Map Connection</small>
+            <strong id="connectionText">กำลังโหลด</strong>
+          </div>
+        </div>
 
-      <div class="actions">
-        <button class="btn" id="reloadBtn" type="button" title="โหลดหน้าใหม่">
-          <span aria-hidden="true">↻</span><span class="label">Refresh</span>
-        </button>
-        <a class="btn primary" id="openBtn" href="#" target="_blank" rel="noopener noreferrer" title="เปิดในแท็บใหม่">
-          <span aria-hidden="true">↗</span><span class="label">เปิดเต็มหน้า</span>
-        </a>
-        <button class="btn" id="fullscreenBtn" type="button" title="Fullscreen">
-          <span aria-hidden="true">⛶</span><span class="label">Fullscreen</span>
-        </button>
+        <div class="info-widget clock-widget">
+          <div class="widget-icon" aria-hidden="true">◷</div>
+          <div class="widget-copy">
+            <small>เวลาปัจจุบัน</small>
+            <strong id="clock">-</strong>
+          </div>
+        </div>
       </div>
     </header>
 
-    <section class="viewer" id="viewer">
-      <iframe
-        id="monitorFrame"
-        title="CCTV Monitor"
-        width="1024"
-        height="768"
-        frameborder="1"
-        allow="fullscreen"
-      ></iframe>
+    <section class="content">
+      <article class="monitor-card">
+        <div class="toolbar">
+          <div class="monitor-info">
+            <div class="status-pill loading" id="statusPill">
+              <span class="dot"></span>
+              <span id="statusText">กำลังโหลด Map</span>
+            </div>
 
-      <div class="status-bar" aria-live="polite">
-        <span class="dot loading" id="statusDot"></span>
-        <span id="statusText">กำลังเตรียม Monitor...</span>
-        <span aria-hidden="true">•</span>
-        <span class="clock" id="clock"></span>
-      </div>
+            <div class="site-meta">
+              <strong id="siteName">CCTV อบจ.ชลบุรี — รวมศูนย์</strong>
+              <span id="siteSlug">cctv-chonburi-central</span>
+            </div>
+          </div>
+
+          <div class="toolbar-actions">
+            <label class="select-label" for="siteSelect">เลือก Network Map</label>
+            <select id="siteSelect" aria-label="เลือก Network Map">
+              <option value="central">CCTV อบจ.ชลบุรี — รวมศูนย์</option>
+              <option value="banglamung">CCTV อบจ. — สภ.บางละมุง</option>
+            </select>
+
+            <button class="btn" id="refreshBtn" type="button" title="รีเฟรช Map">
+              <span aria-hidden="true">⟳</span>
+              <span class="button-text">รีเฟรช</span>
+            </button>
+
+            <a class="btn" id="openMapBtn" href="#" target="_blank" rel="noopener noreferrer" title="เปิด Map ในแท็บใหม่">
+              <span aria-hidden="true">↗</span>
+              <span class="button-text">เปิด Map</span>
+            </a>
+
+            <button class="btn" id="fullscreenBtn" type="button" title="แสดงเต็มจอ">
+              <span aria-hidden="true">⛶</span>
+              <span class="button-text">เต็มจอ</span>
+            </button>
+          </div>
+        </div>
+
+        <section class="map-panel" id="mapPanel" aria-label="พื้นที่แสดง CCTV Monitor">
+          <div class="map-viewport" id="mapViewport">
+            <div class="map-stage" id="mapStage">
+              <iframe
+                id="monitorFrame"
+                width="1024"
+                height="768"
+                frameborder="0"
+                scrolling="auto"
+                allow="fullscreen"
+                title="CCTV Monitor Map">
+              </iframe>
+            </div>
+          </div>
+
+          <div class="map-loading" id="mapLoading" aria-live="polite">
+            <div class="loading-card">
+              <span class="spinner" aria-hidden="true"></span>
+              <span id="loadingText">กำลังโหลด CCTV Monitor...</span>
+            </div>
+          </div>
+
+          <div class="map-scale" id="mapScale">Map 1024 × 768 · Scale 100%</div>
+
+          <div class="refresh-countdown">
+            <span class="dot"></span>
+            <span>รีเฟรชใน</span>
+            <strong id="countdown">05:00</strong>
+          </div>
+        </section>
+      </article>
     </section>
   </main>
 
   <script>
     'use strict';
 
+    // URL ของ CCTV/PRTG Public Map ที่จะแสดงภายใน iframe
     const SITES = {
       central: {
         name: 'CCTV อบจ.ชลบุรี — รวมศูนย์',
+        slug: 'cctv-chonburi-central',
         url: 'http://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2506&mapid=26815356-D3C7-4522-91C0-80DB58E8FF69'
       },
       banglamung: {
         name: 'CCTV อบจ. — สภ.บางละมุง',
+        slug: 'cctv-banglamung-police-station',
         url: 'http://rfcctv.fortiddns.com:8443/public/mapshow.htm?id=2447&mapid=D85564DB-3F1D-4D10-8E21-99B0CA9B2D98'
       }
     };
 
+    const MAP_WIDTH = 1024;
+    const MAP_HEIGHT = 768;
+    const AUTO_REFRESH_SECONDS = 5 * 60;
+
     const siteSelect = document.getElementById('siteSelect');
+    const siteName = document.getElementById('siteName');
+    const siteSlug = document.getElementById('siteSlug');
     const monitorFrame = document.getElementById('monitorFrame');
-    const openBtn = document.getElementById('openBtn');
-    const reloadBtn = document.getElementById('reloadBtn');
+    const openMapBtn = document.getElementById('openMapBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const viewer = document.getElementById('viewer');
-    const statusDot = document.getElementById('statusDot');
+    const mapPanel = document.getElementById('mapPanel');
+    const mapViewport = document.getElementById('mapViewport');
+    const mapStage = document.getElementById('mapStage');
+    const mapLoading = document.getElementById('mapLoading');
+    const loadingText = document.getElementById('loadingText');
+    const mapScale = document.getElementById('mapScale');
+    const statusPill = document.getElementById('statusPill');
     const statusText = document.getElementById('statusText');
+    const connectionText = document.getElementById('connectionText');
+    const countdown = document.getElementById('countdown');
     const clock = document.getElementById('clock');
 
-    let currentKey = 'central';
-    let loadTimer = null;
+    let currentSiteKey = 'central';
+    let refreshSeconds = AUTO_REFRESH_SECONDS;
+    let loadTimeoutId = null;
 
-    function setStatus(type, message) {
-      statusDot.className = 'dot' + (type ? ` ${type}` : '');
-      statusText.textContent = message;
+    // เปลี่ยนสถานะบน Header/Toolbar
+    function setStatus(state, text) {
+      statusPill.classList.remove('loading', 'error');
+
+      if (state === 'loading') {
+        statusPill.classList.add('loading');
+        connectionText.textContent = 'กำลังโหลด';
+      } else if (state === 'error') {
+        statusPill.classList.add('error');
+        connectionText.textContent = 'โหลดไม่สำเร็จ';
+      } else {
+        connectionText.textContent = 'แสดงผลแล้ว';
+      }
+
+      statusText.textContent = text;
     }
 
-    function updateQueryString(key) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('site', key);
-      history.replaceState(null, '', url);
-    }
+    // โหลด Map ที่เลือกเข้า iframe โดยตรง
+    function loadSite(siteKey, forceReload = false) {
+      if (!SITES[siteKey]) siteKey = 'central';
 
-    function loadSite(key) {
-      if (!SITES[key]) key = 'central';
+      currentSiteKey = siteKey;
+      const site = SITES[siteKey];
 
-      currentKey = key;
-      const site = SITES[key];
-      siteSelect.value = key;
-      openBtn.href = site.url;
-      document.title = `${site.name} | CCTV Monitor`;
-      localStorage.setItem('cctv-monitor-site', key);
-      updateQueryString(key);
+      siteSelect.value = siteKey;
+      siteName.textContent = site.name;
+      siteSlug.textContent = site.slug;
+      openMapBtn.href = site.url;
+      document.title = `${site.name} | CCTV Monitor Dashboard`;
 
-      clearTimeout(loadTimer);
-      setStatus('loading', `กำลังโหลด: ${site.name}`);
+      setStatus('loading', `${site.name} กำลังโหลด`);
+      loadingText.textContent = `กำลังโหลด ${site.name}...`;
+      mapLoading.classList.remove('hidden');
 
-      // เปลี่ยน URL ของ iframe โดยตรงตามรายการใน Dropdown
-      monitorFrame.src = site.url;
+      // Assign src โดยตรงตามที่ผู้ใช้กำหนด ไม่มี Probe และไม่มีหน้าคั่น
+      if (forceReload) {
+        monitorFrame.src = 'about:blank';
+        window.setTimeout(() => {
+          monitorFrame.src = site.url;
+        }, 80);
+      } else {
+        monitorFrame.src = site.url;
+      }
 
-      loadTimer = setTimeout(() => {
-        setStatus('error', 'โหลดนานผิดปกติ — ตรวจสอบเครือข่ายหรือกดเปิดเต็มหน้า');
+      refreshSeconds = AUTO_REFRESH_SECONDS;
+      updateCountdown();
+
+      localStorage.setItem('cctv-monitor-site', siteKey);
+
+      const pageUrl = new URL(window.location.href);
+      pageUrl.searchParams.set('site', siteKey);
+      history.replaceState(null, '', pageUrl);
+
+      window.clearTimeout(loadTimeoutId);
+      loadTimeoutId = window.setTimeout(() => {
+        // Cross-origin iframe บางระบบไม่ส่ง error ให้หน้าแม่ จึงซ่อน Loading หลังครบเวลา
+        mapLoading.classList.add('hidden');
       }, 15000);
     }
 
+    // iframe โหลดเสร็จแล้วให้แสดงผล Map
     monitorFrame.addEventListener('load', () => {
-      clearTimeout(loadTimer);
-      setStatus('', `กำลังแสดง: ${SITES[currentKey].name}`);
+      // ไม่ถือ about:blank เป็นหน้าปลายทาง
+      if (monitorFrame.src === 'about:blank') return;
+
+      window.clearTimeout(loadTimeoutId);
+      mapLoading.classList.add('hidden');
+      setStatus('ready', `${SITES[currentSiteKey].name} Ready`);
     });
 
-    siteSelect.addEventListener('change', () => loadSite(siteSelect.value));
+    monitorFrame.addEventListener('error', () => {
+      window.clearTimeout(loadTimeoutId);
+      mapLoading.classList.add('hidden');
+      setStatus('error', 'ไม่สามารถโหลด Map ได้');
+    });
 
-    reloadBtn.addEventListener('click', () => {
-      // ใส่ URL เดิมกลับเข้า iframe เพื่อบังคับโหลดใหม่
-      monitorFrame.src = SITES[currentKey].url;
-      setStatus('loading', `กำลังโหลดใหม่: ${SITES[currentKey].name}`);
+    // คำนวณ Scale เดียวจากพื้นที่ว่าง เพื่อคงอัตราส่วน 1024 × 768
+    function resizeMap() {
+      const viewportWidth = Math.max(mapViewport.clientWidth - 18, 1);
+      const viewportHeight = Math.max(mapViewport.clientHeight - 18, 1);
+      const scale = Math.min(viewportWidth / MAP_WIDTH, viewportHeight / MAP_HEIGHT, 1.35);
+      const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
+
+      mapStage.style.transform = `translate(-50%, -50%) scale(${safeScale})`;
+      mapScale.textContent = `Map ${MAP_WIDTH} × ${MAP_HEIGHT} · Scale ${Math.round(safeScale * 100)}%`;
+    }
+
+    siteSelect.addEventListener('change', () => {
+      loadSite(siteSelect.value);
+    });
+
+    refreshBtn.addEventListener('click', () => {
+      loadSite(currentSiteKey, true);
     });
 
     fullscreenBtn.addEventListener('click', async () => {
       try {
         if (!document.fullscreenElement) {
-          await viewer.requestFullscreen();
+          await mapPanel.requestFullscreen();
         } else {
           await document.exitFullscreen();
         }
       } catch (error) {
-        console.error('Fullscreen failed:', error);
+        console.error('Fullscreen error:', error);
       }
     });
 
     document.addEventListener('fullscreenchange', () => {
-      fullscreenBtn.querySelector('.label').textContent = document.fullscreenElement ? 'ออกจาก Fullscreen' : 'Fullscreen';
+      fullscreenBtn.querySelector('.button-text').textContent = document.fullscreenElement
+        ? 'ออกเต็มจอ'
+        : 'เต็มจอ';
+      window.setTimeout(resizeMap, 80);
     });
 
+    // นาฬิกาประเทศไทย
     function updateClock() {
       clock.textContent = new Intl.DateTimeFormat('th-TH', {
-        dateStyle: 'medium',
-        timeStyle: 'medium',
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
         hour12: false,
         timeZone: 'Asia/Bangkok'
       }).format(new Date());
     }
 
+    function updateCountdown() {
+      const minutes = Math.floor(refreshSeconds / 60);
+      const seconds = refreshSeconds % 60;
+      countdown.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // Auto-refresh ทุก 5 นาที
+    window.setInterval(() => {
+      refreshSeconds -= 1;
+
+      if (refreshSeconds <= 0) {
+        loadSite(currentSiteKey, true);
+        return;
+      }
+
+      updateCountdown();
+    }, 1000);
+
+    const resizeObserver = new ResizeObserver(resizeMap);
+    resizeObserver.observe(mapViewport);
+    window.addEventListener('resize', resizeMap);
+
+    // Query String มีลำดับก่อน LocalStorage
     const querySite = new URLSearchParams(window.location.search).get('site');
     const savedSite = localStorage.getItem('cctv-monitor-site');
-    const initialSite = SITES[querySite] ? querySite : (SITES[savedSite] ? savedSite : 'central');
+    const initialSite = SITES[querySite]
+      ? querySite
+      : (SITES[savedSite] ? savedSite : 'central');
 
     updateClock();
-    setInterval(updateClock, 1000);
+    window.setInterval(updateClock, 1000);
     loadSite(initialSite);
+    window.requestAnimationFrame(resizeMap);
   </script>
 </body>
 </html>
