@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>โมดูลตามสเปก | NT WiFi Tools Offline</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/modules.css">
+  <script defer src="../js/offline-data.js"></script>
+  <script defer src="../js/core.js"></script>
+  <script defer src="../js/pages/modules.js"></script>
+</head>
+
+<body>
+  <noscript>โปรดเปิด JavaScript เพื่อใช้ต้นแบบ NT WiFi Tools</noscript>
+  <div id="nt-portal" data-page="modules">
+    <header class="nt-top">
+      <div class="nt-brand">
+        <span class="nt-brand-mark"><svg class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+            width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M12 20h.01"></path>
+            <path d="M2 8.82a15 15 0 0 1 20 0"></path>
+            <path d="M5 12.859a10 10 0 0 1 14 0"></path>
+            <path d="M8.5 16.429a5 5 0 0 1 7 0"></path>
+          </svg></span>
+        <div>NT WiFi Portal<br><small>Portal &amp; Access Management</small>
+        </div>
+      </div>
+      <div class="nt-top-context">
+        <svg class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          aria-hidden="true" focusable="false">
+          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+          <path
+            d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z">
+          </path>
+        </svg><span>Smart Internet Access</span><span> / </span><span>Desktop Workspace</span>
+      </div>
+      <span class="nt-demo">Offline · ข้อมูลจำลอง</span>
+    </header>
+    <div class="nt-offline-toolbar">
+      <div>
+        <strong>Offline · แยกไฟล์ตามเมนู</strong>
+        <div>Config ใช้ร่วมกันทุกเมนู · ดาวน์โหลด JSON เพื่อเก็บเป็นไฟล์</div>
+      </div>
+      <div class="nt-offline-file-actions">
+        <button type="button" id="nt-import-config">โหลด Config JSON</button><button type="button"
+          id="nt-export-config">ดาวน์โหลด Config JSON</button><input type="file" id="nt-config-file"
+          accept=".json,application/json" hidden><button type="button" id="nt-reset-config">โหลดค่าตั้งต้น</button>
+      </div>
+      <details>
+        <summary>วิธีใช้งานและขอบเขต</summary>
+        <p>เปิดไฟล์ด้วย Chrome หรือ Edge แล้วเลือกเมนูด้านซ้าย สามารถแก้ภาพ สี ข้อความ และดู Portal แบบ Desktop/Mobile
+          ได้</p>
+        <p>ค่า Draft เก็บในเบราว์เซอร์เพื่อใช้ต่อเมื่อสลับเมนู กดดาวน์โหลด Config JSON เพื่อเก็บเป็นไฟล์
+          และโหลดกลับมาใช้บนเครื่องอื่นได้ การบันทึกนี้ไม่เขียนทับไฟล์ในโฟลเดอร์โปรเจกต์</p>
+        <p>Dashboard, Reports, คูปอง และ AI ใช้ข้อมูลหรือการจำลองในไฟล์นี้ ไม่มีการเชื่อม AP, RADIUS, SMS, Social Login
+          หรือบริการจริง และไม่มีการปล่อยอินเทอร์เน็ต</p>
+      </details>
+    </div>
+    <div class="nt-shell">
+      <nav class="nt-side" aria-label="เมนูหลัก">
+        <div class="nt-side-title">WORKSPACE</div>
+        <a class="nt-nav" data-nav="dashboard" href="dashboard.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+            <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+            <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+            <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+          </svg>Dashboard</a>
+        <a class="nt-nav" data-nav="builder" href="portal-config.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+            <path d="M3 9h18"></path>
+            <path d="M9 21V9"></path>
+          </svg>Portal Configuration</a>
+        <a class="nt-nav" data-nav="reports" href="reports.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <path
+              d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z">
+            </path>
+            <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+            <path d="M8 18v-1"></path>
+            <path d="M12 18v-6"></path>
+            <path d="M16 18v-3"></path>
+          </svg>Reports</a>
+        <a class="nt-nav" data-nav="radius" href="radius-policy.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <path
+              d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+            </path>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>RADIUS &amp; Policy</a>
+        <a class="nt-nav" data-nav="access" href="ap-network.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <rect x="16" y="16" width="6" height="6" rx="1"></rect>
+            <rect x="2" y="16" width="6" height="6" rx="1"></rect>
+            <rect x="9" y="2" width="6" height="6" rx="1"></rect>
+            <path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"></path>
+            <path d="M12 12V8"></path>
+          </svg>AP &amp; Network</a>
+        <a class="nt-nav" data-nav="voucher" href="free-wifi-coupons.html" aria-current="false"><svg
+            class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true" focusable="false">
+            <path
+              d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z">
+            </path>
+            <path d="M13 5v2"></path>
+            <path d="M13 17v2"></path>
+            <path d="M13 11v2"></path>
+          </svg>Free WiFi &amp; Coupon</a>
+        <a class="nt-nav" data-nav="monitor" href="monitor-logs.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <path
+              d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2">
+            </path>
+          </svg>Monitor &amp; Logs</a>
+        <a class="nt-nav" data-nav="alerts" href="alerts.html" aria-current="false"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+            <path
+              d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326">
+            </path>
+          </svg>การแจ้งเตือน</a>
+        <a class="nt-nav active" data-nav="modules" href="modules.html" aria-current="page"><svg class="nt-offline-icon"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+            focusable="false">
+            <path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2">
+            </path>
+            <rect x="14" y="2" width="8" height="8" rx="1"></rect>
+          </svg>โมดูลตามสเปก</a>
+        <div class="nt-side-foot">DESKTOP WORKSPACE<br>Manual + AI<br>ยังไม่เชื่อมต่อระบบจริง</div>
+      </nav>
+      <main class="nt-main">
+        <div class="nt-breadcrumb">NT WiFi Tools / <span id="nt-crumb">โมดูลตามสเปก</span>
+        </div>
+        <div class="nt-heading">
+          <div>
+            <h2 id="nt-page-title">โมดูลตามสเปก</h2>
+            <div class="nt-sub" id="nt-page-sub">รายการเพิ่มเติมที่ใช้ประกอบการพัฒนาระบบ</div>
+          </div>
+          <span class="nt-badge neutral" id="nt-draft-status">Draft v1</span>
+        </div>
+        <section id="nt-view-modules" class="nt-view">
+          <div class="nt-notice">ขอบเขตเพิ่มเติมจากเอกสาร MA NT Wi-Fi 2027 · สถานะทั้งหมดเป็นแผนออกแบบ</div>
+          <div class="nt-panel" id="nt-module-list"></div>
+        </section>
+        <footer class="nt-footer"><span class="nt-help" id="nt-save-help">บันทึกเป็น JSON
+            เพื่อโหลดกลับมาใช้งานครั้งต่อไป</span><button type="button" class="nt-button" id="nt-save">บันทึก Draft
+            (JSON)</button><button type="button" class="nt-button primary" id="nt-review">ตรวจความพร้อม</button>
+        </footer>
+        <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
+        <div class="nt-panel shared-style-0" id="nt-review-panel" hidden>
+          <h3>รายการที่ต้องพร้อมก่อนนำไปใช้จริง</h3>
+          <div id="nt-review-results"></div>
+        </div>
+      </main>
+    </div>
+    <div class="nt-app-footer">
+      <span>NT Free WiFi Portal · Smart Internet Access</span><span>Desktop Offline · Prototype</span>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

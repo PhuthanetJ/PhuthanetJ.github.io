@@ -1,0 +1,47 @@
+[
+  [
+    "ThaiD / Email / AD-LDAP",
+    "ออกแบบ Connector ตามข้อมูลและสิทธิ์ที่ผู้ให้บริการอนุญาต",
+    "รอ Integration"
+  ],
+  [
+    "Reports & Export",
+    "Login / Register, Traffic, Peak Time, Quiz, Video และ Top Clients · PDF / XLSX / CSV / PPTX",
+    "แผนพัฒนา"
+  ],
+  [
+    "AI Reports & Dashboard",
+    "เลือกข้อมูล สร้างมุมมอง และสรุปพร้อมช่วงเวลาและแหล่งอ้างอิง",
+    "แผนพัฒนา"
+  ],
+  [
+    "AI Config & Troubleshooting",
+    "เสนอ Policy / AP Config และวิเคราะห์ Log พร้อมหลักฐาน · ตรวจผลก่อน Apply",
+    "แผนพัฒนา"
+  ],
+  [
+    "Multi-site / Tenant / RBAC",
+    "แยกสิทธิ์องค์กร Site Admin, NOC, Front Desk และผู้ดูรายงาน",
+    "แผนพัฒนา"
+  ],
+  [
+    "Payment & Billing",
+    "QR / Payment Gateway, Transaction reconciliation และสิทธิ์หลังชำระเงิน",
+    "ขอบเขตต่อยอด"
+  ],
+  [
+    "Backup / Restore / HA",
+    "สำรอง Config และข้อมูล ทดสอบกู้คืน และกำหนด RPO / RTO",
+    "แผนพัฒนา"
+  ],
+  [
+    "Heatmap / RF / Traffic Analysis",
+    "ต้องมี Telemetry และตำแหน่งอุปกรณ์ · RADIUS เพียงอย่างเดียวให้ข้อมูลไม่ครบ",
+    "รอแหล่งข้อมูล"
+  ],
+  [
+    "Audit & Privacy",
+    "ประวัติการแก้ไข Version ของ Terms, Consent แยกวัตถุประสงค์ และอายุ Log",
+    "แผนพัฒนา"
+  ]
+]

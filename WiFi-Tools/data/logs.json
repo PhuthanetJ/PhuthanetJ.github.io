@@ -1,0 +1,26 @@
+[
+  {
+    "type": "portal",
+    "id": "DEMO-001",
+    "title": "GET /portal/demo → HTTP 200",
+    "detail": "แสดงหน้า Portal สำเร็จ · ตัวอย่าง"
+  },
+  {
+    "type": "auth",
+    "id": "DEMO-002",
+    "title": "RADIUS Timeout",
+    "detail": "ยังไม่พบคำตอบจาก RADIUS · ต้องตรวจปลายทางและเส้นทางเครือข่ายก่อนสรุปสาเหตุ"
+  },
+  {
+    "type": "accounting",
+    "id": "DEMO-003",
+    "title": "Interim-Update",
+    "detail": "ตัวอย่างข้อมูล Session จาก NAS · ไม่ใช่สถานะออนไลน์จริง"
+  },
+  {
+    "type": "audit",
+    "id": "DEMO-004",
+    "title": "Portal Draft updated",
+    "detail": "ตัวอย่างประวัติการเปลี่ยน Config โดยผู้ดูแล"
+  }
+]

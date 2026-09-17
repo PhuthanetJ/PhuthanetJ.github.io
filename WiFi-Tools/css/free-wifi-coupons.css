@@ -1,0 +1,12 @@
+/* Styles specific to Free WiFi & Coupon */
+#nt-portal .free-wifi-coupons-style-0 {
+    margin-top: 12px
+}
+
+#nt-portal #nt-view-voucher {
+    min-width: 0;
+}
+
+#nt-portal #nt-view-voucher {
+    max-width: 1200px;
+}
