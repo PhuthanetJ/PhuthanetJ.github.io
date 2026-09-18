@@ -1,0 +1,66 @@
+{
+  "source": "RADIUS Manager",
+  "connected": false,
+  "sites": [
+    {
+      "id": "a",
+      "name": "Demo Site A",
+      "vlanId": 101,
+      "location": "Demo Lobby",
+      "concurrent": 0,
+      "description": "Site ตัวอย่าง · ยังไม่เชื่อม RADIUS Manager",
+      "allowPackages": [
+        {
+          "packageId": "pkg-0",
+          "prefix": "FREE",
+          "limit": null
+        },
+        {
+          "packageId": "pkg-1",
+          "prefix": "STF",
+          "limit": null
+        }
+      ]
+    },
+    {
+      "id": "b",
+      "name": "Demo Site B",
+      "vlanId": 201,
+      "location": "Demo Office",
+      "concurrent": 100,
+      "description": "Site ตัวอย่าง · ยังไม่เชื่อม RADIUS Manager",
+      "allowPackages": [
+        {
+          "packageId": "pkg-0",
+          "prefix": "FREE",
+          "limit": null
+        },
+        {
+          "packageId": "pkg-2",
+          "prefix": "VST",
+          "limit": null
+        }
+      ]
+    },
+    {
+      "id": "c",
+      "name": "Demo Site C",
+      "vlanId": null,
+      "location": "Demo Visitor Area",
+      "concurrent": 50,
+      "description": "Site ตัวอย่าง · ยังไม่เชื่อม RADIUS Manager",
+      "allowPackages": [
+        {
+          "packageId": "pkg-0",
+          "prefix": "FREE",
+          "limit": null
+        },
+        {
+          "packageId": "pkg-2",
+          "prefix": "VST",
+          "limit": null
+        }
+      ]
+    }
+  ]
+}

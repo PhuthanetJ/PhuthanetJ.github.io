@@ -20,12 +20,7 @@
       "expiration": "2026-12-31 (ตัวอย่าง)",
       "price": "0.00 THB",
       "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
-      "status": "Active",
-      "siteIds": [
-        "a",
-        "b",
-        "c"
-      ]
+      "status": "Active"
     },
     {
       "id": "pkg-1",
@@ -46,10 +41,7 @@
       "expiration": "2026-12-31 (ตัวอย่าง)",
       "price": "0.00 THB",
       "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
-      "status": "Active",
-      "siteIds": [
-        "a"
-      ]
+      "status": "Active"
     },
     {
       "id": "pkg-2",
@@ -70,11 +62,7 @@
       "expiration": "2026-12-31 (ตัวอย่าง)",
       "price": "0.00 THB",
       "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
-      "status": "Active",
-      "siteIds": [
-        "b",
-        "c"
-      ]
+      "status": "Active"
     }
   ]
 }

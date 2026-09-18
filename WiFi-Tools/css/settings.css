@@ -1,1 +1,39 @@
 /* ตั้งค่าและไฟล์ Config */
+#nt-portal .wt-config-picker {
+    display: grid;
+    grid-template-columns: minmax(160px, 1fr) minmax(200px, 2fr) auto;
+    gap: 16px;
+    align-items: end
+}
+
+#nt-portal .wt-config-picker .nt-field {
+    margin-bottom: 0
+}
+
+#nt-portal .wt-config-picker .nt-button {
+    min-height: 46px
+}
+
+#nt-portal .wt-config-active {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 18px;
+    margin: 18px 0;
+    background: #eef5ff;
+    border: 1px solid #b7d1f5;
+    border-radius: 10px;
+    color: #15385f
+}
+
+#nt-portal .wt-config-active code {
+    font-size: 16px;
+    overflow-wrap: anywhere
+}
+
+@media(max-width:780px) {
+    #nt-portal .wt-config-picker {
+        grid-template-columns: 1fr
+    }
+}

@@ -1,1 +1,74 @@
 /* RADIUS & Policy */
+#nt-portal .wt-radius-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap
+}
+
+#nt-portal .wt-radius-search {
+    max-width: 460px
+}
+
+#nt-portal .wt-radius-table {
+    overflow-x: auto
+}
+
+#nt-portal .wt-radius-table th,
+#nt-portal .wt-radius-table td {
+    vertical-align: top;
+    line-height: 1.65
+}
+
+#nt-portal .wt-radius-selected {
+    background: #edf5ff
+}
+
+#nt-portal .wt-radius-package-link {
+    font: inherit;
+    text-align: left;
+    color: #005bc7;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px
+}
+
+#nt-portal #radius-site-rows .nt-button {
+    white-space: nowrap
+}
+
+#nt-portal .wt-radius-dialog {
+    width: min(850px, calc(100vw - 48px));
+    max-height: 80vh;
+    box-sizing: border-box;
+    overflow: auto;
+    border: 1px solid #b6cce5;
+    border-radius: 12px;
+    padding: 24px;
+    background: #fff;
+    color: #103468;
+    box-shadow: 0 20px 80px #102b4860;
+    font: inherit
+}
+
+#nt-portal .wt-radius-dialog::backdrop {
+    background: #102b4899
+}
+
+#nt-portal .wt-radius-dialog h3 {
+    margin: 0;
+    font-size: 22px
+}
+
+#nt-portal .wt-radius-dialog table {
+    width: 100%
+}
+
+#nt-portal .wt-radius-package-link {
+    padding: 8px 0;
+    min-height: 44px;
+    font-weight: 600
+}

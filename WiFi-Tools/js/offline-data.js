@@ -393,7 +393,7 @@ window.NT_DATA = {
   ],
   "config": {
     "format": "wifi-tools-config",
-    "schemaVersion": 2,
+    "schemaVersion": 5,
     "version": 1,
     "state": {
       "name": "Free Wi-Fi",
@@ -425,7 +425,6 @@ window.NT_DATA = {
       "correctAnswer": "ทำงาน",
       "videoEnabled": false,
       "videoSeconds": 15,
-      "policyName": "Free WiFi Default",
       "downloadMbps": 20,
       "uploadMbps": 10,
       "hours": 1,
@@ -442,7 +441,9 @@ window.NT_DATA = {
       "alertThreshold": 5,
       "alertWindow": 5,
       "alertChannel": "In-app",
-      "alertRecovery": true
+      "alertRecovery": true,
+      "termsBodyTh": "เงื่อนไขการใช้งาน Free WiFi\n\n1. สิทธิ์ใช้งานเป็นไปตามระยะเวลาและพื้นที่ให้บริการที่ระบุบนหน้า Portal\n2. ใช้งานเครือข่ายอย่างเหมาะสม และไม่รบกวนการใช้งานของผู้อื่น\n3. ไม่ใช้เครือข่ายเพื่อเข้าถึงระบบหรือข้อมูลที่ไม่ได้รับอนุญาต\n4. หากพบปัญหา ให้ติดต่อผู้ดูแลพื้นที่ให้บริการ\n\nข้อความตัวอย่าง — ผู้ดูแลสามารถแก้ไขให้ตรงกับเงื่อนไขบริการของแต่ละ Site",
+      "termsBodyEn": "Free WiFi terms of use\n\n1. Access is subject to the duration and service area shown on this portal.\n2. Use the network responsibly and do not disrupt other users.\n3. Do not use the network to access systems or data without permission.\n4. Contact the site administrator if you experience a problem.\n\nSample text — the administrator can edit these terms for each site."
     },
     "copy": {
       "th": {
@@ -463,11 +464,22 @@ window.NT_DATA = {
     "assets": {
       "logo": "",
       "banner": "",
-      "background": ""
+      "background": "",
+      "banners": []
     },
     "lists": {
       "wg": [],
       "mac": []
+    },
+    "bindings": {
+      "siteIds": [
+        "a"
+      ],
+      "packageSource": "radius-manager-allow-package",
+      "packageIds": [
+        "pkg-0",
+        "pkg-1"
+      ]
     }
   },
   "dashboard": {
@@ -867,12 +879,7 @@ window.NT_DATA = {
         "expiration": "2026-12-31 (ตัวอย่าง)",
         "price": "0.00 THB",
         "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
-        "status": "Active",
-        "siteIds": [
-          "a",
-          "b",
-          "c"
-        ]
+        "status": "Active"
       },
       {
         "id": "pkg-1",
@@ -893,10 +900,7 @@ window.NT_DATA = {
         "expiration": "2026-12-31 (ตัวอย่าง)",
         "price": "0.00 THB",
         "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
-        "status": "Active",
-        "siteIds": [
-          "a"
-        ]
+        "status": "Active"
       },
       {
         "id": "pkg-2",
@@ -917,10 +921,72 @@ window.NT_DATA = {
         "expiration": "2026-12-31 (ตัวอย่าง)",
         "price": "0.00 THB",
         "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
-        "status": "Active",
-        "siteIds": [
-          "b",
-          "c"
+        "status": "Active"
+      }
+    ]
+  },
+  "radius-sites": {
+    "source": "RADIUS Manager",
+    "connected": false,
+    "sites": [
+      {
+        "id": "a",
+        "name": "Demo Site A",
+        "vlanId": 101,
+        "location": "Demo Lobby",
+        "concurrent": 0,
+        "description": "Site ตัวอย่าง · ยังไม่เชื่อม RADIUS Manager",
+        "allowPackages": [
+          {
+            "packageId": "pkg-0",
+            "prefix": "FREE",
+            "limit": null
+          },
+          {
+            "packageId": "pkg-1",
+            "prefix": "STF",
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "name": "Demo Site B",
+        "vlanId": 201,
+        "location": "Demo Office",
+        "concurrent": 100,
+        "description": "Site ตัวอย่าง · ยังไม่เชื่อม RADIUS Manager",
+        "allowPackages": [
+          {
+            "packageId": "pkg-0",
+            "prefix": "FREE",
+            "limit": null
+          },
+          {
+            "packageId": "pkg-2",
+            "prefix": "VST",
+            "limit": null
+          }
+        ]
+      },
+      {
+        "id": "c",
+        "name": "Demo Site C",
+        "vlanId": null,
+        "location": "Demo Visitor Area",
+        "concurrent": 50,
+        "description": "Site ตัวอย่าง · ยังไม่เชื่อม RADIUS Manager",
+        "allowPackages": [
+          {
+            "packageId": "pkg-0",
+            "prefix": "FREE",
+            "limit": null
+          },
+          {
+            "packageId": "pkg-2",
+            "prefix": "VST",
+            "limit": null
+          }
         ]
       }
     ]

@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../css/radius-policy.css">
     <script defer src="../js/offline-data.js"></script>
     <script defer src="../js/domain.js"></script>
+    <script defer src="../js/banner-model.js"></script>
+    <script defer src="../js/portal-bindings.js"></script>
     <script defer src="../js/app.js"></script>
     <script defer src="../js/pages/radius-policy.js"></script>
 </head>
@@ -39,16 +41,72 @@
                     <h2>RADIUS & Policy</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
                 </div>
                 <section id="page-content">
-                    <div class="nt-panel">
-                        <h3>Package จาก RADIUS Manager</h3><label class="nt-field">ชื่อ Policy / Package<select
-                                id="radius-package"></select></label>
-                        <p class="nt-notice">Snapshot ตัวอย่าง · อ่านอย่างเดียว · ยังไม่เชื่อม RADIUS Manager</p>
-                        <div class="wt-values" id="radius-fields"></div>
+                    <p class="nt-notice">ข้อมูล Site, Allow Package และ Package ตัวอย่างจากรูปแบบ RADIUS Manager ·
+                        อ่านอย่างเดียว · ยังไม่เชื่อมระบบจริง</p>
+                    <div class="nt-tabs" role="tablist" aria-label="ข้อมูล RADIUS Manager">
+                        <button type="button" class="nt-tab active" role="tab" id="radius-tab-sites"
+                            aria-controls="radius-panel-sites" aria-selected="true">Site</button>
+                        <button type="button" class="nt-tab" role="tab" id="radius-tab-packages"
+                            aria-controls="radius-panel-packages" aria-selected="false">Package</button>
                     </div>
-                    <div class="nt-panel">
-                        <h3>พื้นที่ที่อนุญาต</h3>
-                        <div id="radius-sites"></div>
-                    </div>
+                    <section id="radius-panel-sites" role="tabpanel" aria-labelledby="radius-tab-sites">
+                        <div class="nt-panel">
+                            <div class="wt-radius-heading">
+                                <h3>Site จาก RADIUS Manager</h3><span id="radius-site-count" class="nt-help"></span>
+                            </div>
+                            <label class="nt-field wt-radius-search">ค้นหา Site<input id="radius-site-search"
+                                    type="search" placeholder="Name, VLAN ID, Location"></label>
+                            <div class="wt-radius-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>VLAN ID</th>
+                                            <th>Location</th>
+                                            <th>Concurrent</th>
+                                            <th>Description</th>
+                                            <th>Allow Package</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="radius-site-rows"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <dialog class="wt-radius-dialog" id="radius-allow-panel" aria-labelledby="radius-allow-title"
+                            aria-describedby="radius-allow-help">
+                            <div class="wt-radius-heading">
+                                <h3 id="radius-allow-title">Allow Package</h3><button type="button" class="nt-button"
+                                    id="radius-allow-close" autofocus>ปิด</button>
+                            </div>
+                            <p class="nt-notice" id="radius-allow-help">Package ตัวอย่างของ Site นี้ · ยังไม่เชื่อม
+                                RADIUS Manager · อ่านอย่างเดียว</p>
+                            <p class="nt-help">กดชื่อ Package เพื่อดูรายละเอียด Policy, ความเร็ว และเวลาการใช้งาน ·
+                                Limit ที่เป็น — หมายถึงไม่มีข้อมูล</p>
+                            <div class="wt-radius-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Prefix</th>
+                                            <th>Limit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="radius-allow-rows"></tbody>
+                                </table>
+                            </div>
+                        </dialog>
+                    </section>
+                    <section id="radius-panel-packages" role="tabpanel" aria-labelledby="radius-tab-packages" hidden>
+                        <div class="nt-panel">
+                            <h3>Package จาก RADIUS Manager</h3><label class="nt-field">ชื่อ Policy / Package<select
+                                    id="radius-package"></select></label>
+                            <div class="wt-values" id="radius-fields"></div>
+                        </div>
+                        <div class="nt-panel">
+                            <h3>Site ที่กำหนด Package นี้ใน Allow Package</h3>
+                            <div id="radius-sites"></div>
+                        </div>
+                    </section>
                 </section>
                 <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
                 <div id="nt-review-panel" class="nt-panel" hidden>
