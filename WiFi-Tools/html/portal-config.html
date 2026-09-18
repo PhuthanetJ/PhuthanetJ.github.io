@@ -14,6 +14,7 @@
   <script defer src="../js/portal-bindings.js"></script>
   <script defer src="../js/app.js"></script>
   <script defer src="../js/pages/portal-banners.js"></script>
+  <script defer src="../js/pages/portal-questionnaires.js"></script>
   <script defer src="../js/pages/portal-general.js"></script>
   <script defer src="../js/pages/portal-config.js"></script>
 </head>
@@ -112,8 +113,7 @@
                     <div class="wt-banner-card-head">
                       <h3>Banner · รูปภาพและวิดีโอ</h3><span id="wt-banner-count" class="nt-help"></span>
                     </div>
-                    <p class="nt-help">เพิ่มได้หลายรายการ เปิด–ปิดและเรียงลำดับแยกกัน ใส่ลิงก์ปลายทาง https:// หรือ
-                      http:// ได้</p>
+                    <p class="nt-help">เลือก Banner area แยกแต่ละรายการ เปิด–ปิดและเรียงลำดับได้ · วิดีโอที่เปิด Clickable เลือกเปิดลิงก์หรือ Quiz / Questionnaires ได้</p>
                     <button class="nt-button primary" type="button" id="wt-banner-add">＋ เพิ่มรูปภาพ / วิดีโอ</button>
                     <input id="wt-banner-files" type="file"
                       accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,.mp4,.webm" multiple hidden>
@@ -122,7 +122,9 @@
                     <p class="nt-help">สื่อที่อัปโหลดรวมอยู่ใน Config และเปิดออฟไลน์ได้
                       ส่วนลิงก์เว็บไซต์ปลายทางต้องใช้อินเทอร์เน็ต</p>
                     <p id="wt-banner-message" class="nt-help" aria-live="polite"></p>
+                    <div class="wt-area-guide"><strong>ตำแหน่ง Banner ใน Preview</strong><p>b01: ส่วนหัว / ข้างฟอร์ม · login: เหนือฟอร์ม · b02: ใต้ฟอร์ม<br>1st page: ก่อนเข้า Portal · modal: หน้าต่างบน Portal</p></div>
                     <div id="wt-banner-list"></div>
+
                   </div>
                   <div class="nt-upload">
                     <div class="nt-upload-label"><span>Background</span><span class="nt-help">พื้นหลังหน้า Portal</span>
@@ -233,15 +235,21 @@
                   <h3>Questionnaire / Quiz</h3>
                   <label class="nt-check"><input type="checkbox"
                       data-bind="surveyEnabled">แสดงคำถามก่อนรับสิทธิ์</label>
-                  <label class="nt-field">ประเภท<select data-bind="surveyType">
-                      <option value="survey">แบบสอบถาม</option>
-                      <option value="quiz">Quiz มีคำตอบถูก</option>
-                    </select></label>
-                  <label class="nt-field">คำถาม<textarea
-                      data-bind="question">คุณใช้ WiFi เพื่อทำกิจกรรมใดเป็นหลัก?</textarea></label>
-                  <label class="nt-field">ตัวเลือก คั่นด้วยจุลภาค<input data-bind="answers"
-                      value="ทำงาน,เรียน,ติดต่อสื่อสาร"></label>
-                  <label class="nt-field">คำตอบที่ถูก สำหรับ Quiz<input data-bind="correctAnswer" value="ทำงาน"></label>
+                  <p class="nt-help">เลือกคำถามจากรายการเดียวกับวิดีโอ และแก้ไขชื่อ คำถาม ตัวเลือก หรือเฉลยในฟอร์มด้านล่าง</p>
+                  <fieldset class="wt-banner-question-choices"><legend>คำถามก่อนรับสิทธิ์บนหน้า Portal</legend><div id="wt-portal-question-choices"></div></fieldset>
+                    <div class="wt-question-editor" id="wt-question-editor">
+                      <h3>แก้ไข Questionnaire / Quiz</h3>
+                      <p class="nt-help">คำถามชุดเดียวกับที่เลือกใน Banner วิดีโอ แก้ไขที่นี่แล้วทุกตำแหน่งที่ใช้งานจะเปลี่ยนตาม</p>
+                      <label class="nt-field">เลือกคำถามเพื่อแก้ไข<select id="wt-question-select"></select></label><p class="nt-help" id="wt-question-usage"></p>
+                      <div class="nt-row"><button type="button" class="nt-button" id="wt-question-new">＋ สร้าง Questionnaire</button><button type="button" class="nt-button" id="wt-question-delete">ลบคำถาม</button></div>
+                      <label class="nt-field">ชื่อ<input id="wt-question-name" maxlength="160"></label>
+                      <label class="nt-field">ประเภท<select id="wt-question-type"><option value="survey">Questionnaire · แบบสอบถาม</option><option value="quiz">Quiz · มีคำตอบถูก</option></select></label>
+                      <label class="nt-field">คำถาม<textarea id="wt-question-text" maxlength="2000" rows="3"></textarea></label>
+                      <label class="nt-field">ตัวเลือก · หนึ่งรายการต่อบรรทัด<textarea id="wt-question-answers" rows="5"></textarea></label>
+                      <label class="nt-field" id="wt-question-correct-field">คำตอบที่ถูก<select id="wt-question-correct"></select></label>
+                      <button type="button" class="nt-button primary" id="wt-question-save">บันทึกคำถาม</button>
+                      <p id="wt-question-message" role="status" class="nt-help"></p>
+                    </div>
                   <hr class="nt-rule">
                   <h3>Video Ads</h3>
                   <label class="nt-check"><input type="checkbox"
@@ -276,6 +284,7 @@
                 <div class="nt-row page-style-4"><button type="button" class="nt-button nt-compact"
                     id="nt-preview-normal">ปกติ</button><button type="button" class="nt-button nt-compact"
                     id="nt-preview-error">แสดง Error</button></div>
+                <div class="nt-row wt-banner-tools"><button type="button" class="nt-button nt-compact" id="wt-banner-first-open" disabled>ทดลอง 1st page</button><button type="button" class="nt-button nt-compact" id="wt-banner-modal-open" disabled>เปิด Modal</button></div>
                 <div class="nt-browser-chrome"><span></span><span></span><span></span>
                   <div class="nt-browser-url" id="nt-browser-url">portal.example/portal/demo</div>
                 </div>
@@ -283,18 +292,9 @@
                   <div class="nt-public-hero" id="nt-hero">
                     <div class="nt-public-logo" id="nt-wordmark">Wi-Fi</div><img class="nt-public-logo-img"
                       id="nt-logo-image" alt="Logo ตัวอย่าง Portal" hidden><small id="nt-hero-label">Free WiFi</small>
-                    <section id="wt-banner-preview" class="wt-banner-preview" aria-label="Banner" hidden>
-                      <div id="wt-banner-media" class="wt-banner-media"></div>
-                      <p id="wt-banner-caption"></p>
-                      <div id="wt-banner-navigation" class="wt-banner-navigation"><button class="nt-button nt-compact"
-                          id="wt-banner-prev" type="button">← ก่อนหน้า</button><span id="wt-banner-position"
-                          aria-live="polite"></span><button class="nt-button nt-compact" id="wt-banner-next"
-                          type="button">ถัดไป →</button></div><a id="wt-banner-link" target="_blank"
-                        rel="noopener noreferrer" hidden>เปิดลิงก์ Banner ↗</a>
-                      <p id="wt-banner-playback-error" role="status"></p>
-                    </section>
+                    <section id="wt-banner-b01" class="wt-banner-preview" aria-label="Banner b01" hidden></section>
                   </div>
-                  <div class="nt-public-content" id="nt-public-content"></div>
+                  <div class="wt-public-form"><section id="wt-banner-login" class="wt-banner-preview" aria-label="Banner login" hidden></section><div class="nt-public-content" id="nt-public-content"></div><section id="wt-banner-b02" class="wt-banner-preview" aria-label="Banner b02" hidden></section></div>
                 </div>
                 <div class="nt-status-line"><svg class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -339,6 +339,15 @@
         </div>
       </main>
     </div>
+    <dialog id="wt-banner-dialog" class="wt-banner-dialog" aria-labelledby="wt-banner-dialog-title">
+      <header class="wt-banner-card-head"><h2 id="wt-banner-dialog-title">Banner</h2><button type="button" class="nt-button" id="wt-banner-dialog-close" autofocus>ดำเนินการต่อ</button></header>
+      <section id="wt-banner-dialog-content" class="wt-banner-preview"></section><p id="wt-banner-dialog-message" role="status"></p>
+    </dialog>
+    <dialog id="wt-quiz-dialog" class="wt-banner-dialog" aria-labelledby="wt-quiz-title">
+      <header class="wt-banner-card-head"><h2 id="wt-quiz-title">Quiz / Questionnaires</h2><button type="button" class="nt-button" id="wt-quiz-close">ปิด</button></header>
+      <p class="nt-help">ทดลองตอบใน Preview · ยังไม่ส่งคำตอบหรือสร้างสิทธิ์ใช้งานจริง</p>
+      <form id="wt-quiz-form"><div id="wt-quiz-questions"></div><button type="submit" class="nt-button primary">ส่งคำตอบ</button><p id="wt-quiz-result" role="status"></p><button type="button" class="nt-button primary" id="wt-quiz-next" hidden>ดำเนินการต่อ</button></form>
+    </dialog>
     <dialog id="nt-terms-dialog" class="wt-terms-dialog" aria-labelledby="nt-terms-title">
       <header>
         <h2 id="nt-terms-title">เงื่อนไขการใช้งาน Free WiFi</h2>

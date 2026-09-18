@@ -393,7 +393,7 @@ window.NT_DATA = {
   ],
   "config": {
     "format": "wifi-tools-config",
-    "schemaVersion": 5,
+    "schemaVersion": 7,
     "version": 1,
     "state": {
       "name": "Free Wi-Fi",
@@ -469,7 +469,50 @@ window.NT_DATA = {
     },
     "lists": {
       "wg": [],
-      "mac": []
+      "mac": [],
+      "questionnaires": [
+        {
+          "id": "customer-age",
+          "name": "Customer age",
+          "type": "survey",
+          "question": "อายุของคุณ",
+          "answers": [
+            "ต่ำกว่า 18 ปี",
+            "18–29 ปี",
+            "30–39 ปี",
+            "40–59 ปี",
+            "ตั้งแต่ 60 ปีขึ้นไป"
+          ],
+          "correctAnswer": ""
+        },
+        {
+          "id": "wifi-purpose",
+          "name": "WiFi purpose",
+          "type": "survey",
+          "question": "คุณใช้ WiFi เพื่อทำกิจกรรมใดเป็นหลัก?",
+          "answers": [
+            "ทำงาน",
+            "เรียน",
+            "ติดต่อสื่อสาร"
+          ],
+          "correctAnswer": ""
+        },
+        {
+          "id": "wifi-quiz",
+          "name": "WiFi Quiz (ตัวอย่าง)",
+          "type": "quiz",
+          "question": "ก่อนรับสิทธิ์ Free WiFi ควรทำอย่างไร?",
+          "answers": [
+            "อ่านและยอมรับเงื่อนไข",
+            "เปิดเผยรหัสผ่านให้ผู้อื่น",
+            "รบกวนการใช้งานเครือข่าย"
+          ],
+          "correctAnswer": "อ่านและยอมรับเงื่อนไข"
+        }
+      ],
+      "portalQuestionnaireIds": [
+        "wifi-purpose"
+      ]
     },
     "bindings": {
       "siteIds": [

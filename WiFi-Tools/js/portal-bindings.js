@@ -29,5 +29,10 @@
         return Object.entries(configs).filter(([, c]) => c.bindings.siteIds.includes(siteId)).map(([id, c]) => ({ id, name: c.state.name, path: c.state.path }));
     }
     function resolve(configs, siteId, selectedId, allowed) { const rows = choices(configs, siteId, allowed); return rows.some(c => c.id === selectedId) ? selectedId : rows.some(c => c.id === siteId) ? siteId : rows[0]?.id; }
-    return { packageSource, defaults, normalize, coverage, canManage, choices, resolve };
+    function pathChoices(configs, allowed) {
+        return Object.entries(configs).filter(([, c]) => c.bindings.siteIds.some(id => allowed.includes(id)))
+            .map(([id, c]) => ({ id, name: c.state.name, path: c.state.path, siteIds: c.bindings.siteIds.filter(id => allowed.includes(id)) }))
+            .sort((a, b) => a.path.localeCompare(b.path));
+    }
+    return { packageSource, defaults, normalize, coverage, canManage, choices, resolve, pathChoices };
 });

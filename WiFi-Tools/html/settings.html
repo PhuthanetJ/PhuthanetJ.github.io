@@ -20,7 +20,7 @@
     <div id="nt-portal" data-page="settings">
         <header class="nt-top">
             <div class="nt-brand">Wi-Fi Tools</div>
-            <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+            <div class="wt-header"><label hidden>Site <select id="wt-current-site"></select></label><span
                     id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
                     class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
         </header>
@@ -42,32 +42,31 @@
                 </div>
                 <section id="page-content">
                     <div class="nt-panel">
-                        <h3>เลือก Config ตาม Site / Portal Path</h3>
+                        <h3>เลือก Config ตาม Portal Path</h3>
                         <div class="wt-config-picker">
-                            <label class="nt-field">Site<select id="wt-config-site"></select></label>
                             <label class="nt-field">Portal Path<select id="wt-config-path"></select></label>
                             <button class="nt-button primary" type="button" id="wt-select-config">เลือก Config
                                 นี้</button>
                         </div>
                         <p class="nt-help" id="wt-config-selection-hint" aria-live="polite"></p>
                         <div class="wt-config-active" aria-live="polite"><strong>Config ที่กำลังใช้งาน</strong><span
-                                id="wt-config-active-site"></span><code id="wt-config-active-path"></code></div>
+                                id="wt-config-active-name"></span><code id="wt-config-active-path"></code></div>
+                        <p class="nt-help" id="wt-config-assigned-sites"></p>
                         <div class="nt-row">
-                            <button class="nt-button primary" type="button" id="nt-import-config">โหลด Config
+                            <button class="nt-button primary" type="button" id="nt-import-config">Import Config
                                 JSON</button>
-                            <button class="nt-button primary" type="button" id="nt-export-config">ดาวน์โหลด Config
+                            <button class="nt-button primary" type="button" id="nt-export-config">Export Config
                                 JSON</button>
-                            <button class="nt-button primary" type="button" id="nt-reset-config">โหลดค่าตั้งต้น</button>
+                            <button class="nt-button primary" type="button" id="nt-reset-config">Rollback</button>
                             <a class="nt-button" href="portal-config.html">เปิด Portal Configuration</a>
                             <input id="nt-config-file" type="file" accept=".json" hidden>
                         </div>
-                        <p class="nt-help">Portal Path ดึงจาก Portal Configuration ของ Site นั้น การโหลดหรือดาวน์โหลด
+                        <p class="nt-help">เลือก Portal Path ได้โดยตรง ส่วน Site เป็นรายการที่ผูกภายใน Path นั้น การโหลดหรือดาวน์โหลด
                             JSON ใช้ Config ที่กำลังใช้งานตามด้านบน</p>
                     </div>
                     <div class="nt-panel">
                         <h3>วิธีใช้งานและขอบเขต</h3>
-                        <p>เลือก Site แล้วตั้งค่าจากเมนูที่ต้องการ กดบันทึก Draft เพื่อเก็บใน Browser หรือดาวน์โหลด JSON
-                            เพื่อเก็บ Config ของ Site เป็นไฟล์</p>
+                        <p>เลือก Portal Path แล้วเปิด Portal Configuration เพื่อเพิ่ม Site หรือแก้ดีไซน์ กดบันทึก Draft หรือดาวน์โหลด JSON เพื่อเก็บ Config ของ Path เป็นไฟล์</p>
                         <p>PDF บันทึกผ่านหน้าพิมพ์ของ Browser ส่วนการส่งเมลรายเดือนเป็นการตั้งค่า ยังรอ Scheduler และ
                             SMTP</p>
                         <p>ต้นแบบออฟไลน์ใช้ข้อมูลตัวอย่าง Login/สิทธิ์จำลองบน Browser ไม่ใช่ Authentication สำหรับ

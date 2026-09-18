@@ -39,7 +39,7 @@
         q('#nt-browser-url').textContent = 'portal.example' + state.path;
         let html = '<h3>' + esc(c.title) + '</h3><p>' + esc(c.subtitle) + '</p>';
         if (state.videoEnabled) html += '<div class="nt-public-message success">' + (en ? 'Video placeholder' : 'ตัวอย่างพื้นที่วิดีโอ') + ' · ' + esc(state.videoSeconds) + 's</div>';
-        if (state.surveyEnabled) { html += '<label style="font-size:14px;display:block;text-align:left">' + esc(state.question) + '<select id="nt-public-answer" class="nt-public-input"><option value="">' + (en ? 'Select an answer' : 'เลือกคำตอบ') + '</option>' + state.answers.split(',').map(x => '<option>' + esc(x.trim()) + '</option>').join('') + '</select></label>'; }
+        if (state.surveyEnabled) html += WiFiQuestionnaireUI.portalMarkup(language);
         if (state.member) html += '<input aria-label="Username ตัวอย่าง" class="nt-public-input" placeholder="Username" autocomplete="off"><input aria-label="Password ตัวอย่าง" class="nt-public-input" type="password" placeholder="Password" autocomplete="off"><button type="button" class="nt-public-button" data-public-auth="RADIUS">' + (en ? 'Sign in' : 'เข้าสู่ระบบ') + '</button>';
         ['line', 'google', 'facebook', 'apple'].forEach(provider => { if (state[provider]) html += '<button type="button" class="nt-public-button" data-public-auth="' + provider + '">' + (en ? 'Continue with ' : 'เข้าสู่ระบบด้วย ') + ({ line: 'LINE', google: 'Google', facebook: 'Facebook', apple: 'Apple' }[provider]) + '</button>'; });
         if (state.otp) html += '<input aria-label="เบอร์โทรศัพท์ตัวอย่าง" class="nt-public-input" inputmode="tel" placeholder="' + (en ? 'Phone number' : 'เบอร์โทรศัพท์') + '"><button type="button" class="nt-public-button" data-public-auth="OTP">' + esc(c.otp) + '</button>';
@@ -57,8 +57,11 @@
         qa('[data-public-auth]').forEach(el => el.addEventListener('click', () => feedback(en ? 'Preview only. Provider is not connected.' : 'ตัวอย่างเท่านั้น ยังไม่ได้เชื่อมต่อ ' + el.dataset.publicAuth, false)));
         if (q('#nt-public-connect')) q('#nt-public-connect').addEventListener('click', () => {
             if (state.termsEnabled && (acceptedTerms !== termsSignature() || !q('#nt-public-accept').checked)) return feedback(en ? 'Please read and accept the terms first.' : 'กรุณาอ่านและยอมรับเงื่อนไขก่อนรับสิทธิ์', false);
-            if (state.surveyEnabled && !q('#nt-public-answer').value) return feedback(en ? 'Please answer the question.' : 'กรุณาตอบคำถามก่อนรับสิทธิ์', false);
-            if (state.surveyEnabled && state.surveyType === 'quiz' && q('#nt-public-answer').value !== state.correctAnswer.trim()) return feedback(en ? 'Please try the quiz again.' : 'คำตอบยังไม่ถูกต้อง ลองอีกครั้ง', false);
+            if (state.surveyEnabled) {
+                const result = WiFiQuestionnaireUI.gradePortal();
+                if (result.missing.length) return feedback(en ? 'Please answer every question.' : 'กรุณาตอบคำถามให้ครบทุกข้อ', false);
+                if (!result.ok) return feedback(en ? 'Please check the quiz answers and question settings.' : 'กรุณาตรวจคำตอบ Quiz และการเลือกคำถาม', false);
+            }
             if (state.guest && state.voucherMode === 'coupon' && !NT.db.coupons.some(c => c.siteId === NT.currentSite && c.code === q('#nt-public-coupon').value.trim())) return feedback(en ? 'Use a coupon generated for this site.' : 'ใช้คูปองที่สร้างสำหรับ Site นี้', false);
             if (state.videoEnabled) return feedback(en ? 'Video playback is not connected in this prototype.' : 'ต้นแบบยังไม่มีไฟล์วิดีโอสำหรับตรวจเงื่อนไข', false);
             feedback((en ? 'Sample session approved: ' : 'จำลองรับสิทธิ์สำเร็จ: ') + state.hours + (en ? ' hour(s) · no network session created' : ' ชั่วโมง · ยังไม่เกิด Session จริง'), true);

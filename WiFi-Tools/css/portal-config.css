@@ -314,3 +314,32 @@
 #nt-portal .page-style-4 {
     margin-bottom: 10px
 }
+/* Banner areas and video questionnaires */
+#nt-portal .wt-area-guide{padding:14px 16px;border:1px dashed #92b5df;background:#f0f6ff;border-radius:8px;color:#173b62;margin:16px 0;font-size:15px;line-height:1.7}
+#nt-portal .wt-area-guide p{margin:5px 0 0}
+#nt-portal .wt-banner-question-choices,#nt-portal .wt-quiz-question{min-width:0;margin:14px 0;padding:14px;border:1px solid #bdcfe4;border-radius:8px;text-align:left}
+#nt-portal .wt-banner-question-choices legend,#nt-portal .wt-quiz-question legend{font-weight:600;padding:0 7px}
+#nt-portal .wt-banner-question-choices .nt-check,#nt-portal .wt-quiz-question .nt-check{display:flex;align-items:flex-start;gap:10px;margin:8px 0;line-height:1.7;overflow-wrap:anywhere}
+#nt-portal .wt-banner-question-choices input,#nt-portal .wt-quiz-question input{flex:none;margin-top:7px}
+#nt-portal .wt-question-editor{padding:16px;border:1px solid #aec7e5;border-radius:8px;background:#f7faff;margin-top:18px}
+#nt-portal .wt-question-editor summary{cursor:pointer;font-size:17px;font-weight:600;color:#113d73}
+#nt-portal .wt-question-editor[open] summary{margin-bottom:14px}
+#nt-portal .wt-public-form{min-width:0;display:flex;flex-direction:column;justify-content:center;background:#fff}
+#nt-portal #wt-banner-login,#nt-portal #wt-banner-b02{box-sizing:border-box;padding:14px 16px}
+#nt-portal .wt-banner-area-label{color:#345576;font-size:13px;font-weight:600;line-height:1.6;text-align:left}
+#nt-portal .wt-banner-tools{margin:10px 0}
+#nt-portal .wt-banner-media{position:relative}
+#nt-portal .wt-banner-preview a{color:#0751ad;text-decoration:underline;text-underline-offset:3px}
+#nt-portal .wt-banner-playback-error{color:#9b2525}
+#nt-portal .wt-banner-dialog{box-sizing:border-box;width:min(860px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;margin:auto;border:1px solid #bacce0;border-radius:14px;padding:24px;background:white;color:#153453;box-shadow:0 20px 70px #10274677;font:inherit}
+#nt-portal .wt-banner-dialog::backdrop{background:#102746ad}
+#nt-portal .wt-banner-dialog h2{font-size:22px;margin:0;overflow-wrap:anywhere}
+#nt-portal .wt-banner-dialog .wt-banner-card-head{margin-bottom:16px}
+#nt-portal .wt-banner-dialog .wt-banner-media video,#nt-portal .wt-banner-dialog .wt-banner-media img{max-height:55vh;min-height:180px}
+#nt-portal #wt-quiz-result{white-space:pre-wrap;line-height:1.7}
+@media(max-width:700px){#nt-portal .wt-banner-dialog{padding:16px}#nt-portal .wt-banner-dialog h2{font-size:19px}}
+
+#nt-portal .wt-banner-continue{margin:12px 0;min-height:44px}
+#nt-portal .wt-public-question{display:block;text-align:left;margin:12px 0;font-size:15px;line-height:1.7}
+#nt-portal #wt-banner-dialog-message{color:#9b2525;line-height:1.7}
+#nt-portal #wt-question-editor h3{font-size:18px;margin:0 0 12px;color:#113d73}
