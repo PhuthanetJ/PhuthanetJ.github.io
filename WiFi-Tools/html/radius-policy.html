@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RADIUS & Policy | Wi-Fi Tools</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/radius-policy.css">
+    <script defer src="../js/offline-data.js"></script>
+    <script defer src="../js/domain.js"></script>
+    <script defer src="../js/app.js"></script>
+    <script defer src="../js/pages/radius-policy.js"></script>
+</head>
+
+<body>
+    <div id="nt-portal" data-page="radius">
+        <header class="nt-top">
+            <div class="nt-brand">Wi-Fi Tools</div>
+            <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+                    id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
+                    class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
+        </header>
+        <div class="nt-shell">
+            <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a
+                    class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav "
+                    href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav "
+                    href="reports.html" data-nav="reports">Reports</a><a class="nt-nav active" href="radius-policy.html"
+                    data-nav="radius">RADIUS & Policy</a><a class="nt-nav " href="ap-network.html"
+                    data-nav="access">Network Configuration</a><a class="nt-nav " href="free-wifi-coupons.html"
+                    data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="monitor-logs.html"
+                    data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html"
+                    data-nav="alerts">การแจ้งเตือน</a><a class="nt-nav " href="users.html" data-nav="users">User</a><a
+                    class="nt-nav " href="settings.html" data-nav="settings">ตั้งค่าและไฟล์ Config</a><a class="nt-nav "
+                    href="modules.html" data-nav="modules">โมดูลตามสเปก</a></nav>
+            <main class="nt-main">
+                <div class="nt-heading">
+                    <h2>RADIUS & Policy</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
+                </div>
+                <section id="page-content">
+                    <div class="nt-panel">
+                        <h3>Package จาก RADIUS Manager</h3><label class="nt-field">ชื่อ Policy / Package<select
+                                id="radius-package"></select></label>
+                        <p class="nt-notice">Snapshot ตัวอย่าง · อ่านอย่างเดียว · ยังไม่เชื่อม RADIUS Manager</p>
+                        <div class="wt-values" id="radius-fields"></div>
+                    </div>
+                    <div class="nt-panel">
+                        <h3>พื้นที่ที่อนุญาต</h3>
+                        <div id="radius-sites"></div>
+                    </div>
+                </section>
+                <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
+                <div id="nt-review-panel" class="nt-panel" hidden>
+                    <div id="nt-review-results"></div>
+                </div>
+            </main>
+        </div>
+        <div class="nt-app-footer">Wi-Fi Tools · ข้อมูลตัวอย่าง</div>
+    </div>
+</body>
+
+</html>

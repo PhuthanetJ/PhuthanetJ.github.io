@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Portal Configuration | Wi-Fi Tools</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/portal-config.css">
+    <script defer src="../js/offline-data.js"></script>
+    <script defer src="../js/domain.js"></script>
+    <script defer src="../js/app.js"></script>
+    <script defer src="../js/pages/portal-config.js"></script>
+</head>
+
+<body>
+    <div id="nt-portal" data-page="builder">
+        <header class="nt-top">
+            <div class="nt-brand">Wi-Fi Tools</div>
+            <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+                    id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
+                    class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
+        </header>
+        <div class="nt-shell">
+            <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a
+                    class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav active"
+                    href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav "
+                    href="reports.html" data-nav="reports">Reports</a><a class="nt-nav " href="radius-policy.html"
+                    data-nav="radius">RADIUS & Policy</a><a class="nt-nav " href="ap-network.html"
+                    data-nav="access">Network Configuration</a><a class="nt-nav " href="free-wifi-coupons.html"
+                    data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="monitor-logs.html"
+                    data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html"
+                    data-nav="alerts">การแจ้งเตือน</a><a class="nt-nav " href="users.html" data-nav="users">User</a><a
+                    class="nt-nav " href="settings.html" data-nav="settings">ตั้งค่าและไฟล์ Config</a><a class="nt-nav "
+                    href="modules.html" data-nav="modules">โมดูลตามสเปก</a></nav>
+            <main class="nt-main">
+                <div class="nt-heading">
+                    <h2>Portal Configuration</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
+                </div>
+                <section id="page-content">
+                    <section id="nt-view-builder" class="nt-view">
+                        <div class="nt-row page-style-0">
+                            <button class="nt-button" type="button" id="nt-mode-manual" aria-pressed="true"><svg
+                                    class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M10 5H3"></path>
+                                    <path d="M12 19H3"></path>
+                                    <path d="M14 3v4"></path>
+                                    <path d="M16 17v4"></path>
+                                    <path d="M21 12h-9"></path>
+                                    <path d="M21 19h-5"></path>
+                                    <path d="M21 5h-7"></path>
+                                    <path d="M8 10v4"></path>
+                                    <path d="M8 12H3"></path>
+                                </svg>Manual</button>
+                            <button class="nt-button ai" type="button" id="nt-mode-ai" aria-pressed="false"><svg
+                                    class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z">
+                                    </path>
+                                    <path d="M20 2v4"></path>
+                                    <path d="M22 4h-4"></path>
+                                    <circle cx="4" cy="20" r="2"></circle>
+                                </svg>AI ช่วยสร้าง</button>
+                            <span class="nt-help">แก้ไขต่อได้บน Config ชุดเดียวกัน</span>
+                        </div>
+                        <div class="nt-panel" id="nt-ai-panel" hidden>
+                            <h3>AI Portal Generator <span class="nt-badge neutral">จำลอง Workflow</span></h3>
+                            <label class="nt-field">คำสั่งตัวอย่าง<textarea
+                                    id="nt-ai-prompt">สร้าง Portal ภาษาไทยและอังกฤษ ธีมสีน้ำเงิน เปิด WiFi ฟรี 2 ชั่วโมง ไม่ใช้ OTP มีเงื่อนไขการใช้งาน</textarea></label>
+                            <div class="nt-row"><button class="nt-button ai" type="button"
+                                    id="nt-ai-generate">จำลองสร้างข้อเสนอ</button><span
+                                    class="nt-help">ใช้ตัวอย่างภายในต้นแบบ ยังไม่ได้เรียก AI</span></div>
+                            <div id="nt-ai-review" class="nt-ai-review" hidden>
+                                <h3>รายการเปลี่ยนแปลงที่เสนอ</h3>
+                                <div id="nt-ai-diff"></div>
+                                <div class="nt-row page-style-1"><button class="nt-button primary" id="nt-ai-apply"
+                                        type="button">ใช้ข้อเสนอใน Draft</button><button class="nt-button"
+                                        id="nt-ai-dismiss" type="button">ยกเลิกข้อเสนอ</button></div>
+                            </div>
+                        </div>
+                        <div class="nt-tabs" role="tablist" aria-label="ส่วนตั้งค่า Portal">
+                            <button class="nt-tab active" type="button" role="tab" id="nt-tab-design"
+                                aria-selected="true" aria-controls="nt-form-design" data-tab="design">ดีไซน์</button>
+                            <button class="nt-tab" type="button" role="tab" id="nt-tab-general" aria-selected="false"
+                                aria-controls="nt-form-general" data-tab="general">ทั่วไป &amp; Path</button>
+                            <button class="nt-tab" type="button" role="tab" id="nt-tab-copy" aria-selected="false"
+                                aria-controls="nt-form-copy" data-tab="copy">ข้อความ &amp; ภาษา</button>
+                            <button class="nt-tab" type="button" role="tab" id="nt-tab-auth" aria-selected="false"
+                                aria-controls="nt-form-auth" data-tab="auth">Login / OTP</button>
+                            <button class="nt-tab" type="button" role="tab" id="nt-tab-engage" aria-selected="false"
+                                aria-controls="nt-form-engage" data-tab="engage">Quiz &amp; เงื่อนไข</button>
+                        </div>
+                        <div class="nt-editor-grid">
+                            <div>
+                                <section class="nt-panel nt-form" id="nt-form-design" role="tabpanel"
+                                    aria-labelledby="nt-tab-design">
+                                    <h3>ภาพและอัตลักษณ์</h3>
+                                    <div class="nt-upload">
+                                        <div class="nt-upload-label"><span>Logo</span><span class="nt-help">PNG / JPG /
+                                                WebP</span></div><label class="nt-field"><input
+                                                aria-label="อัปโหลด Logo" type="file"
+                                                accept="image/png,image/jpeg,image/webp"
+                                                data-asset="logo"></label><button class="nt-button nt-compact"
+                                            type="button" data-clear="logo">ล้าง Logo</button>
+                                    </div>
+                                    <div class="nt-upload">
+                                        <div class="nt-upload-label"><span>Banner</span><span class="nt-help">ภาพหัวหน้า
+                                                Portal</span></div><label class="nt-field"><input
+                                                aria-label="อัปโหลด Banner" type="file"
+                                                accept="image/png,image/jpeg,image/webp"
+                                                data-asset="banner"></label><button class="nt-button nt-compact"
+                                            type="button" data-clear="banner">ใช้ Banner เริ่มต้น</button>
+                                    </div>
+                                    <div class="nt-upload">
+                                        <div class="nt-upload-label"><span>Background</span><span
+                                                class="nt-help">พื้นหลังหน้า Portal</span></div><label
+                                            class="nt-field"><input aria-label="อัปโหลด Background" type="file"
+                                                accept="image/png,image/jpeg,image/webp"
+                                                data-asset="background"></label><button class="nt-button nt-compact"
+                                            type="button" data-clear="background">ล้าง Background</button>
+                                    </div>
+                                    <div class="nt-form-grid"><label class="nt-field">สีปุ่ม<input type="color"
+                                                data-bind="buttonColor" value="#086cf0"></label><label
+                                            class="nt-field">สีข้อความปุ่ม<input type="color"
+                                                data-bind="buttonTextColor" value="#ffffff"></label></div>
+                                    <label class="nt-field">รูปแบบปุ่ม<select data-bind="shape">
+                                            <option value="rounded">มุมโค้ง</option>
+                                            <option value="pill">ทรงแคปซูล</option>
+                                            <option value="square">มุมตรง</option>
+                                        </select></label>
+                                </section>
+                                <section class="nt-panel nt-form" id="nt-form-general" role="tabpanel"
+                                    aria-labelledby="nt-tab-general" hidden>
+                                    <h3>ข้อมูลพื้นฐาน</h3>
+                                    <label class="nt-field">ชื่อ Portal<input data-bind="name"
+                                            value="Free Wi-Fi"></label>
+                                    <label class="nt-field">Template ตั้งต้น<select data-bind="template">
+                                            <option>Template01</option>
+                                            <option>Template02</option>
+                                            <option>Template03</option>
+                                            <option>Template04</option>
+                                            <option>Template05</option>
+                                        </select></label>
+                                    <div class="nt-help page-style-2">ต้นแบบนี้ใช้ดีไซน์ตัวอย่างร่วมกัน ยังไม่ได้นำ
+                                        Template จริงเข้าระบบ</div>
+                                    <label class="nt-field">Site / SSID<input data-bind="site"
+                                            value="Demo Site / Free-WiFi"></label>
+                                    <label class="nt-field">Portal Path<input data-bind="path" value="/portal/demo"
+                                            spellcheck="false"></label>
+                                    <div class="nt-help" id="nt-path-preview">https://portal.example/portal/demo</div>
+                                    <hr class="nt-rule">
+                                    <div class="nt-row"><span class="nt-badge pending">Draft</span><span
+                                            class="nt-help">ตรวจ Path ซ้ำกับเซิร์ฟเวอร์ก่อนเผยแพร่จริง</span></div>
+                                </section>
+                                <section class="nt-panel nt-form" id="nt-form-copy" role="tabpanel"
+                                    aria-labelledby="nt-tab-copy" hidden>
+                                    <h3>แก้ไขข้อความบน Portal</h3>
+                                    <label class="nt-field">ภาษาที่กำลังแก้<select id="nt-edit-language">
+                                            <option value="th">ไทย</option>
+                                            <option value="en">English</option>
+                                        </select></label>
+                                    <label class="nt-field">หัวข้อหลัก<input data-copy="title"></label>
+                                    <label class="nt-field">ข้อความต้อนรับ<textarea
+                                            data-copy="subtitle"></textarea></label>
+                                    <label class="nt-field">ข้อความปุ่มรับสิทธิ์<input data-copy="button"></label>
+                                    <label class="nt-field">ข้อความขอ OTP<input data-copy="otp"></label>
+                                    <label class="nt-field">ข้อความเมื่อเกิดข้อผิดพลาด<textarea
+                                            data-copy="error"></textarea></label>
+                                    <div class="nt-help">Production ใช้รหัส Error แยกจากข้อความที่แสดงต่อผู้ใช้
+                                        และตั้งคำแปลได้ครบทุกข้อความ</div>
+                                </section>
+                                <section class="nt-panel nt-form" id="nt-form-auth" role="tabpanel"
+                                    aria-labelledby="nt-tab-auth" hidden>
+                                    <h3>วิธีเข้าสู่ระบบ</h3>
+                                    <label class="nt-check"><input type="checkbox" data-bind="guest"
+                                            checked>รับสิทธิ์ฟรี โดยไม่กรอก Username / OTP</label>
+                                    <label class="nt-check"><input type="checkbox" data-bind="member">Username /
+                                        Password ผ่าน RADIUS</label>
+                                    <label class="nt-check"><input type="checkbox" data-bind="otp">SMS / OTP</label>
+                                    <label class="nt-check"><input type="checkbox" data-bind="line">LINE Login</label>
+                                    <label class="nt-check"><input type="checkbox" data-bind="google">Google
+                                        Login</label>
+                                    <label class="nt-check"><input type="checkbox" data-bind="facebook">Facebook
+                                        Login</label>
+                                    <label class="nt-check"><input type="checkbox" data-bind="apple">Apple Login</label>
+                                    <hr class="nt-rule">
+                                    <h3>SMS / OTP Profile</h3>
+                                    <label class="nt-field">ผู้ให้บริการ SMS<input data-bind="smsProvider"
+                                            placeholder="เลือกหรือระบุ SMS Gateway"></label>
+                                    <div class="nt-form-grid"><label class="nt-field">OTP หมดอายุ (วินาที)<input
+                                                type="number" min="30" max="900" data-bind="otpTtl"
+                                                value="180"></label><label class="nt-field">เว้นช่วงส่งซ้ำ
+                                            (วินาที)<input type="number" min="10" max="600" data-bind="otpResend"
+                                                value="60"></label></div>
+                                    <label class="nt-field">จำนวนครั้งที่ให้กรอกรหัสผิด<input type="number" min="1"
+                                            max="10" data-bind="otpAttempts" value="5"></label>
+                                    <div class="nt-notice">สถานะ SMS / Social: ยังไม่เชื่อมต่อ Provider</div>
+                                    <div class="nt-help">ทดสอบ Social Login บน Captive Browser และ Browser
+                                        ปกติของอุปกรณ์จริง</div>
+                                </section>
+                                <section class="nt-panel nt-form" id="nt-form-engage" role="tabpanel"
+                                    aria-labelledby="nt-tab-engage" hidden>
+                                    <h3>Terms &amp; Conditions</h3>
+                                    <label class="nt-check"><input type="checkbox" data-bind="termsEnabled"
+                                            checked>ต้องยอมรับเงื่อนไขก่อนรับสิทธิ์</label>
+                                    <label class="nt-field">รุ่นเงื่อนไข<input data-bind="termsVersion"
+                                            value="draft-1"></label>
+                                    <label class="nt-field">ข้อความเงื่อนไขภาษาไทย<textarea
+                                            data-bind="termsTh">ยอมรับเงื่อนไขการใช้งาน Free WiFi</textarea></label>
+                                    <label class="nt-field">ข้อความเงื่อนไขภาษาอังกฤษ<textarea
+                                            data-bind="termsEn">I accept the Free WiFi terms of use</textarea></label>
+                                    <div class="nt-help">ข้อความตัวอย่าง · แยก Terms, Privacy Notice และ Marketing
+                                        Consent</div>
+                                    <hr class="nt-rule">
+                                    <h3>Questionnaire / Quiz</h3>
+                                    <label class="nt-check"><input type="checkbox"
+                                            data-bind="surveyEnabled">แสดงคำถามก่อนรับสิทธิ์</label>
+                                    <label class="nt-field">ประเภท<select data-bind="surveyType">
+                                            <option value="survey">แบบสอบถาม</option>
+                                            <option value="quiz">Quiz มีคำตอบถูก</option>
+                                        </select></label>
+                                    <label class="nt-field">คำถาม<textarea
+                                            data-bind="question">คุณใช้ WiFi เพื่อทำกิจกรรมใดเป็นหลัก?</textarea></label>
+                                    <label class="nt-field">ตัวเลือก คั่นด้วยจุลภาค<input data-bind="answers"
+                                            value="ทำงาน,เรียน,ติดต่อสื่อสาร"></label>
+                                    <label class="nt-field">คำตอบที่ถูก สำหรับ Quiz<input data-bind="correctAnswer"
+                                            value="ทำงาน"></label>
+                                    <hr class="nt-rule">
+                                    <h3>Video Ads</h3>
+                                    <label class="nt-check"><input type="checkbox"
+                                            data-bind="videoEnabled">แสดงวิดีโอก่อนรับสิทธิ์</label>
+                                    <label class="nt-field">ระยะเวลาที่กำหนด (วินาที)<input type="number" min="1"
+                                            max="120" data-bind="videoSeconds" value="15"></label>
+                                    <div class="nt-help">พื้นที่วิดีโอตัวอย่าง · Production
+                                        ต้องมีไฟล์สื่อและตรวจเงื่อนไขฝั่ง Server</div>
+                                </section>
+                            </div>
+                            <aside class="nt-preview-wrap">
+                                <div class="nt-preview-head">
+                                    <h3 class=" page-style-3">ตัวอย่างหน้า Portal</h3><span class="nt-badge neutral"
+                                        id="nt-preview-device-label">Desktop</span>
+                                </div>
+                                <div class="nt-device-selector" aria-label="อุปกรณ์แสดงตัวอย่าง"><button type="button"
+                                        class="nt-button nt-compact" id="nt-device-desktop" aria-pressed="true"><svg
+                                            class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            aria-hidden="true" focusable="false">
+                                            <rect width="20" height="14" x="2" y="3" rx="2"></rect>
+                                            <line x1="8" x2="16" y1="21" y2="21"></line>
+                                            <line x1="12" x2="12" y1="17" y2="21"></line>
+                                        </svg>Desktop</button><button type="button" class="nt-button nt-compact"
+                                        id="nt-device-mobile" aria-pressed="false"><svg class="nt-offline-icon"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20"
+                                            height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                            focusable="false">
+                                            <rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+                                            <path d="M12 18h.01"></path>
+                                        </svg>Mobile</button><button type="button" class="nt-button nt-compact"
+                                        id="nt-preview-expand" aria-pressed="false">ขยาย Preview</button></div>
+                                <div class="nt-row page-style-4"><button type="button" class="nt-button nt-compact"
+                                        id="nt-preview-normal">ปกติ</button><button type="button"
+                                        class="nt-button nt-compact" id="nt-preview-error">แสดง Error</button></div>
+                                <div class="nt-browser-chrome"><span></span><span></span><span></span>
+                                    <div class="nt-browser-url" id="nt-browser-url">portal.example/portal/demo</div>
+                                </div>
+                                <div class="nt-phone nt-desktop-screen" id="nt-phone">
+                                    <div class="nt-public-hero" id="nt-hero">
+                                        <div class="nt-public-logo" id="nt-wordmark">Wi-Fi</div><img
+                                            class="nt-public-logo-img" id="nt-logo-image" alt="Logo ตัวอย่าง Portal"
+                                            hidden><small id="nt-hero-label">NT FREE WIFI</small>
+                                    </div>
+                                    <div class="nt-public-content" id="nt-public-content"></div>
+                                </div>
+                                <div class="nt-status-line"><svg class="nt-offline-icon"
+                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0">
+                                        </path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>ตัวอย่างการแสดงผล · ไม่มีการปล่อยเน็ตจริง</div>
+                            </aside>
+                            <aside class="nt-quick-settings">
+                                <div class="nt-mini-cards">
+                                    <div class="nt-mini-card">
+                                        <h3>ฟังก์ชันการทำงาน</h3><label class="nt-check">SMS / OTP<input type="checkbox"
+                                                data-bind="otp"></label><label class="nt-check">LINE Login<input
+                                                type="checkbox" data-bind="line"></label><label
+                                            class="nt-check">Questionnaire<input type="checkbox"
+                                                data-bind="surveyEnabled"></label><label class="nt-check">Terms &amp;
+                                            Conditions<input type="checkbox" data-bind="termsEnabled"
+                                                checked></label><label class="nt-check">Free WiFi<input type="checkbox"
+                                                data-bind="guest" checked></label>
+                                    </div>
+                                    <div class="nt-mini-card">
+                                        <h3>Walled Garden / MAC</h3>
+                                        <p class="nt-help">จัดการปลายทางก่อน Login และอุปกรณ์ยกเว้นตาม Site</p><button
+                                            type="button" class="nt-button nt-compact"
+                                            data-go="access">จัดการเครือข่าย</button>
+                                    </div>
+                                    <div class="nt-mini-card">
+                                        <h3>Reports</h3>
+                                        <p class="nt-help">Login / Register, Authentication, Traffic และคูปอง</p><button
+                                            type="button" class="nt-button primary nt-compact"
+                                            data-go="reports">เปิดรายงาน</button>
+                                    </div>
+                                </div>
+                            </aside>
+                        </div>
+                    </section>
+                </section>
+                <footer class="nt-footer"><span id="nt-save-help" class="nt-help"></span><button
+                        class="nt-button primary" type="button" id="nt-save">บันทึก Draft</button><button
+                        class="nt-button primary" type="button" id="nt-review">ตรวจความพร้อม</button></footer>
+                <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
+                <div id="nt-review-panel" class="nt-panel" hidden>
+                    <div id="nt-review-results"></div>
+                </div>
+            </main>
+        </div>
+        <div class="nt-app-footer">Wi-Fi Tools · ข้อมูลตัวอย่าง</div>
+    </div>
+</body>
+
+</html>

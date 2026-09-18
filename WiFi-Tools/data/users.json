@@ -1,0 +1,57 @@
+[
+  {
+    "id": "u-admin",
+    "username": "admin",
+    "name": "System Administrator",
+    "email": "admin@example.com",
+    "role": "system_admin",
+    "siteIds": [
+      "a",
+      "b",
+      "c"
+    ],
+    "canExport": true,
+    "canGenerateReports": true,
+    "status": "active"
+  },
+  {
+    "id": "u-site",
+    "username": "siteadmin",
+    "name": "Site Admin A",
+    "email": "siteadmin@example.com",
+    "role": "site_admin",
+    "siteIds": [
+      "a"
+    ],
+    "canExport": true,
+    "canGenerateReports": true,
+    "status": "active"
+  },
+  {
+    "id": "u-view",
+    "username": "viewer",
+    "name": "Site Viewer B",
+    "email": "viewer@example.com",
+    "role": "site_viewer",
+    "siteIds": [
+      "b"
+    ],
+    "canExport": false,
+    "canGenerateReports": false,
+    "status": "active"
+  },
+  {
+    "id": "u-report",
+    "username": "reporter",
+    "name": "Report Viewer A+C",
+    "email": "reporter@example.com",
+    "role": "site_viewer",
+    "siteIds": [
+      "a",
+      "c"
+    ],
+    "canExport": true,
+    "canGenerateReports": true,
+    "status": "active"
+  }
+]

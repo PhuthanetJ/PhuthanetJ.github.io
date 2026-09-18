@@ -1,0 +1,62 @@
+[
+  {
+    "id": "dashboard",
+    "file": "dashboard.html",
+    "title": "Dashboard"
+  },
+  {
+    "id": "ap-sites",
+    "file": "ap-sites.html",
+    "title": "AP by Site"
+  },
+  {
+    "id": "builder",
+    "file": "portal-config.html",
+    "title": "Portal Configuration"
+  },
+  {
+    "id": "reports",
+    "file": "reports.html",
+    "title": "Reports"
+  },
+  {
+    "id": "radius",
+    "file": "radius-policy.html",
+    "title": "RADIUS & Policy"
+  },
+  {
+    "id": "access",
+    "file": "ap-network.html",
+    "title": "Network Configuration"
+  },
+  {
+    "id": "voucher",
+    "file": "free-wifi-coupons.html",
+    "title": "Free WiFi & Coupon"
+  },
+  {
+    "id": "monitor",
+    "file": "monitor-logs.html",
+    "title": "Monitor & Logs"
+  },
+  {
+    "id": "alerts",
+    "file": "alerts.html",
+    "title": "การแจ้งเตือน"
+  },
+  {
+    "id": "users",
+    "file": "users.html",
+    "title": "User"
+  },
+  {
+    "id": "settings",
+    "file": "settings.html",
+    "title": "ตั้งค่าและไฟล์ Config"
+  },
+  {
+    "id": "modules",
+    "file": "modules.html",
+    "title": "โมดูลตามสเปก"
+  }
+]

@@ -1,0 +1,79 @@
+{
+  "format": "wifi-tools-config",
+  "schemaVersion": 2,
+  "version": 1,
+  "state": {
+    "name": "Free Wi-Fi",
+    "template": "Template01",
+    "site": "Demo Site A",
+    "path": "/portal/demo",
+    "buttonColor": "#086cf0",
+    "buttonTextColor": "#ffffff",
+    "shape": "rounded",
+    "guest": true,
+    "member": false,
+    "otp": false,
+    "line": false,
+    "google": false,
+    "facebook": false,
+    "apple": false,
+    "smsProvider": "",
+    "otpTtl": 180,
+    "otpResend": 60,
+    "otpAttempts": 5,
+    "termsEnabled": true,
+    "termsVersion": "draft-1",
+    "termsTh": "ยอมรับเงื่อนไขการใช้งาน Free WiFi",
+    "termsEn": "I accept the Free WiFi terms of use",
+    "surveyEnabled": false,
+    "surveyType": "survey",
+    "question": "คุณใช้ WiFi เพื่อทำกิจกรรมใดเป็นหลัก?",
+    "answers": "ทำงาน,เรียน,ติดต่อสื่อสาร",
+    "correctAnswer": "ทำงาน",
+    "videoEnabled": false,
+    "videoSeconds": 15,
+    "policyName": "Free WiFi Default",
+    "downloadMbps": 20,
+    "uploadMbps": 10,
+    "hours": 1,
+    "quotaGb": 0,
+    "concurrent": 1,
+    "allowedSite": "Demo Site",
+    "vendor": "MikroTik",
+    "model": "",
+    "firmware": "",
+    "controllerMode": "Controller",
+    "voucherMode": "click",
+    "repeatPolicy": "1 ครั้งต่ออุปกรณ์ต่อวัน",
+    "alertEvent": "RADIUS Timeout",
+    "alertThreshold": 5,
+    "alertWindow": 5,
+    "alertChannel": "In-app",
+    "alertRecovery": true
+  },
+  "copy": {
+    "th": {
+      "title": "Free WiFi",
+      "subtitle": "เชื่อมต่ออินเทอร์เน็ตฟรี สำหรับทุกคน",
+      "button": "รับสิทธิ์ใช้งานฟรี",
+      "otp": "รับรหัส OTP",
+      "error": "ไม่สามารถเข้าสู่ระบบได้ กรุณาลองอีกครั้ง"
+    },
+    "en": {
+      "title": "Free WiFi",
+      "subtitle": "Stay connected, wherever you are.",
+      "button": "Get free WiFi",
+      "otp": "Request OTP",
+      "error": "Unable to connect. Please try again."
+    }
+  },
+  "assets": {
+    "logo": "",
+    "banner": "",
+    "background": ""
+  },
+  "lists": {
+    "wg": [],
+    "mac": []
+  }
+}

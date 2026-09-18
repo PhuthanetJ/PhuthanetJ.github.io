@@ -1,0 +1,112 @@
+[
+  {
+    "id": "in-app",
+    "name": "In-app",
+    "fields": [
+      [
+        "group",
+        "Role / กลุ่มผู้รับ",
+        "text"
+      ]
+    ]
+  },
+  {
+    "id": "telegram",
+    "name": "Telegram",
+    "fields": [
+      [
+        "chatId",
+        "Chat / Group ID",
+        "text"
+      ],
+      [
+        "token",
+        "Bot Token",
+        "password"
+      ]
+    ]
+  },
+  {
+    "id": "line",
+    "name": "LINE Messaging API",
+    "fields": [
+      [
+        "channelId",
+        "Channel ID",
+        "text"
+      ],
+      [
+        "targetId",
+        "User / Group ID",
+        "text"
+      ],
+      [
+        "token",
+        "Channel Access Token",
+        "password"
+      ],
+      [
+        "secret",
+        "Channel Secret",
+        "password"
+      ]
+    ]
+  },
+  {
+    "id": "email",
+    "name": "Email / SMTP",
+    "fields": [
+      [
+        "host",
+        "SMTP Host",
+        "text"
+      ],
+      [
+        "port",
+        "SMTP Port",
+        "number"
+      ],
+      [
+        "security",
+        "TLS / STARTTLS",
+        "text"
+      ],
+      [
+        "username",
+        "SMTP Username",
+        "text"
+      ],
+      [
+        "password",
+        "SMTP Password",
+        "password"
+      ],
+      [
+        "from",
+        "From Email",
+        "email"
+      ],
+      [
+        "to",
+        "To Email",
+        "email"
+      ]
+    ]
+  },
+  {
+    "id": "webhook",
+    "name": "Webhook",
+    "fields": [
+      [
+        "url",
+        "Webhook URL",
+        "url"
+      ],
+      [
+        "token",
+        "Authorization Token",
+        "password"
+      ]
+    ]
+  }
+]

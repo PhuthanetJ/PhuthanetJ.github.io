@@ -1,0 +1,17 @@
+[
+  {
+    "id": "system_admin",
+    "name": "System Admin",
+    "description": "จัดการทุกอย่างของระบบและทุก Site"
+  },
+  {
+    "id": "site_admin",
+    "name": "Site Admin",
+    "description": "จัดการทุกอย่างภายใน Site ที่ได้รับมอบหมาย"
+  },
+  {
+    "id": "site_viewer",
+    "name": "Site Viewer",
+    "description": "ดูเฉพาะ Site ที่ได้รับมอบหมาย"
+  }
+]

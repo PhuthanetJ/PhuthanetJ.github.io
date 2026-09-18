@@ -1,0 +1,80 @@
+{
+  "connected": false,
+  "packages": [
+    {
+      "id": "pkg-0",
+      "policyName": "Free WiFi 1 Hour",
+      "userPrefix": "FREE",
+      "usernameFormat": "FREE + 8 digits (ตัวอย่าง)",
+      "packageExpired": "30 วัน (ตัวอย่าง)",
+      "packageType": "Time quota (ตัวอย่าง)",
+      "upload": "10 Mbps",
+      "download": "20 Mbps",
+      "sessionTime": "01:00",
+      "sessionLimit": "1",
+      "idleTimeout": "00:10",
+      "time": "00:00",
+      "dailyTime": "01:00",
+      "weeklyTime": "00:00",
+      "monthlyTime": "00:00",
+      "expiration": "2026-12-31 (ตัวอย่าง)",
+      "price": "0.00 THB",
+      "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
+      "status": "Active",
+      "siteIds": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "id": "pkg-1",
+      "policyName": "Staff Monthly",
+      "userPrefix": "STF",
+      "usernameFormat": "STF + 8 digits (ตัวอย่าง)",
+      "packageExpired": "30 วัน (ตัวอย่าง)",
+      "packageType": "Time quota (ตัวอย่าง)",
+      "upload": "10 Mbps",
+      "download": "20 Mbps",
+      "sessionTime": "01:00",
+      "sessionLimit": "1",
+      "idleTimeout": "00:10",
+      "time": "00:00",
+      "dailyTime": "01:00",
+      "weeklyTime": "00:00",
+      "monthlyTime": "00:00",
+      "expiration": "2026-12-31 (ตัวอย่าง)",
+      "price": "0.00 THB",
+      "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
+      "status": "Active",
+      "siteIds": [
+        "a"
+      ]
+    },
+    {
+      "id": "pkg-2",
+      "policyName": "Visitor Daily",
+      "userPrefix": "VST",
+      "usernameFormat": "VST + 8 digits (ตัวอย่าง)",
+      "packageExpired": "30 วัน (ตัวอย่าง)",
+      "packageType": "Time quota (ตัวอย่าง)",
+      "upload": "10 Mbps",
+      "download": "20 Mbps",
+      "sessionTime": "01:00",
+      "sessionLimit": "1",
+      "idleTimeout": "00:10",
+      "time": "00:00",
+      "dailyTime": "01:00",
+      "weeklyTime": "00:00",
+      "monthlyTime": "00:00",
+      "expiration": "2026-12-31 (ตัวอย่าง)",
+      "price": "0.00 THB",
+      "description": "Snapshot ตัวอย่าง ยังไม่เชื่อม RADIUS Manager",
+      "status": "Active",
+      "siteIds": [
+        "b",
+        "c"
+      ]
+    }
+  ]
+}

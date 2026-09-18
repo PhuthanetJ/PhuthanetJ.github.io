@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Reports | Wi-Fi Tools</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/reports.css">
+    <script defer src="../js/offline-data.js"></script>
+    <script defer src="../js/domain.js"></script>
+    <script defer src="../js/app.js"></script>
+    <script defer src="../js/pages/reports.js"></script>
+</head>
+
+<body>
+    <div id="nt-portal" data-page="reports">
+        <header class="nt-top">
+            <div class="nt-brand">Wi-Fi Tools</div>
+            <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+                    id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
+                    class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
+        </header>
+        <div class="nt-shell">
+            <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a
+                    class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav "
+                    href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav active"
+                    href="reports.html" data-nav="reports">Reports</a><a class="nt-nav " href="radius-policy.html"
+                    data-nav="radius">RADIUS & Policy</a><a class="nt-nav " href="ap-network.html"
+                    data-nav="access">Network Configuration</a><a class="nt-nav " href="free-wifi-coupons.html"
+                    data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="monitor-logs.html"
+                    data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html"
+                    data-nav="alerts">การแจ้งเตือน</a><a class="nt-nav " href="users.html" data-nav="users">User</a><a
+                    class="nt-nav " href="settings.html" data-nav="settings">ตั้งค่าและไฟล์ Config</a><a class="nt-nav "
+                    href="modules.html" data-nav="modules">โมดูลตามสเปก</a></nav>
+            <main class="nt-main">
+                <div class="nt-heading">
+                    <h2>Reports</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
+                </div>
+                <section id="page-content">
+                    <div class="nt-panel">
+                        <h3>รายงานรายวัน</h3>
+                        <div class="wt-grid"><label class="nt-field">Site<select
+                                    id="report-site"></select></label><label class="nt-field">วันที่เริ่ม<input
+                                    id="report-from" type="date" value="2026-09-15"></label><label
+                                class="nt-field">วันที่สิ้นสุด<input id="report-to" type="date"
+                                    value="2026-09-17"></label><label class="nt-field">ประเภท<select id="report-type">
+                                    <option value="login">Login / Register</option>
+                                    <option value="auth">Authentication</option>
+                                    <option value="traffic">Traffic</option>
+                                    <option value="coupon">Coupon</option>
+                                </select></label><label class="nt-field">แสดงผล<select id="report-group">
+                                    <option value="daily">รวมรายวัน</option>
+                                    <option value="site">รายวันแยก Site</option>
+                                </select></label><label class="nt-field">Export<select id="report-format">
+                                    <option value="pdf">PDF ผ่านหน้าพิมพ์</option>
+                                    <option value="csv">CSV</option>
+                                </select></label></div>
+                        <div class="nt-row"><button class="nt-button primary" type="button"
+                                id="report-generate">สร้างรายงาน</button><button class="nt-button primary" type="button"
+                                id="report-export">Export file</button></div>
+                        <p id="report-message" role="status"></p>
+                        <div id="report-output" hidden>
+                            <div id="report-metrics" class="nt-dash-metrics"></div>
+                            <div id="report-chart" class="nt-report-bars"></div>
+                            <div class="nt-table-wrap">
+                                <table>
+                                    <thead id="report-head"></thead>
+                                    <tbody id="report-body"></tbody>
+                                    <tfoot id="report-foot"></tfoot>
+                                </table>
+                            </div>
+                            <p id="report-definition"></p>
+                        </div>
+                    </div>
+                    <div class="nt-panel">
+                        <h3>หน้าปก PDF</h3>
+                        <div class="wt-grid">
+                            <div><label class="nt-field">รูปแบบ<select id="cover-layout">
+                                        <option value="classic">มาตรฐาน</option>
+                                        <option value="executive">ผู้บริหาร</option>
+                                        <option value="image">รูปภาพ</option>
+                                    </select></label><label class="nt-field">ชื่อรายงาน<input id="cover-title"
+                                        type="text" value=""></label><label class="nt-field">หัวข้อรอง<input
+                                        id="cover-subtitle" type="text" value=""></label><label
+                                    class="nt-field">หน่วยงาน<input id="cover-organization" type="text"
+                                        value=""></label><label class="nt-field">สีหลัก<input id="cover-accent"
+                                        type="color" value="#075ac1"></label><label class="nt-field">Logo<input
+                                        id="cover-logo" type="file" value=""></label><label
+                                    class="nt-field">รูปหน้าปก<input id="cover-image" type="file"
+                                        value=""></label><button class="nt-button primary" type="button"
+                                    id="cover-clear">ล้างรูปภาพ</button></div>
+                            <div id="cover-preview" class="wt-cover-preview"></div>
+                        </div>
+                    </div>
+                    <div class="nt-panel">
+                        <h3>ส่งรายงานทาง Email รายเดือน</h3>
+                        <form id="schedule-form">
+                            <div class="wt-grid"><label class="nt-field">ชื่อรายการ<input id="schedule-name" type="text"
+                                        value="รายงานประจำเดือน"></label><label class="nt-field">ส่งวันที่ 1–28<input
+                                        id="schedule-day" type="number" value="1"></label><label class="nt-field">เวลา
+                                    (Asia/Bangkok)<input id="schedule-time" type="time" value="08:00"></label><label
+                                    class="nt-field">Email ผู้รับ (comma คั่น)<input id="schedule-emails" type="text"
+                                        value=""></label><label class="nt-field">รูปแบบไฟล์<select id="schedule-format">
+                                        <option value="pdf">PDF พร้อมหน้าปก</option>
+                                        <option value="csv">CSV</option>
+                                    </select></label></div>
+                            <p>Site ที่รวมในรายงาน</p>
+                            <div id="schedule-sites" class="wt-checks"></div><label class="nt-check"><input
+                                    type="checkbox" id="schedule-enabled" checked>เปิดเมื่อเชื่อม Scheduler</label>
+                            <p class="nt-help">ใช้ประเภทรายงานและหน้าปกด้านบน รายงานครอบคลุมเดือนปฏิทินก่อนหน้า</p>
+                            <button type="submit" class="nt-button primary" id="schedule-save">บันทึกรายเดือน</button>
+                            <p id="schedule-message" role="status"></p>
+                        </form>
+                        <p class="nt-notice">บันทึกเฉพาะค่าตั้ง · ยังไม่เชื่อม Scheduler / SMTP และยังไม่ส่ง Email</p>
+                        <div class="nt-table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>รายการ / Site</th>
+                                        <th>กำหนดส่ง</th>
+                                        <th>Email</th>
+                                        <th>ไฟล์ / หน้าปก</th>
+                                        <th>สถานะ</th>
+                                        <th>จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schedule-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
+                <div id="nt-review-panel" class="nt-panel" hidden>
+                    <div id="nt-review-results"></div>
+                </div>
+            </main>
+        </div>
+        <div class="nt-app-footer">Wi-Fi Tools · ข้อมูลตัวอย่าง</div>
+    </div>
+</body>
+
+</html>

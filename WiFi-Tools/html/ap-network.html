@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Network Configuration | Wi-Fi Tools</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ap-network.css">
+    <script defer src="../js/offline-data.js"></script>
+    <script defer src="../js/domain.js"></script>
+    <script defer src="../js/app.js"></script>
+    <script defer src="../js/pages/ap-network.js"></script>
+</head>
+
+<body>
+    <div id="nt-portal" data-page="access">
+        <header class="nt-top">
+            <div class="nt-brand">Wi-Fi Tools</div>
+            <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+                    id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
+                    class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
+        </header>
+        <div class="nt-shell">
+            <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a
+                    class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav "
+                    href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav "
+                    href="reports.html" data-nav="reports">Reports</a><a class="nt-nav " href="radius-policy.html"
+                    data-nav="radius">RADIUS & Policy</a><a class="nt-nav active" href="ap-network.html"
+                    data-nav="access">Network Configuration</a><a class="nt-nav " href="free-wifi-coupons.html"
+                    data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="monitor-logs.html"
+                    data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html"
+                    data-nav="alerts">การแจ้งเตือน</a><a class="nt-nav " href="users.html" data-nav="users">User</a><a
+                    class="nt-nav " href="settings.html" data-nav="settings">ตั้งค่าและไฟล์ Config</a><a class="nt-nav "
+                    href="modules.html" data-nav="modules">โมดูลตามสเปก</a></nav>
+            <main class="nt-main">
+                <div class="nt-heading">
+                    <h2>Network Configuration</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
+                </div>
+                <section id="page-content">
+                    <section id="nt-view-access" class="nt-view">
+                        <div class="nt-panel">
+                            <h3>Vendor Adapter</h3>
+                            <div class="nt-form-grid"><label class="nt-field">ยี่ห้อ<select data-bind="vendor">
+                                        <option>MikroTik</option>
+                                        <option>EnGenius</option>
+                                        <option>Ruijie</option>
+                                        <option>Ruckus</option>
+                                        <option>TP-Link Omada</option>
+                                        <option>Grandstream</option>
+                                        <option>Cisco</option>
+                                        <option>Aruba</option>
+                                        <option>Ubiquiti UniFi</option>
+                                        <option>Fortinet</option>
+                                        <option>Generic Gateway</option>
+                                    </select></label><label class="nt-field">รุ่น<input data-bind="model"
+                                        placeholder="ระบุรุ่น AP / Controller"></label><label
+                                    class="nt-field">Firmware<input data-bind="firmware"
+                                        placeholder="ระบุเวอร์ชัน"></label><label
+                                    class="nt-field">รูปแบบการจัดการ<select data-bind="controllerMode">
+                                        <option>Controller</option>
+                                        <option>Cloud</option>
+                                        <option>Standalone</option>
+                                    </select></label></div><span
+                                class="nt-badge pending">ยังไม่ได้รับรองความเข้ากันได้</span>
+                            <div class="nt-help page-style-0">ต้องตรวจ Redirect, Authorize, Accounting, Timeout, Walled
+                                Garden และ MAC Bypass แยกแต่ละความสามารถ</div>
+                        </div>
+                        <div class="nt-panel">
+                            <h3>Walled Garden</h3><label class="nt-field">Domain / IP / CIDR<input id="nt-wg-input"
+                                    placeholder="portal.example"></label><label class="nt-field">เหตุผล<input
+                                    id="nt-wg-reason"
+                                    placeholder="หน้า Portal / สื่อที่ต้องเปิดก่อน Login"></label><button
+                                class="nt-button" type="button" id="nt-wg-add">เพิ่มรายการใน Draft</button>
+                            <div id="nt-wg-table" class=" page-style-1"></div>
+                            <div class="nt-help">ให้สิทธิ์เฉพาะปลายทางที่ Client ต้องใช้จริง ส่วน SMS API ที่ Server
+                                เรียก ไม่จำเป็นต้องเปิดให้ Client</div>
+                        </div>
+                        <div class="nt-panel">
+                            <h3>Bypassed MAC</h3>
+                            <div class="nt-form-grid"><label class="nt-field">MAC Address<input id="nt-mac-input"
+                                        placeholder="02:00:00:00:00:01"></label><label class="nt-field">วันหมดอายุ<input
+                                        id="nt-mac-expiry" type="date"></label></div><label
+                                class="nt-field">เหตุผล<input id="nt-mac-reason"
+                                    placeholder="อุปกรณ์ที่ได้รับสิทธิ์ยกเว้น"></label><button class="nt-button"
+                                type="button" id="nt-mac-add">เพิ่ม MAC ใน Draft</button>
+                            <div id="nt-mac-table" class=" page-style-2"></div>
+                        </div>
+                    </section>
+                </section>
+                <footer class="nt-footer"><span id="nt-save-help" class="nt-help"></span><button
+                        class="nt-button primary" type="button" id="nt-save">บันทึก Draft</button><button
+                        class="nt-button primary" type="button" id="nt-review">ตรวจความพร้อม</button></footer>
+                <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
+                <div id="nt-review-panel" class="nt-panel" hidden>
+                    <div id="nt-review-results"></div>
+                </div>
+            </main>
+        </div>
+        <div class="nt-app-footer">Wi-Fi Tools · ข้อมูลตัวอย่าง</div>
+    </div>
+</body>
+
+</html>
