@@ -6,10 +6,21 @@
     const base = new URL('../', location.href).href, key = 'wifi-tools:v2:' + base, prefix = 'WIFI_TOOLS_DEMO:';
     NT_DATA.sites = sites; // Compatibility alias; RADIUS Manager Site is the source.
     const portalPage = ['builder', 'settings'].includes(page);
+    // UI-only division selector. Real site-to-division mappings have not yet been provided.
+    const divisions = [
+        ['all', 'ALL'],
+        ['bangkok-metro', 'กรุงเทพและปริมณฑล'],
+        ['central', 'ภาคกลาง'],
+        ['east', 'ภาคตะวันออก'],
+        ['north', 'ภาคเหนือ'],
+        ['northeast', 'ภาคตะวันออกเฉียงเหนือ'],
+        ['south', 'ภาคใต้']
+    ];
     const configs = {}; for (const site of NT_DATA.sites) { configs[site.id] = D.clone(NT_DATA.config); configs[site.id].state.site = site.name; configs[site.id].state.path = '/portal/site-' + site.id; configs[site.id].bindings = P.defaults(site.id, sites, packages); }
-    let db = { schema: 2, key, updatedAt: 0, session: null, currentSite: 'a', portalSelections: {}, configs, users: D.clone(NT_DATA.users), channels: {}, covers: {}, coupons: [], schedules: [], reportDrafts: {} };
+    let db = { schema: 2, key, updatedAt: 0, session: null, currentSite: 'a', currentDivision: 'all', portalSelections: {}, configs, users: D.clone(NT_DATA.users), channels: {}, covers: {}, coupons: [], schedules: [], reportDrafts: {} };
     const candidates = []; try { const x = localStorage.getItem(key); if (x) candidates.push(JSON.parse(x)); } catch (_) { } try { if (window.name.startsWith(prefix)) candidates.push(JSON.parse(window.name.slice(prefix.length))); } catch (_) { }
     candidates.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); const previous = candidates.find(x => x.key === key && x.schema === 2 && x.configs && Array.isArray(x.users)); if (previous) db = Object.assign(db, previous);
+    if (!divisions.some(([id]) => id === db.currentDivision)) db.currentDivision = 'all';
     // Existing drafts and JSON exports predate the full terms body fields.
     const termsBodyKeys = ['termsBodyTh', 'termsBodyEn'];
     for (const [id, saved] of Object.entries(db.configs)) {
@@ -67,6 +78,16 @@
     }
     function apply(doc) { const next = parseConfig(doc); config.bindings = next.bindings; Object.assign(state, next.state); Object.assign(copy.th, next.copy.th); Object.assign(copy.en, next.copy.en); Object.assign(assets, next.assets); lists.wg = next.lists.wg; lists.mac = next.lists.mac; lists.questionnaires = next.lists.questionnaires; lists.portalQuestionnaireIds = next.lists.portalQuestionnaireIds; persist(); syncFields(); loadListeners.forEach(f => f()); }
     function download(filename, text, mime) { if (!can('export')) return toast('ไม่มีสิทธิ์ Export'); const url = URL.createObjectURL(new Blob([text], { type: mime })), a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); }
+    function fillDivisions(el) {
+        if (!el) return;
+        el.innerHTML = divisions.map(([id, name]) => '<option value="' + esc(id) + '">' + esc(name) + '</option>').join('');
+        el.value = db.currentDivision;
+    }
+    function selectDivision(id) {
+        if (!divisions.some(([value]) => value === id)) return toast('ไม่พบส่วนงานที่เลือก');
+        db.currentDivision = id;
+        persist();
+    }
     function fillSites(el, all = false) { el.innerHTML = (all ? '<option value="all">ทุก Site ตามสิทธิ์</option>' : '') + NT_DATA.sites.filter(s => allowedIds().includes(s.id)).map(s => '<option value="' + s.id + '">' + esc(s.name) + '</option>').join(''); el.value = all ? 'all' : currentSite; }
     function portalChoices(siteId) { return P.choices(db.configs, siteId, allowedIds()); }
     function portalPathChoices() { return P.pathChoices(db.configs, allowedIds()); }
@@ -77,13 +98,13 @@
     function choosePortal(siteId, portalId) { if (!portalChoices(siteId).some(c => c.id === portalId)) throw Error('ไม่มีสิทธิ์เลือก Site / Portal นี้'); db.currentSite = siteId; db.portalSelections[siteId] = portalId; persist(); location.reload(); }
     function setBindings(value) { if (!can('editSite')) throw Error('ไม่มีสิทธิ์แก้ไข Portal ร่วมในทุก Site'); const next = P.normalize(value, { owner: currentPortalId, sites: NT_DATA.sites, packages, allowed: allowedIds() }); if (!next.siteIds.includes(currentSite)) throw Error('เปลี่ยนไป Site เจ้าของ Config ก่อนนำ Site ที่กำลังเปิดออก'); config.bindings = next; changed(); }
     function selectSite(id) { if (!allowedIds().includes(id)) return toast('ไม่มีสิทธิ์ใน Site'); db.currentSite = id; persist(); location.reload(); }
-    window.NT = { q, qa, on, esc, db, user, getUser, state, copy, assets, lists, currentSite, currentPortalId, bindings: () => config.bindings, setBindings, portalChoices, portalPathChoices, choosePortalPath, choosePortal, can, allowedIds, allowedSites: () => NT_DATA.sites.filter(s => allowedIds().includes(s.id)), siteName, fillSites, selectSite, changed, syncFields, toast, validate, download, snapshot, parseConfig, persist, storageStatus: () => ({ ...storageResult }), onChange: f => changeListeners.push(f), onLoad: f => loadListeners.push(f) };
+    window.NT = { q, qa, on, esc, db, user, getUser, state, copy, assets, lists, currentSite, currentPortalId, bindings: () => config.bindings, setBindings, portalChoices, portalPathChoices, choosePortalPath, choosePortal, can, allowedIds, allowedSites: () => NT_DATA.sites.filter(s => allowedIds().includes(s.id)), siteName, fillSites, selectSite, divisions, fillDivisions, selectDivision, currentDivision: () => db.currentDivision, changed, syncFields, toast, validate, download, snapshot, parseConfig, persist, storageStatus: () => ({ ...storageResult }), onChange: f => changeListeners.push(f), onLoad: f => loadListeners.push(f) };
     if (page === 'login' || page === 'print') return;
     if (!P.canManage(config.bindings, allowedIds())) {
         const main = q('#page-content'); if (main) { const notice = document.createElement('p'); notice.className = 'nt-notice'; notice.textContent = 'Config นี้ใช้ร่วมกับ Site นอกสิทธิ์ของคุณ การแก้ไขต้องใช้ผู้ดูแลที่มีสิทธิ์ครบทุก Site'; main.prepend(notice); }
     }
-    fillSites(q('#wt-current-site')); q('#wt-current-user').textContent = user.name + ' · ' + NT_DATA.roles.find(r => r.id === user.role).name;
-    on('#wt-current-site', 'change', e => selectSite(e.target.value)); on('#wt-logout', 'click', logout);
+    fillDivisions(q('#wt-current-division')); q('#wt-current-user').textContent = user.name + ' · ' + NT_DATA.roles.find(r => r.id === user.role).name;
+    on('#wt-current-division', 'change', e => selectDivision(e.target.value)); on('#wt-logout', 'click', logout);
     qa('a[data-nav="users"]').forEach(a => a.hidden = !can('users'));
     syncFields(); status();
     qa('[data-bind]').forEach(el => el.addEventListener('input', () => { if (!can('editSite')) return syncFields(); state[el.dataset.bind] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; syncFields(); changed(); }));

@@ -17,6 +17,26 @@
 
 ตรวจโครงสร้างไฟล์และทดสอบตรรกะเมนูมือถือ รวมเปิด/ปิดเมนู, Escape, การวนโฟกัส, เปลี่ยนความกว้างจอ และ Role ที่ซ่อนเมนูด้วย DOM จำลอง ยังไม่ได้ทดสอบการแสดงผลด้วย Browser หรือมือถือจริงในสภาพแวดล้อมนี้
 
+## V011 — ส่วนงาน (ตัวเลือกบน Header)
+
+- เปลี่ยน Header จาก `Site ที่ตั้งค่า` เป็น **ส่วนงาน** ทุกหน้าที่มี Header รวมถึงหน้าตั้งค่า
+- ตัวเลือก: `ALL` (ค่าเริ่มต้น), `กรุงเทพและปริมณฑล`, `ภาคกลาง`, `ภาคตะวันออก`, `ภาคเหนือ`, `ภาคตะวันออกเฉียงเหนือ`, `ภาคใต้`
+- เก็บค่าที่เลือกใน Draft ของ Browser เพื่อให้เลือกค้างไว้เมื่อเปลี่ยนหน้า; ข้อมูล V010 เดิมที่ไม่มีค่าจะเริ่มต้น `ALL`
+- **ขอบเขต:** เป็นตัวเลือกส่วนงานใน UI เท่านั้น เพราะข้อมูลตัวอย่าง `radius-sites.json` มีเพียง Demo Site A/B/C ไม่มีฟิลด์ระบุส่วนงาน/ภูมิภาค จึงยังไม่กรอง Dashboard, Reports, สิทธิ์ หรือ Config ตามภูมิภาค และไม่ได้เปลี่ยน Site ที่กำลังแก้ไข การกรองจริงต้องกำหนดความสัมพันธ์ระหว่าง Site กับส่วนงานและแหล่งข้อมูลจริงก่อน
+
+## V013 — RADIUS & Policy → NAS (Offline CRUD)
+
+- เพิ่มแท็บ **NAS** ต่อจาก Site และ Package; Site/Package ยังเป็น Snapshot อ่านอย่างเดียวตามเดิม
+- ตาราง NAS แสดง **Name/Host, Shortname, Secret (แสดง •••••••• เท่านั้น), Server** พร้อมปุ่ม **แก้ไข/ลบ** และค้นหา
+- ปุ่ม **เพิ่ม NAS** เปิดฟอร์มแปดพารามิเตอร์: Name/Host, Shortname, Type, Ports, Secret, Server, Community, Description
+- ต้องกรอก Name/Host, Shortname, Secret สำหรับรายการใหม่; แก้ไขโดยเว้น Secret ว่างจะรักษาค่าเดิม กรอกใหม่เพื่อเปลี่ยนค่าเดิม
+- ตรวจ Name/Host และ Shortname ไม่ซ้ำ, Ports (ถ้ากรอก) เป็นเลข 1–65535 คั่น comma, ความยาวข้อความ และยืนยันก่อนลบ
+- ต้นแบบให้ **System Admin** เข้าถึงแท็บ NAS; บัญชีอื่นจะไม่อ่าน/แสดงข้อมูล NAS ผ่านหน้าจอ แต่การตรวจสิทธิ์ที่ Browser **ไม่ใช่ระบบ Security สำหรับ Production**
+- NAS Draft เริ่มต้นว่างจาก `data/radius-nas.json` และถูกบันทึกแยกใน `localStorage` ของ Browser นี้ โดยไม่ได้ส่งไป RADIUS Manager และไม่ได้รวมใน Portal Config Export หรือ `window.name`
+- **ข้อควรระวังด้านความปลอดภัย:** `localStorage` ไม่เข้ารหัสและผู้ใช้ Browser/เครื่องเดียวกันอาจอ่าน Secret ได้ ต้องใช้ **Secret จำลองเท่านั้น** ห้ามกรอก RADIUS Secret จริง ก่อนใช้ Production ต้องพัฒนา Backend, RBAC ฝั่ง Server, การจัดเก็บ Secret ที่ปลอดภัย, API และ Audit Log ตาม RADIUS Manager รุ่นจริง
+- หาก Browser ไม่อนุญาต `localStorage` หรือข้อมูลเก่าอ่านไม่ออก ปิดการแก้ไข NAS และแสดงเหตุผล ไม่เขียนทับข้อมูลที่อ่านไม่ออก
+- ไฟล์เกี่ยวข้อง: `html/radius-policy.html`, `js/pages/radius-policy.js`, `js/pages/radius-nas.js`, `js/nas-model.js`, `css/radius-policy.css`, `data/radius-nas.json`, `js/offline-data.js`, `tests/nas.test.js`
+
 ## เริ่มใช้งาน
 
 แตก ZIP ทั้งหมด แล้วเปิด `index.html` ด้วย Chrome หรือ Edge ไม่ต้องติดตั้ง Node.js หรือ Web Server
@@ -188,3 +208,34 @@ Config schemaVersion 7 เพิ่ม `area`, `clickable`, `action` และ `
 หาก GPU ใช้เครื่องจริงแยก จะเป็น 11 VM + 1 GPU Physical Server ไม่ใช่ 12 VM + เครื่องเพิ่มอีกหนึ่ง ยอด vCPU ไม่ใช่จำนวน Physical core ระบบตัวอย่างยังไม่รัน AI หรือ Backup จริง
 
 ข้อมูลอยู่ใน `data/server-plan.json` และ `data/modules.json`; แก้แล้วรัน `node scripts/build-offline-data.js` อัปเดตไฟล์ออฟไลน์
+
+## V014 — RADIUS & Policy → Site / Package (Offline CRUD)
+
+- แท็บ **Site**: เพิ่ม / แก้ไข / ลบ Site Draft โดยใช้ Name, VLAN ID (1–4094 หรือว่าง), Location, Concurrent, Description และเลือก Allow Package แบบ checkbox; ดู Allow Package ของ Site ได้เหมือนเดิม
+- แท็บ **Package**: เพิ่ม / แก้ไข / ลบ Package Draft พร้อมพารามิเตอร์ 18 ช่องจากรายละเอียด Package เดิม; แก้ไขชื่อ Package ซ้ำไม่ได้
+- หากลบ Package ที่อ้างอิงใน Allow Package ของ Site Draft จะมีข้อความยืนยันบอกจำนวน Site ที่ได้รับผล และลบความสัมพันธ์ภายใน Draft เท่านั้น
+- เฉพาะ System Admin ในต้นแบบเท่านั้นที่เห็นปุ่มจัดการและโหลด Draft; ระบบสิทธิ์ฝั่ง Browser นี้ไม่ใช่ Backend authorization สำหรับ Production
+- เก็บข้อมูลลง `localStorage` คีย์ `wifi-tools:radius-catalog-demo:v1:<base URL>`; เริ่มจากชุดข้อมูลตัวอย่าง แล้วบันทึก snapshot แยกของเมนู RADIUS & Policy เพื่อ **ไม่เปลี่ยน Portal Configuration, Dashboard, รายชื่อ Site / Role ส่วนอื่น หรือ RADIUS จริง**. การแก้ไขใหม่จะคงอยู่เฉพาะ Browser/Origin/Path เดิมเท่านั้น ถ้าต้องการให้เชื่อมทุกเมนูต้องออกแบบ data source, migration, RBAC และ API ของ RADIUS Manager เพิ่ม ไม่ใช่ความสามารถ V014
+- NAS CRUD ของ V013 ยังอยู่เหมือนเดิมและใช้คีย์แยก; ไม่มีการอัปโหลด Secret จริงไปที่ใด
+- การตรวจสอบ: Node automated tests + `node --check` ผ่าน; ลองเปิด Chromium ทั้ง file:// และ localhost แล้วได้รับ ERR_BLOCKED_BY_ADMINISTRATOR จากสภาพแวดล้อม จึงยังไม่ยืนยันผล Browser UI จริง
+
+## V015 — RADIUS & Policy → Package: ตารางและพารามิเตอร์
+
+- แท็บ Package แสดงตาราง **Status, Name, Prefix Accounts, Created Date** (Prefix Accounts ใช้ค่าจาก User Prefix เดิม ไม่ใช่จำนวน Account) กดชื่อในตารางเพื่อเลือกดูรายละเอียด/แก้ไข/ลบ
+- `Created Date` ของ Package ที่เพิ่มใหม่จะบันทึกเวลาจริงขณะสร้างใน Browser และเก็บไว้เมื่อแก้ไข ส่วนข้อมูลตัวอย่างและ Draft V014 ที่ไม่ได้เก็บวันที่สร้างจะแสดง `—` รวมถึงหลังแก้ไข ไม่แต่งวันที่ย้อนหลัง
+- ฟอร์ม Package Type เปลี่ยนเป็น Dropdown **Prepaid / Postpaid**; ฟอร์ม Expiration เป็น **1st Login / Specified Date / Unlimited**; เลือก Specified Date จะแสดงช่องวันหมดอายุและบังคับเลือกวันที่จริง เลือกอย่างอื่นจะซ่อนช่องและล้างวันที่
+- โหลด Draft V014 ที่บันทึกไว้ใน Browser ได้โดยไม่แปลงข้อความ Package Type/Expiration เดิมโดยพลการ หากต้องการแก้ไข Package เดิม ต้องเลือกสองฟิลด์ใหม่จาก Dropdown ก่อนบันทึก
+- CRUD ยังบันทึกใน `localStorage` แยกจาก Portal Configuration / RADIUS จริง ไม่เรียก Backend หรือเปลี่ยนข้อมูล Production; บัญชี System Admin เป็นการจำลองสิทธิ์ใน Browser ไม่ใช่ RBAC Production
+- ไฟล์ที่เปลี่ยน: `html/radius-policy.html`, `js/pages/radius-policy.js`, `js/pages/radius-catalog.js`, `js/radius-catalog-model.js`, `css/radius-policy.css`, `tests/radius-catalog.test.js`, `README.md`, `START-HERE.txt`
+- ทดสอบ Node Automated Tests และตรวจ Syntax/JSON; การเปิด Browser จริงในสภาพแวดล้อมนี้ถูกบล็อก (`ERR_BLOCKED_BY_ADMINISTRATOR`) จึงไม่อ้างว่าทดสอบ UI จริงแล้ว
+
+
+### V016 — RADIUS & Policy / Package: Expiration 1st Login
+- เมื่อเลือก `1st Login` แสดงช่อง `Days` (จำนวนเต็ม 1–36500; เมื่อผู้ใช้เลือกโหมดนี้ใหม่ ค่าในฟอร์มเริ่มต้น 30) และบันทึกเป็น `expirationDays` ใน Offline Draft
+- `Specified Date` แสดงเฉพาะวันที่ และ `Unlimited` ไม่แสดงวันที่หรือ Days; เปลี่ยนโหมดแล้วเคลียร์ฟิลด์ที่ไม่เกี่ยวข้อง
+- Draft จาก V015 ยังอ่านได้โดยไม่เติม Days เอง หากแก้ Package เดิมที่เลือก 1st Login แต่ไม่มี Days ต้องกรอกก่อนบันทึก
+- Days หมายถึงช่วงเวลานับตั้งแต่ Login สำเร็จครั้งแรกตามความต้องการ UI เท่านั้น ยังไม่เชื่อมระบบยืนยันตัวตน/บังคับ Expiration บน RADIUS จริง
+
+### V017 — RADIUS & Policy: ลำดับแท็บ
+- แสดงแท็บตามลำดับ **NAS → Package → Site** และเข้าเมนูตามปกติให้แสดง NAS เป็นค่าเริ่มต้น
+- ลิงก์เจาะจง `?package=...` ยังคงเปิดแท็บ Package ได้; ไม่มีการแก้ไข NAS, Package, Site Draft หรือระบบ RADIUS จริง

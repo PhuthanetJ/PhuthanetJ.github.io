@@ -2,14 +2,14 @@
 const test = require('node:test'), assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../js/pages/radius-policy.js'), 'utf8');
 const html = fs.readFileSync(path.join(__dirname, '../html/radius-policy.html'), 'utf8');
-function page(allowed = ['a', 'b', 'c'], mutate = () => { }) {
+function page(allowed = ['a', 'b', 'c'], mutate = () => { }, search = '') {
     const data = {}; for (const name of ['radius-sites', 'radius-packages']) data[name] = JSON.parse(fs.readFileSync(path.join(__dirname, '../data', name + '.json'), 'utf8'));
     mutate(data);
     const nodes = new Map();
     for (const [, id] of html.matchAll(/id="([^"]+)"/g)) {
         const listeners = {};
         nodes.set('#' + id, {
-            value: '', innerHTML: '', textContent: '', hidden: id === 'radius-panel-packages', open: false, focused: false,
+            value: '', innerHTML: '', textContent: '', hidden: ['radius-panel-packages', 'radius-panel-sites'].includes(id), open: false, focused: false,
             classList: { toggle() { } }, setAttribute() { }, scrollIntoView() { }, focus() { this.focused = true; },
             addEventListener(type, fn) { (listeners[type] ??= []).push(fn); },
             emit(type, event = {}) { for (const fn of listeners[type] || []) fn(event); },
@@ -19,13 +19,13 @@ function page(allowed = ['a', 'b', 'c'], mutate = () => { }) {
     }
     const q = s => { assert.ok(nodes.has(s), 'Selector exists in real HTML: ' + s); return nodes.get(s); };
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const c = { NT: { q, esc, allowedIds: () => allowed, can: () => allowed.length === 3, currentSite: allowed[0] }, NT_DATA: data, URLSearchParams, location: { search: '' } };
+    const c = { NT: { q, esc, allowedIds: () => allowed, can: () => allowed.length === 3, currentSite: allowed[0] }, NT_DATA: data, URLSearchParams, location: { search } };
     c.window = c; vm.runInNewContext(source, c);
     function click(container, attr, id) { const button = { dataset: { [attr]: id }, focused: false, focus() { this.focused = true; } }; q(container).emit('click', { target: { closest: () => button } }); return button; }
     return { q, click };
 }
 test('Allow Package opens visibly for the default Site and can reopen after closing', () => {
-    const { q, click } = page(), button = click('#radius-site-rows', 'radiusSite', 'a');
+    const { q, click } = page(); q('#radius-tab-sites').emit('click'); const button = click('#radius-site-rows', 'radiusSite', 'a');
     assert.equal(q('#radius-allow-panel').open, true);
     assert.match(q('#radius-allow-title').textContent, /Demo Site A/);
     assert.match(q('#radius-allow-rows').innerHTML, /Free WiFi 1 Hour/);
@@ -61,4 +61,32 @@ test('Empty, missing and unresolved allow lists show an explicit message', () =>
         const { q, click } = page(['a'], data => data['radius-sites'].sites[0].allowPackages = value);
         click('#radius-site-rows', 'radiusSite', 'a'); assert.equal(q('#radius-allow-panel').open, true); assert.match(q('#radius-allow-rows').innerHTML, message);
     }
+});
+
+
+test('V017: tabs render NAS, Package, Site in that order and NAS is the default', () => {
+    const tablist = html.match(/<div class="nt-tabs"[^>]*>([\s\S]*?)<\/div>/)[1];
+    assert.deepEqual([...tablist.matchAll(/id="radius-tab-(nas|packages|sites)"/g)].map(match => match[1]), ['nas', 'packages', 'sites']);
+    assert.match(tablist, /class="nt-tab active" role="tab" id="radius-tab-nas"[\s\S]*?aria-selected="true"/);
+    const { q } = page();
+    assert.equal(q('#radius-panel-nas').hidden, false);
+    assert.equal(q('#radius-panel-packages').hidden, true);
+    assert.equal(q('#radius-panel-sites').hidden, true);
+    q('#radius-tab-packages').emit('click');
+    assert.equal(q('#radius-panel-packages').hidden, false);
+    assert.equal(q('#radius-panel-nas').hidden, true);
+    q('#radius-tab-sites').emit('click');
+    assert.equal(q('#radius-panel-sites').hidden, false);
+    assert.equal(q('#radius-panel-packages').hidden, true);
+    q('#radius-tab-nas').emit('click');
+    assert.equal(q('#radius-panel-nas').hidden, false);
+    assert.equal(q('#radius-panel-sites').hidden, true);
+});
+
+test('V017: package deep link still switches to Package rather than the default NAS', () => {
+    const { q } = page(['a', 'b', 'c'], () => {}, '?package=pkg-2');
+    assert.equal(q('#radius-panel-packages').hidden, false);
+    assert.equal(q('#radius-panel-nas').hidden, true);
+    assert.equal(q('#radius-panel-sites').hidden, true);
+    assert.equal(q('#radius-package').value, 'pkg-2');
 });

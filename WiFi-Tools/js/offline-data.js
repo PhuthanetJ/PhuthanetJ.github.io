@@ -1102,6 +1102,9 @@ window.NT_DATA = {
       ]
     }
   ],
+  "radius-nas": {
+    "nas": []
+  },
   "radius-packages": {
     "connected": false,
     "packages": [

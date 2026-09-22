@@ -72,3 +72,53 @@
     min-height: 44px;
     font-weight: 600
 }
+/* V013 NAS tab: responsive offline draft editor. */
+#nt-portal .wt-nas-actions,
+#nt-portal .wt-nas-row-actions,
+#nt-portal .wt-nas-form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+#nt-portal .wt-nas-form-actions { justify-content: flex-end; margin-top: 15px; }
+#nt-portal .wt-nas-row-actions { flex-wrap: nowrap; }
+#nt-portal .wt-nas-dialog { width: min(760px, calc(100vw - 28px)); max-height: min(88vh, 900px); }
+#nt-portal .wt-nas-dialog .nt-form-grid { margin: 15px 0 12px; }
+#nt-portal .wt-nas-secret { letter-spacing: .14em; white-space: nowrap; }
+#nt-portal .wt-nas-required { color: #b42318; }
+#nt-portal .wt-nas-error { color: #a20e18; background: #fff0f0; border-radius: 5px; padding: 9px; }
+#nt-portal .wt-nas-delete { color: #a20e18; border-color: #e7b3b8; }
+#nt-portal #radius-panel-nas table { min-width: 580px; }
+@media (max-width: 780px) {
+    #nt-portal .wt-nas-dialog { padding: 15px; }
+    #nt-portal .wt-nas-dialog .nt-form-grid { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .wt-nas-row-actions { flex-wrap: wrap; }
+}
+
+/* V014: Site / Package draft CRUD; mobile forms use existing responsive grid. */
+#nt-portal .wt-catalog-dialog { width: min(780px, calc(100vw - 28px)); max-height: min(88vh, 950px); }
+#nt-portal .wt-catalog-dialog .nt-form-grid { margin: 14px 0; }
+#nt-portal .wt-catalog-package-actions { margin: 12px 0; }
+#nt-portal .wt-catalog-allow { border: 1px solid #b6cce5; border-radius: 9px; margin: 14px 0; padding: 12px; }
+#nt-portal .wt-catalog-allow legend { font-weight: 600; padding: 0 5px; }
+#nt-portal .wt-catalog-allow label { display: flex; align-items: center; gap: 9px; padding: 7px 3px; }
+#nt-portal #radius-panel-sites table { min-width: 870px; }
+@media (max-width: 780px) {
+    #nt-portal .wt-catalog-dialog { padding: 15px; }
+    #nt-portal .wt-catalog-dialog .nt-form-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* V015: Package summary and conditional expiration date */
+#nt-portal .wt-package-list { min-width: 650px; }
+#nt-portal .wt-package-list th { white-space: nowrap; }
+#nt-portal .wt-package-detail-picker { margin-top: 18px; }
+#nt-portal #radius-package-expiration-date-field[hidden] { display: none; }
+#nt-portal #radius-package-expiration-date { min-width: 0; }
+@media (max-width: 780px) { #nt-portal .wt-package-list { min-width: 570px; } }
+
+/* V016: compact first-login expiration Days control; follows responsive form grid. */
+#nt-portal #radius-package-expiration-days-field[hidden] { display: none; }
+#nt-portal .wt-expiration-days-control { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#nt-portal .wt-expiration-days-control input { width: min(100%, 145px); min-width: 0; }
+#nt-portal .wt-expiration-days-control span { white-space: nowrap; }

@@ -25,7 +25,7 @@
   <div id="nt-portal" data-page="builder">
     <header class="nt-top">
       <div class="nt-brand">Wi-Fi Tools</div>
-      <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+      <div class="wt-header"><label>ส่วนงาน <select id="wt-current-division" title="ตัวเลือกส่วนงาน (ข้อมูลตัวอย่าง ยังไม่ผูกกับ Site)"></select></label><span
           id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
           class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
     </header>
@@ -90,10 +90,10 @@
               </div>
             </div>
             <div class="nt-tabs" role="tablist" aria-label="ส่วนตั้งค่า Portal">
-              <button class="nt-tab active" type="button" role="tab" id="nt-tab-design" aria-selected="true"
-                aria-controls="nt-form-design" data-tab="design">ดีไซน์</button>
-              <button class="nt-tab" type="button" role="tab" id="nt-tab-general" aria-selected="false"
+              <button class="nt-tab active" type="button" role="tab" id="nt-tab-general" aria-selected="true"
                 aria-controls="nt-form-general" data-tab="general">ทั่วไป &amp; Path</button>
+              <button class="nt-tab" type="button" role="tab" id="nt-tab-design" aria-selected="false"
+                aria-controls="nt-form-design" data-tab="design">ดีไซน์</button>
               <button class="nt-tab" type="button" role="tab" id="nt-tab-copy" aria-selected="false"
                 aria-controls="nt-form-copy" data-tab="copy">ข้อความ &amp; ภาษา</button>
               <button class="nt-tab" type="button" role="tab" id="nt-tab-auth" aria-selected="false"
@@ -103,7 +103,41 @@
             </div>
             <div class="nt-editor-grid">
               <div>
-                <section class="nt-panel nt-form" id="nt-form-design" role="tabpanel" aria-labelledby="nt-tab-design">
+                <section class="nt-panel nt-form" id="nt-form-general" role="tabpanel" aria-labelledby="nt-tab-general">
+                  <h3>ข้อมูลพื้นฐาน</h3>
+                  <label class="nt-field" id="wt-portal-selector-field" hidden>เลือก Portal ของ Site นี้<select
+                      id="wt-portal-selector"></select></label>
+                  <label class="nt-field">ชื่อ Portal<input data-bind="name" value="Free Wi-Fi"></label>
+                  <label class="nt-field">Template ตั้งต้น<select data-bind="template">
+                      <option>Template01</option>
+                      <option>Template02</option>
+                      <option>Template03</option>
+                      <option>Template04</option>
+                      <option>Template05</option>
+                    </select></label>
+                  <div class="nt-help page-style-2">ต้นแบบนี้ใช้ดีไซน์ตัวอย่างร่วมกัน ยังไม่ได้นำ Template จริงเข้าระบบ
+                  </div>
+                  <fieldset class="wt-portal-binding-group">
+                    <legend>Site ที่ใช้งาน Portal นี้ · เลือกได้หลาย Site</legend>
+                    <div id="wt-portal-sites" class="wt-portal-options"></div>
+                  </fieldset>
+                  <fieldset class="wt-portal-binding-group">
+                    <legend>ชื่อ Policy / Package (Allow Package)</legend>
+                    <p class="nt-help">แสดงอัตโนมัติจาก Allow Package ของ Site ที่เลือก</p>
+                    <div id="wt-portal-allow-packages"></div>
+                  </fieldset>
+                  <p id="wt-portal-binding-count" class="nt-help"></p>
+                  <p id="wt-portal-binding-lock" class="nt-notice" hidden>Portal นี้ใช้ร่วมกับ Site นอกสิทธิ์ของคุณ
+                    การแก้ไขหรือ Export Config ต้องใช้ผู้ดูแลที่มีสิทธิ์ครบทุก Site</p>
+                  <p id="wt-portal-binding-message" class="nt-help" aria-live="polite"></p>
+                  <label class="nt-field">Portal Path<input data-bind="path" value="/portal/demo"
+                      spellcheck="false"></label>
+                  <div class="nt-help" id="nt-path-preview">https://portal.example/portal/demo</div>
+                  <hr class="nt-rule">
+                  <div class="nt-row"><span class="nt-badge pending">Draft</span><span class="nt-help">ตรวจ Path
+                      ซ้ำกับเซิร์ฟเวอร์ก่อนเผยแพร่จริง</span></div>
+                </section>
+                <section class="nt-panel nt-form" id="nt-form-design" role="tabpanel" aria-labelledby="nt-tab-design" hidden>
                   <h3>ภาพและอัตลักษณ์</h3>
                   <div class="nt-upload">
                     <div class="nt-upload-label"><span>Logo</span><span class="nt-help">PNG / JPG / WebP</span></div>
@@ -142,41 +176,6 @@
                       <option value="pill">ทรงแคปซูล</option>
                       <option value="square">มุมตรง</option>
                     </select></label>
-                </section>
-                <section class="nt-panel nt-form" id="nt-form-general" role="tabpanel" aria-labelledby="nt-tab-general"
-                  hidden>
-                  <h3>ข้อมูลพื้นฐาน</h3>
-                  <label class="nt-field" id="wt-portal-selector-field" hidden>เลือก Portal ของ Site นี้<select
-                      id="wt-portal-selector"></select></label>
-                  <label class="nt-field">ชื่อ Portal<input data-bind="name" value="Free Wi-Fi"></label>
-                  <label class="nt-field">Template ตั้งต้น<select data-bind="template">
-                      <option>Template01</option>
-                      <option>Template02</option>
-                      <option>Template03</option>
-                      <option>Template04</option>
-                      <option>Template05</option>
-                    </select></label>
-                  <div class="nt-help page-style-2">ต้นแบบนี้ใช้ดีไซน์ตัวอย่างร่วมกัน ยังไม่ได้นำ Template จริงเข้าระบบ
-                  </div>
-                  <fieldset class="wt-portal-binding-group">
-                    <legend>Site ที่ใช้งาน Portal นี้ · เลือกได้หลาย Site</legend>
-                    <div id="wt-portal-sites" class="wt-portal-options"></div>
-                  </fieldset>
-                  <fieldset class="wt-portal-binding-group">
-                    <legend>ชื่อ Policy / Package (Allow Package)</legend>
-                    <p class="nt-help">แสดงอัตโนมัติจาก Allow Package ของ Site ที่เลือก</p>
-                    <div id="wt-portal-allow-packages"></div>
-                  </fieldset>
-                  <p id="wt-portal-binding-count" class="nt-help"></p>
-                  <p id="wt-portal-binding-lock" class="nt-notice" hidden>Portal นี้ใช้ร่วมกับ Site นอกสิทธิ์ของคุณ
-                    การแก้ไขหรือ Export Config ต้องใช้ผู้ดูแลที่มีสิทธิ์ครบทุก Site</p>
-                  <p id="wt-portal-binding-message" class="nt-help" aria-live="polite"></p>
-                  <label class="nt-field">Portal Path<input data-bind="path" value="/portal/demo"
-                      spellcheck="false"></label>
-                  <div class="nt-help" id="nt-path-preview">https://portal.example/portal/demo</div>
-                  <hr class="nt-rule">
-                  <div class="nt-row"><span class="nt-badge pending">Draft</span><span class="nt-help">ตรวจ Path
-                      ซ้ำกับเซิร์ฟเวอร์ก่อนเผยแพร่จริง</span></div>
                 </section>
                 <section class="nt-panel nt-form" id="nt-form-copy" role="tabpanel" aria-labelledby="nt-tab-copy"
                   hidden>

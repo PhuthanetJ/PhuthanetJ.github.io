@@ -13,7 +13,11 @@
     <script defer src="../js/banner-model.js"></script>
     <script defer src="../js/portal-bindings.js"></script>
     <script defer src="../js/app.js"></script>
+    <script defer src="../js/nas-model.js"></script>
+    <script defer src="../js/radius-catalog-model.js"></script>
     <script defer src="../js/pages/radius-policy.js"></script>
+    <script defer src="../js/pages/radius-nas.js"></script>
+    <script defer src="../js/pages/radius-catalog.js"></script>
     <link rel="stylesheet" href="../css/mobile.css">
     <script defer src="../js/mobile.js"></script>
 </head>
@@ -22,7 +26,7 @@
     <div id="nt-portal" data-page="radius">
         <header class="nt-top">
             <div class="nt-brand">Wi-Fi Tools</div>
-            <div class="wt-header"><label>Site ที่ตั้งค่า <select id="wt-current-site"></select></label><span
+            <div class="wt-header"><label>ส่วนงาน <select id="wt-current-division" title="ตัวเลือกส่วนงาน (ข้อมูลตัวอย่าง ยังไม่ผูกกับ Site)"></select></label><span
                     id="wt-current-user"></span><span class="nt-badge neutral">ข้อมูลตัวอย่าง</span><button
                     class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
         </header>
@@ -43,19 +47,21 @@
                     <h2>RADIUS & Policy</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
                 </div>
                 <section id="page-content">
-                    <p class="nt-notice">ข้อมูล Site, Allow Package และ Package ตัวอย่างจากรูปแบบ RADIUS Manager ·
-                        อ่านอย่างเดียว · ยังไม่เชื่อมระบบจริง</p>
+                    <p class="nt-notice">Site / Package / NAS เป็นข้อมูลตัวอย่างและ Draft แยกใน Browser · ยังไม่เชื่อม RADIUS Manager จริง · การแก้ไข Site / Package ในหน้านี้ยังไม่เปลี่ยน Portal Configuration, Dashboard หรือระบบจริง</p>
                     <div class="nt-tabs" role="tablist" aria-label="ข้อมูล RADIUS Manager">
-                        <button type="button" class="nt-tab active" role="tab" id="radius-tab-sites"
-                            aria-controls="radius-panel-sites" aria-selected="true">Site</button>
+                        <button type="button" class="nt-tab active" role="tab" id="radius-tab-nas"
+                            aria-controls="radius-panel-nas" aria-selected="true">NAS</button>
                         <button type="button" class="nt-tab" role="tab" id="radius-tab-packages"
                             aria-controls="radius-panel-packages" aria-selected="false">Package</button>
+                        <button type="button" class="nt-tab" role="tab" id="radius-tab-sites"
+                            aria-controls="radius-panel-sites" aria-selected="false">Site</button>
                     </div>
-                    <section id="radius-panel-sites" role="tabpanel" aria-labelledby="radius-tab-sites">
+                    <section id="radius-panel-sites" role="tabpanel" aria-labelledby="radius-tab-sites" hidden>
                         <div class="nt-panel">
                             <div class="wt-radius-heading">
-                                <h3>Site จาก RADIUS Manager</h3><span id="radius-site-count" class="nt-help"></span>
+                                <h3>จัดการ Site (Draft)</h3><div class="wt-nas-actions"><span id="radius-site-count" class="nt-help"></span><button type="button" class="nt-button primary" id="radius-site-add">เพิ่ม Site</button></div>
                             </div>
+                            <p id="radius-catalog-status" class="nt-help" role="status" aria-live="polite"></p>
                             <label class="nt-field wt-radius-search">ค้นหา Site<input id="radius-site-search"
                                     type="search" placeholder="Name, VLAN ID, Location"></label>
                             <div class="wt-radius-table">
@@ -68,20 +74,37 @@
                                             <th>Concurrent</th>
                                             <th>Description</th>
                                             <th>Allow Package</th>
+                                            <th>จัดการ</th>
                                         </tr>
                                     </thead>
                                     <tbody id="radius-site-rows"></tbody>
                                 </table>
                             </div>
                         </div>
+                        <dialog class="wt-radius-dialog wt-catalog-dialog" id="radius-site-dialog" aria-labelledby="radius-site-title">
+                            <div class="wt-radius-heading"><h3 id="radius-site-title">เพิ่ม Site</h3><button type="button" class="nt-button" id="radius-site-close">ปิด</button></div>
+                            <p class="nt-notice">Site Draft อยู่เฉพาะ Browser · ยังไม่เปลี่ยน Site ที่กำหนดสิทธิ์ผู้ใช้หรือ Portal Configuration</p>
+                            <form id="radius-site-form" novalidate autocomplete="off">
+                                <div class="nt-form-grid">
+                                    <label class="nt-field">Name *<input id="radius-site-name" name="name" maxlength="150" required></label>
+                                    <label class="nt-field">VLAN ID<input id="radius-site-vlan" name="vlanId" type="number" min="1" max="4094" placeholder="เว้นว่างได้"></label>
+                                    <label class="nt-field">Location<input id="radius-site-location" name="location" maxlength="255"></label>
+                                    <label class="nt-field">Concurrent<input id="radius-site-concurrent" name="concurrent" type="number" min="0" max="1000000" required></label>
+                                </div>
+                                <label class="nt-field">Description<textarea id="radius-site-description" name="description" rows="3" maxlength="2000"></textarea></label>
+                                <fieldset class="wt-catalog-allow"><legend>Allow Package (เลือก Package ที่อนุญาตสำหรับ Site นี้)</legend><div id="radius-site-package-choices"></div></fieldset>
+                                <p class="nt-help">รายการที่เลือกใหม่ใช้ User Prefix จาก Package และ Limit = ไม่กำหนด; ค่าที่มีอยู่จะถูกเก็บไว้</p>
+                                <p id="radius-site-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-site-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">บันทึก Site</button></div>
+                            </form>
+                        </dialog>
                         <dialog class="wt-radius-dialog" id="radius-allow-panel" aria-labelledby="radius-allow-title"
                             aria-describedby="radius-allow-help">
                             <div class="wt-radius-heading">
                                 <h3 id="radius-allow-title">Allow Package</h3><button type="button" class="nt-button"
                                     id="radius-allow-close" autofocus>ปิด</button>
                             </div>
-                            <p class="nt-notice" id="radius-allow-help">Package ตัวอย่างของ Site นี้ · ยังไม่เชื่อม
-                                RADIUS Manager · อ่านอย่างเดียว</p>
+                            <p class="nt-notice" id="radius-allow-help">Allow Package ใน Site Draft นี้ · ยังไม่เชื่อม RADIUS Manager</p>
                             <p class="nt-help">กดชื่อ Package เพื่อดูรายละเอียด Policy, ความเร็ว และเวลาการใช้งาน ·
                                 Limit ที่เป็น — หมายถึงไม่มีข้อมูล</p>
                             <div class="wt-radius-table">
@@ -100,14 +123,115 @@
                     </section>
                     <section id="radius-panel-packages" role="tabpanel" aria-labelledby="radius-tab-packages" hidden>
                         <div class="nt-panel">
-                            <h3>Package จาก RADIUS Manager</h3><label class="nt-field">ชื่อ Policy / Package<select
-                                    id="radius-package"></select></label>
+                            <div class="wt-radius-heading"><h3>จัดการ Package (Draft)</h3><div class="wt-nas-actions"><span id="radius-package-count" class="nt-help"></span><button type="button" class="nt-button primary" id="radius-package-add">เพิ่ม Package</button></div></div>
+                            <p class="nt-help">Created Date ของข้อมูลตัวอย่างเดิมที่ไม่มีวันสร้างจะแสดงเป็น — (ไม่สร้างวันที่ย้อนหลังขึ้นเอง)</p>
+                            <div class="wt-radius-table">
+                                <table class="wt-package-list">
+                                    <thead><tr><th>Status</th><th>Name</th><th>Prefix Accounts</th><th>Created Date</th></tr></thead>
+                                    <tbody id="radius-package-rows"></tbody>
+                                </table>
+                            </div>
+                            <label class="nt-field wt-package-detail-picker">รายละเอียด Package ที่เลือก<select id="radius-package"></select></label>
+                            <div class="wt-nas-actions wt-catalog-package-actions"><button type="button" class="nt-button" id="radius-package-edit">แก้ไข Package ที่เลือก</button><button type="button" class="nt-button wt-nas-delete" id="radius-package-delete">ลบ Package ที่เลือก</button></div>
                             <div class="wt-values" id="radius-fields"></div>
                         </div>
                         <div class="nt-panel">
                             <h3>Site ที่กำหนด Package นี้ใน Allow Package</h3>
                             <div id="radius-sites"></div>
                         </div>
+                        <dialog class="wt-radius-dialog wt-catalog-dialog" id="radius-package-dialog" aria-labelledby="radius-package-title">
+                            <div class="wt-radius-heading"><h3 id="radius-package-title">เพิ่ม Package</h3><button type="button" class="nt-button" id="radius-package-close">ปิด</button></div>
+                            <p class="nt-notice">Package Draft สำหรับทดลองเท่านั้น · ยังไม่อัปเดต RADIUS Manager หรือ Portal Configuration</p>
+                            <form id="radius-package-form" novalidate autocomplete="off">
+                                <div class="nt-form-grid">
+                                    <label class="nt-field">ชื่อ Policy / Package *<input name="policyName" required maxlength="255"></label>
+                                    <label class="nt-field">User Prefix<input name="userPrefix" maxlength="255"></label>
+                                    <label class="nt-field">Username format<input name="usernameFormat" maxlength="255"></label>
+                                    <label class="nt-field">Package Expired<input name="packageExpired" maxlength="255"></label>
+                                    <label class="nt-field">Package Type *<select name="packageType" required>
+                                        <option value="">เลือก Package Type</option><option value="Prepaid">Prepaid</option><option value="Postpaid">Postpaid</option>
+                                    </select></label>
+                                    <label class="nt-field">Upload<input name="upload" maxlength="255"></label>
+                                    <label class="nt-field">Download<input name="download" maxlength="255"></label>
+                                    <label class="nt-field">Session Time<input name="sessionTime" maxlength="255"></label>
+                                    <label class="nt-field">Session Limit<input name="sessionLimit" maxlength="255"></label>
+                                    <label class="nt-field">Idle Timeout<input name="idleTimeout" maxlength="255"></label>
+                                    <label class="nt-field">Time (hours:minutes)<input name="time" maxlength="255"></label>
+                                    <label class="nt-field">Daily time (hours:minutes)<input name="dailyTime" maxlength="255"></label>
+                                    <label class="nt-field">Weekly time (hours:minutes)<input name="weeklyTime" maxlength="255"></label>
+                                    <label class="nt-field">Monthly time (hours:minutes)<input name="monthlyTime" maxlength="255"></label>
+                                    <label class="nt-field">Expiration *<select name="expiration" id="radius-package-expiration" required>
+                                        <option value="">เลือก Expiration</option><option value="1st Login">1st Login</option>
+                                        <option value="Specified Date">Specified Date</option><option value="Unlimited">Unlimited</option>
+                                    </select></label>
+                                    <label class="nt-field" id="radius-package-expiration-days-field" hidden>Days *<span class="wt-expiration-days-control"><input name="expirationDays" id="radius-package-expiration-days" type="number" min="1" max="36500" step="1" inputmode="numeric" placeholder="30" aria-describedby="radius-package-expiration-help" disabled><span>Days</span></span></label>
+                                    <label class="nt-field" id="radius-package-expiration-date-field" hidden>Expiration Date *<input name="expirationDate" id="radius-package-expiration-date" type="date" aria-describedby="radius-package-expiration-help" disabled></label>
+                                    <label class="nt-field">Price<input name="price" maxlength="255"></label>
+                                    <label class="nt-field">Status<select name="status"><option value="Active">Active</option><option value="Disabled">Disabled</option></select></label>
+                                </div>
+                                <p id="radius-package-expiration-help" class="nt-help">1st Login: กำหนดจำนวน Days นับจากการเข้าสู่ระบบครั้งแรก (ค่าเริ่มต้นในฟอร์ม 30 วัน) · Specified Date: ระบุวันที่หมดอายุ · Unlimited: ไม่กำหนดวันหมดอายุ · เป็นการตั้งค่า Draft เท่านั้น ยังไม่บังคับใช้งานบน RADIUS จริง</p>
+                                <p id="radius-package-legacy-help" class="nt-help" hidden>Package เดิมใช้ข้อมูล Type / Expiration แบบข้อความ กรุณาเลือกค่าจากรายการก่อนบันทึก (ค่าที่มีอยู่ยังคงเดิมจนกว่าจะบันทึก)</p>
+                                <label class="nt-field">Description<textarea name="description" maxlength="2000" rows="3"></textarea></label>
+                                <p id="radius-package-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-package-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">บันทึก Package</button></div>
+                            </form>
+                        </dialog>
+                    </section>
+                    <section id="radius-panel-nas" role="tabpanel" aria-labelledby="radius-tab-nas">
+                        <div class="nt-panel">
+                            <div class="wt-radius-heading">
+                                <h3>จัดการ NAS</h3>
+                                <div class="wt-nas-actions"><span id="radius-nas-count" class="nt-help"></span>
+                                    <button type="button" class="nt-button primary" id="radius-nas-add">เพิ่ม NAS</button>
+                                </div>
+                            </div>
+                            <p class="nt-notice">NAS Draft สำหรับทดลอง UI แบบ Offline เท่านั้น · ไม่ส่งค่าไปยัง RADIUS จริง ·
+                                ใช้ Secret จำลองเท่านั้น เพราะข้อมูล Draft อยู่ใน localStorage ของ Browser และไม่ได้เข้ารหัส
+                                · ใช้เมนูนี้ด้วยบัญชี System Admin ในต้นแบบ</p>
+                            <p id="radius-nas-storage-status" class="nt-help" role="status" aria-live="polite"></p>
+                            <label class="nt-field wt-radius-search">ค้นหา NAS
+                                <input id="radius-nas-search" type="search" placeholder="Name/Host, Shortname, Server">
+                            </label>
+                            <div class="wt-radius-table">
+                                <table>
+                                    <thead><tr><th>Name/Host</th><th>Shortname</th><th>Secret</th><th>Server</th><th>จัดการ</th></tr></thead>
+                                    <tbody id="radius-nas-rows"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <dialog class="wt-radius-dialog wt-nas-dialog" id="radius-nas-dialog"
+                            aria-labelledby="radius-nas-title" aria-describedby="radius-nas-form-help">
+                            <div class="wt-radius-heading">
+                                <h3 id="radius-nas-title">เพิ่ม NAS</h3>
+                                <button type="button" class="nt-button" id="radius-nas-close">ปิด</button>
+                            </div>
+                            <p id="radius-nas-form-help" class="nt-help">กรอกข้อมูล NAS Draft · Secret ที่บันทึกจะแสดงเป็นค่าปิดบังเท่านั้น</p>
+                            <form id="radius-nas-form" autocomplete="off" novalidate>
+                                <div class="nt-form-grid">
+                                    <label class="nt-field">Name/Host <span class="wt-nas-required">*</span>
+                                        <input id="radius-nas-name-host" name="nameHost" required maxlength="255" autocomplete="off" spellcheck="false" placeholder="IP / Hostname / CIDR"></label>
+                                    <label class="nt-field">Shortname <span class="wt-nas-required">*</span>
+                                        <input id="radius-nas-shortname" name="shortname" required maxlength="100" autocomplete="off" spellcheck="false"></label>
+                                    <label class="nt-field">Type
+                                        <input id="radius-nas-type" name="type" maxlength="100" autocomplete="off"></label>
+                                    <label class="nt-field">Ports
+                                        <input id="radius-nas-ports" name="ports" maxlength="120" autocomplete="off" placeholder="เช่น 1812,1813"></label>
+                                    <label class="nt-field">Secret <span class="wt-nas-required">*</span>
+                                        <input id="radius-nas-secret" name="secret" type="password" maxlength="255" autocomplete="new-password" spellcheck="false"></label>
+                                    <label class="nt-field">Server
+                                        <input id="radius-nas-server" name="server" maxlength="255" autocomplete="off"></label>
+                                    <label class="nt-field">Community
+                                        <input id="radius-nas-community" name="community" maxlength="255" autocomplete="off" spellcheck="false"></label>
+                                </div>
+                                <label class="nt-field">Description
+                                    <textarea id="radius-nas-description" name="description" maxlength="2000" rows="3"></textarea></label>
+                                <p id="radius-nas-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions">
+                                    <button type="button" class="nt-button" id="radius-nas-cancel">ยกเลิก</button>
+                                    <button type="submit" class="nt-button primary" id="radius-nas-save">บันทึก NAS</button>
+                                </div>
+                            </form>
+                        </dialog>
                     </section>
                 </section>
                 <div id="nt-toast" class="nt-toast" aria-live="polite"></div>

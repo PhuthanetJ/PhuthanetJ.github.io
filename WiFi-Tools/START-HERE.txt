@@ -21,3 +21,32 @@ RADIUS Site / Allow Package, Report, Role และ Separate Servers
 
 แผนใหม่อยู่เมนู โมดูลตามสเปก และ Separate-Servers-Plan.md
 Local AI และ Backup ยังเป็นแผน ไม่ได้ติดตั้งหรือเชื่อมระบบจริง
+
+V011: Header เปลี่ยนเป็น "ส่วนงาน" ค่าเริ่มต้น ALL มี 6 ภูมิภาค เลือกแล้วจำค่าใน Browser
+ข้อมูล Demo Site A/B/C ยังไม่กำหนดส่วนงาน จึงยังไม่กรองข้อมูลจริงตามภูมิภาค
+
+V013: RADIUS & Policy > NAS เพิ่ม/แก้ไข/ลบ NAS Draft ได้จาก System Admin
+แสดง Name/Host, Shortname, Secret (ปิดบัง), Server; ฟอร์มครบ 8 ช่อง
+NAS อยู่ใน localStorage ไม่เข้ารหัส ใช้ Secret จำลองเท่านั้น ไม่เชื่อม RADIUS จริง
+
+V014: RADIUS & Policy > Site / Package เพิ่ม แก้ไข ลบ ได้ใน Offline Prototype
+- Site: Name, VLAN ID, Location, Concurrent, Description, เลือก Allow Package
+- Package: แก้ไขพารามิเตอร์ตามหน้ารายละเอียดทั้ง 18 ฟิลด์
+- เฉพาะบัญชี demo System Admin จัดการได้ (จำกัด UI เท่านั้น ไม่ใช่ Production RBAC)
+- บันทึก Site/Package Draft ลง localStorage ของ Browser ที่เปิด ใช้คนละชุดข้อมูลกับ Portal Configuration
+- ลบ Package Draft จะนำรายการออกจาก Allow Package ของ Site Draft ด้วย หลังยืนยัน
+- ยังไม่เชื่อม RADIUS Manager, ไม่แก้ Config / Portal / Dashboard / Site ผู้ใช้ในส่วนอื่น และไม่แก้ข้อมูล Production
+- Automated Tests ด้วย Node ครอบคลุม model/UI structure; Browser ถูกสภาพแวดล้อมทดสอบบล็อกการเปิดไฟล์และ localhost จึงยังไม่ได้ทดสอบบน Browser จริง
+
+V015: RADIUS & Policy > Package แสดง Status, Name, Prefix Accounts (= User Prefix), Created Date
+- สร้าง Package ใหม่: Created Date เป็นเวลาที่กดบันทึกใน Browser; Package ตัวอย่างเดิมที่ไม่มีวันที่จะแสดง —
+- Package Type: Prepaid / Postpaid เท่านั้นสำหรับการเพิ่มหรือแก้ไข
+- Expiration: 1st Login / Specified Date / Unlimited; เมื่อเลือก Specified Date ต้องกรอก Expiration Date
+- Draft V014 เดิมเปิดต่อได้ ข้อความ Type/Expiration เดิมจะไม่ถูกเปลี่ยนอัตโนมัติ ต้องเลือกใหม่เมื่อแก้ไข
+- ยังคงเป็น Offline Draft ไม่เชื่อม RADIUS Manager จริง
+
+V016: Package > Expiration = 1st Login จะแสดง Days (จำนวนเต็ม 1–36500; เมื่อเลือกใหม่เริ่ม 30)
+Specified Date แสดงช่องวันที่ / Unlimited ซ่อน Days และวันที่; Draft เก่าไม่เติม Days ให้เอง
+ยังไม่เชื่อมการเริ่มนับวันหลัง Login ครั้งแรกกับ RADIUS จริง
+
+V017: RADIUS & Policy เรียงแท็บ NAS → Package → Site โดย NAS เป็นแท็บเริ่มต้น (ลิงก์ตรงไป Package ยังคงทำงาน)
