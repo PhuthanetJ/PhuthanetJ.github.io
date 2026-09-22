@@ -13,6 +13,8 @@
     <script defer src="../js/portal-bindings.js"></script>
     <script defer src="../js/app.js"></script>
     <script defer src="../js/pages/login.js"></script>
+    <link rel="stylesheet" href="../css/mobile.css">
+    <script defer src="../js/mobile.js"></script>
 </head>
 
 <body>
@@ -22,8 +24,8 @@
             <p>Portal / Sites / Reports</p>
             <div class="nt-panel">
                 <h3>เข้าสู่ระบบ</h3>
-                <form id="login-form"><label class="nt-field">Username<input id="login-username" type="text"
-                            value=""></label><label class="nt-field">Password<input id="login-password" type="password"
+                <form id="login-form"><label class="nt-field">Username<input id="login-username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required
+                            value=""></label><label class="nt-field">Password<input id="login-password" type="password" autocomplete="current-password" required
                             value=""></label><button class="nt-button primary" type="submit">เข้าสู่ระบบ</button>
                     <p id="login-error" role="alert"></p>
                 </form>

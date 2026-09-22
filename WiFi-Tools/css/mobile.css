@@ -1,0 +1,264 @@
+/* Shared responsive layout, loaded after the per-menu styles. No remote assets. */
+#nt-portal .wt-menu-toggle,
+#nt-portal .wt-drawer-heading,
+#nt-portal .wt-menu-backdrop {
+    display: none;
+}
+
+#nt-portal .wt-header > label { min-width: 0; }
+#nt-portal .wt-header select {
+    max-width: 100%;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid #a8bdd6;
+    border-radius: 5px;
+    color: #172b46;
+    background: white;
+    font-size: 16px;
+}
+
+#nt-portal .nt-table-wrap,
+#nt-portal .wt-radius-table,
+#nt-portal .wt-plan-table,
+#nt-portal .wt-portal-coverage {
+    max-width: 100%;
+    min-width: 0;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+#nt-portal .wt-scroll-hint { display: none; }
+
+@media screen and (max-width: 780px) {
+    #nt-portal {
+        border-radius: 0;
+        overflow: visible;
+        font-size: 16px;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
+    #nt-portal .nt-top {
+        padding: 0;
+        display: block;
+    }
+
+    #nt-portal .nt-brand {
+        width: 100%;
+        min-height: 60px;
+        padding: 10px 14px;
+        gap: 12px;
+        font-size: 22px;
+        background: #062743;
+    }
+
+    #nt-portal .wt-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        justify-content: stretch;
+        gap: 10px;
+        padding: 12px 14px;
+        background: #fff;
+    }
+
+    #nt-portal .wt-header > label {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+    }
+
+    #nt-portal .wt-header select { flex: 1; min-width: 0; }
+    #nt-portal #wt-current-user { font-size: 14px; overflow-wrap: anywhere; }
+    #nt-portal .wt-header > .nt-badge { display: none; }
+    #nt-portal #wt-logout { grid-column: 2; font-size: 14px; }
+
+    #nt-portal .nt-shell { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .nt-main { padding: 18px 14px; background: #f5f8fd; }
+
+    /* Without JavaScript, menu links remain usable in the normal page flow. */
+    #nt-portal .nt-side { min-height: 0; }
+    #nt-portal.wt-mobile-ready .wt-menu-toggle {
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 10px;
+        border: 1px solid #6d91b1;
+        border-radius: 7px;
+        color: white;
+        background: #123b5d;
+    }
+    #nt-portal .wt-menu-toggle svg { width: 22px; height: 22px; }
+
+    #nt-portal.wt-mobile-ready .nt-side {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 101;
+        width: min(310px, calc(100vw - 48px));
+        max-height: 100vh;
+        max-height: 100dvh;
+        padding: max(14px, env(safe-area-inset-top)) 12px max(18px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        background: #062743;
+        visibility: hidden;
+        transform: translateX(-100%);
+        transition: transform 160ms ease, visibility 160ms;
+    }
+
+    #nt-portal.wt-mobile-ready.wt-menu-open .nt-side {
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    #nt-portal .wt-drawer-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 0 0 14px 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #355470;
+        color: white;
+    }
+    #nt-portal .wt-drawer-heading strong { font-size: 21px; }
+    #nt-portal .wt-drawer-heading button {
+        min-height: 44px;
+        min-width: 44px;
+        border: 1px solid #6d91b1;
+        border-radius: 6px;
+        background: #123b5d;
+        color: white;
+        font-size: 16px;
+    }
+
+    #nt-portal .nt-side .nt-nav {
+        display: flex;
+        width: 100%;
+        min-height: 48px;
+        padding: 12px;
+        margin: 4px 0;
+        font-size: 16px;
+        color: #e6f0ff;
+    }
+    #nt-portal .nt-side .nt-nav.active { background: #005bc7; color: white; }
+    #nt-portal.wt-menu-open .wt-menu-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: #041a32a6;
+        touch-action: none;
+    }
+
+    #nt-portal .nt-heading { gap: 8px; margin-bottom: 16px; }
+    #nt-portal h2 { font-size: 24px; overflow-wrap: anywhere; }
+    #nt-portal h3 { font-size: 18px; }
+    #nt-portal .nt-help, #nt-portal .nt-sub { font-size: 14px; }
+    #nt-portal .nt-panel, #nt-portal .nt-preview-wrap {
+        padding: 16px;
+        border-radius: 8px;
+        border-color: #d1deec;
+        margin-bottom: 14px;
+        max-width: 100%;
+    }
+    #nt-portal .nt-button, #nt-portal .nt-tab { min-height: 44px; }
+    #nt-portal input:not([type=checkbox]):not([type=radio]),
+    #nt-portal select, #nt-portal textarea { font-size: 16px; max-width: 100%; }
+    #nt-portal .nt-check { min-height: 44px; }
+
+    #nt-portal .nt-dash-toolbar { align-items: stretch; gap: 10px; }
+    #nt-portal .nt-dash-toolbar .nt-field { min-width: 0; width: 100%; }
+    #nt-portal .nt-dash-toolbar > div { width: 100%; }
+    #nt-portal .nt-dash-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    #nt-portal .nt-dash-metrics .nt-kpi { padding: 14px 12px; font-size: 14px; }
+    #nt-portal .nt-dash-metrics .nt-kpi strong { font-size: 27px; margin: 8px 0; }
+    #nt-portal .nt-dash-metrics .nt-help { font-size: 13px; }
+    #nt-portal .nt-dash-columns { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    #nt-portal .nt-dash-bars { gap: 7px; }
+    #nt-portal .nt-dash-barspace { height: 150px; }
+    #nt-portal .nt-dash-bar span { font-size: 12px; }
+    #nt-portal .nt-dash-scale { font-size: 13px; margin-bottom: 28px; }
+    #nt-portal .nt-dash-service { font-size: 14px; gap: 8px; }
+    #nt-portal .nt-dash-service .nt-badge { font-size: 13px; flex: none; }
+    #nt-portal .nt-preview-head { flex-wrap: wrap; gap: 10px; }
+    #nt-portal .nt-module { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    #nt-portal .nt-module > .nt-badge { justify-self: start; }
+
+    #nt-portal .wt-grid, #nt-portal .wt-cards, #nt-portal .wt-values,
+    #nt-portal .nt-form-grid, #nt-portal .nt-editor-grid,
+    #nt-portal .wt-plan-columns { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .wt-grid > *, #nt-portal .nt-editor-grid > * { min-width: 0; }
+    #nt-portal .wt-values dd { overflow-wrap: anywhere; }
+    #nt-portal .nt-tabs { gap: 4px; }
+    #nt-portal .nt-tab { flex: 1 1 auto; padding: 10px; }
+    #nt-portal .nt-preview-wrap { grid-row: auto; width: 100%; margin: 0 0 14px; }
+    #nt-portal .nt-phone.nt-desktop-screen { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .nt-desktop-screen .nt-public-hero { min-height: 120px; }
+    #nt-portal .nt-preview-expanded .nt-desktop-screen .nt-public-hero { min-height: 120px; }
+    #nt-portal .nt-preview-expanded .nt-desktop-screen .nt-public-content { padding: 20px 12px; }
+    #nt-portal .nt-phone.nt-mobile-screen { width: 100%; max-width: 330px; }
+    #nt-portal .nt-public-content { padding: 20px 12px; }
+    #nt-portal .nt-public-content h3 { overflow-wrap: anywhere; }
+    #nt-portal .wt-banner-editor, #nt-portal .wt-banner-card,
+    #nt-portal .wt-question-editor { padding: 12px; }
+    #nt-portal .wt-banner-question-choices legend,
+    #nt-portal .wt-quiz-question legend { max-width: 100%; overflow-wrap: anywhere; }
+
+    /* Wide tables scroll inside their own card, never the whole dashboard. */
+    #nt-portal .nt-table-wrap > table,
+    #nt-portal .wt-radius-table > table,
+    #nt-portal .wt-portal-coverage > table { min-width: 620px; }
+    #nt-portal .wt-radius-dialog .wt-radius-table > table { min-width: 420px; }
+    #nt-portal .wt-scroll-hint {
+        display: block;
+        margin: 6px 0 8px;
+        color: #405470;
+        font-size: 13px;
+    }
+    #nt-portal .wt-config-picker { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .wt-module-filters .nt-field { min-width: 0; flex-basis: 100%; }
+    #nt-portal .wt-server-summary { gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #nt-portal .wt-server-kpi { padding: 14px 12px; }
+    #nt-portal .wt-server-kpi strong { font-size: 26px; }
+    #nt-portal .wt-server-kpi span { font-size: 14px; }
+    #nt-portal .wt-cover-preview { padding: 16px; min-height: 280px; overflow-wrap: anywhere; }
+
+    #nt-portal dialog {
+        width: calc(100% - 24px);
+        max-width: 100%;
+        max-height: calc(100vh - 24px);
+        max-height: calc(100dvh - 24px);
+    }
+    #nt-portal .wt-radius-dialog, #nt-portal .wt-banner-dialog { padding: 16px; }
+    #nt-portal .wt-radius-dialog h3 { font-size: 20px; }
+    #nt-portal .wt-terms-dialog { padding: 0; }
+    #nt-portal .nt-toast { overflow-wrap: anywhere; }
+    #nt-portal .nt-app-footer { padding: 16px; font-size: 13px; }
+
+    #nt-portal .wt-login { margin: 0 auto; padding: 28px 14px; max-width: 540px; }
+    #nt-portal .wt-login h1 { margin: 0; font-size: 30px; }
+    #nt-portal .wt-login .nt-panel { padding: 20px 16px; }
+    #nt-portal .wt-login form > button { width: 100%; }
+}
+
+@media screen and (max-width: 340px) {
+    #nt-portal .nt-dash-metrics { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .nt-main { padding: 14px 10px; }
+    #nt-portal .nt-panel { padding: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #nt-portal.wt-mobile-ready .nt-side { transition: none; }
+}

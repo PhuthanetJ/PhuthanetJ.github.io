@@ -1,1 +1,25 @@
-/* โมดูลตามสเปก */
+/* Modules and separate server plan */
+#nt-portal .wt-server-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 20px}
+#nt-portal .wt-server-kpi{background:white;border:1px solid #bad2ef;border-top:4px solid #0967cf;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:8px}
+#nt-portal .wt-server-kpi strong{font-size:30px;color:#0d396d;line-height:1.3}
+#nt-portal .wt-server-kpi span{font-size:15px;color:#314f71}
+#nt-portal .wt-plan-table{overflow-x:auto;margin-top:14px}
+#nt-portal .wt-plan-table table{width:100%;min-width:1000px;font-size:15px}
+#nt-portal .wt-plan-table th,#nt-portal .wt-plan-table td{vertical-align:top;padding:13px 12px;line-height:1.7}
+#nt-portal .wt-plan-table td p{margin:7px 0;color:#304a66;line-height:1.7}
+#nt-portal .wt-plan-table tfoot{background:#e9f3ff;color:#163c68;font-weight:700}
+#nt-portal .wt-server-role{min-width:250px;max-width:340px}
+#nt-portal .wt-plan-table .wt-num{text-align:right;white-space:nowrap}
+#nt-portal .wt-plan-table tr:focus{outline:3px solid #2376cd;outline-offset:-3px;background:#eef6ff}
+#nt-portal .wt-plan-notes{padding-left:23px;line-height:1.85}
+#nt-portal .wt-plan-notes li{margin-bottom:10px}
+#nt-portal .wt-plan-notes p{margin:4px 0;color:#405a74}
+#nt-portal .wt-plan-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+#nt-portal .wt-module-filters{display:flex;align-items:end;flex-wrap:wrap;gap:16px}
+#nt-portal .wt-module-filters .nt-field{min-width:220px;flex:1;margin:0}
+#nt-portal .wt-vm-links{display:flex;flex-wrap:wrap;gap:8px;min-width:145px}
+#nt-portal .wt-vm-links a{display:inline-block;background:#e7f1ff;border:1px solid #b7d2f3;border-radius:5px;padding:4px 8px;color:#0751a6;font-weight:600}
+#nt-portal #nt-view-modules summary{cursor:pointer;color:#114e90;font-weight:600}
+#nt-portal #nt-view-modules .nt-tabs{margin-bottom:18px}
+@media(max-width:900px){#nt-portal .wt-server-summary{grid-template-columns:repeat(2,minmax(0,1fr))}#nt-portal .wt-plan-columns{grid-template-columns:1fr}}
+@media(max-width:450px){#nt-portal .wt-server-kpi{padding:14px}#nt-portal .wt-server-kpi strong{font-size:24px}}

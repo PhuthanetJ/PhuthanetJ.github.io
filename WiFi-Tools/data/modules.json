@@ -1,47 +1,249 @@
 [
-  [
-    "ThaiD / Email / AD-LDAP",
-    "ออกแบบ Connector ตามข้อมูลและสิทธิ์ที่ผู้ให้บริการอนุญาต",
-    "รอ Integration"
-  ],
-  [
-    "Reports & Export",
-    "Login / Register, Traffic, Peak Time, Quiz, Video และ Top Clients · PDF / XLSX / CSV / PPTX",
-    "แผนพัฒนา"
-  ],
-  [
-    "AI Reports & Dashboard",
-    "เลือกข้อมูล สร้างมุมมอง และสรุปพร้อมช่วงเวลาและแหล่งอ้างอิง",
-    "แผนพัฒนา"
-  ],
-  [
-    "AI Config & Troubleshooting",
-    "เสนอ Policy / AP Config และวิเคราะห์ Log พร้อมหลักฐาน · ตรวจผลก่อน Apply",
-    "แผนพัฒนา"
-  ],
-  [
-    "Multi-site / Tenant / RBAC",
-    "แยกสิทธิ์องค์กร Site Admin, NOC, Front Desk และผู้ดูรายงาน",
-    "แผนพัฒนา"
-  ],
-  [
-    "Payment & Billing",
-    "QR / Payment Gateway, Transaction reconciliation และสิทธิ์หลังชำระเงิน",
-    "ขอบเขตต่อยอด"
-  ],
-  [
-    "Backup / Restore / HA",
-    "สำรอง Config และข้อมูล ทดสอบกู้คืน และกำหนด RPO / RTO",
-    "แผนพัฒนา"
-  ],
-  [
-    "Heatmap / RF / Traffic Analysis",
-    "ต้องมี Telemetry และตำแหน่งอุปกรณ์ · RADIUS เพียงอย่างเดียวให้ข้อมูลไม่ครบ",
-    "รอแหล่งข้อมูล"
-  ],
-  [
-    "Audit & Privacy",
-    "ประวัติการแก้ไข Version ของ Terms, Consent แยกวัตถุประสงค์ และอายุ Log",
-    "แผนพัฒนา"
-  ]
+  {
+    "id": "portal",
+    "group": "หลัก",
+    "name": "Portal Configuration / CMS",
+    "features": "Logo, Background, หลาย Banner area, วิดีโอ, สี, ข้อความ, ภาษา และ Portal Path หลาย Site",
+    "servers": [
+      "portal",
+      "tools",
+      "media"
+    ],
+    "status": "มี GUI / Preview; รอ Backend และการเผยแพร่ Portal"
+  },
+  {
+    "id": "radius",
+    "group": "หลัก",
+    "name": "RADIUS AAA / Policy",
+    "features": "Authentication, Accounting, Time/Quota/Session limits และ Vendor Attributes",
+    "servers": [
+      "radius",
+      "manager",
+      "database"
+    ],
+    "status": "รอเชื่อม RADIUS จริงและทดสอบราย Vendor"
+  },
+  {
+    "id": "packages",
+    "group": "หลัก",
+    "name": "RADIUS Manager Integration",
+    "features": "อ่าน Site, Allow Package และรายละเอียด Policy / Package แบบอ่านอย่างเดียว",
+    "servers": [
+      "tools",
+      "manager",
+      "database"
+    ],
+    "status": "มี Snapshot ตัวอย่าง; รอ API/Schema จาก Manager"
+  },
+  {
+    "id": "identity",
+    "group": "หลัก",
+    "name": "Identity / Login Connectors",
+    "features": "Username, SMS OTP, Social Login, ThaiD, Email และ AD/LDAP ตามสิทธิ์ Provider",
+    "servers": [
+      "portal",
+      "tools",
+      "database"
+    ],
+    "status": "GUI ตัวอย่าง; รอ Provider และการเชื่อมต่อ"
+  },
+  {
+    "id": "coupon",
+    "group": "หลัก",
+    "name": "Free WiFi / Coupon",
+    "features": "สิทธิ์ฟรีรายชั่วโมง, Coupon ตาม Site, Expiry/Quota และจำกัดการใช้ซ้ำ",
+    "servers": [
+      "tools",
+      "radius",
+      "database"
+    ],
+    "status": "มีคูปองตัวอย่าง; รอ Session จริง"
+  },
+  {
+    "id": "consent",
+    "group": "หลัก",
+    "name": "Terms / Consent / Language",
+    "features": "เนื้อหาเงื่อนไข, Version, ภาษา และหลักฐานการยอมรับ",
+    "servers": [
+      "portal",
+      "tools",
+      "database"
+    ],
+    "status": "มี Editor/Preview; รอการจัดเก็บ Consent จริง"
+  },
+  {
+    "id": "engage",
+    "group": "หลัก",
+    "name": "Video / Questionnaire / Quiz",
+    "features": "ดำเนินการต่อจากวิดีโอไปคำถาม; คลังคำถามร่วม, ตัวเลือก/เฉลย และผลการตอบ",
+    "servers": [
+      "portal",
+      "tools",
+      "media",
+      "database"
+    ],
+    "status": "มี Preview/Config; ยังไม่บันทึกผลตอบจริง"
+  },
+  {
+    "id": "rbac",
+    "group": "หลัก",
+    "name": "Multi-site / Tenant / RBAC",
+    "features": "ผู้ใช้, Role, Site scope, Export และ Gen Report permission",
+    "servers": [
+      "tools",
+      "database"
+    ],
+    "status": "มีสิทธิ์จำลอง; Backend ต้องตรวจทุก request"
+  },
+  {
+    "id": "network",
+    "group": "หลัก",
+    "name": "AP / Vendor Adapter",
+    "features": "AP แยก Site→Vendor→Model, Portal Redirect, Walled Garden และ Bypassed MAC",
+    "servers": [
+      "tools",
+      "radius",
+      "monitor"
+    ],
+    "status": "มีข้อมูลตัวอย่าง; ต้องทดสอบแต่ละรุ่น/firmware"
+  },
+  {
+    "id": "dashboard",
+    "group": "หลัก",
+    "name": "Dashboard / Real-time Monitor",
+    "features": "ภาพรวม Sessions, Authentication, AP/บริการ และการใช้งานแยก Site",
+    "servers": [
+      "tools",
+      "monitor",
+      "database"
+    ],
+    "status": "มี Dashboard ตัวอย่าง; รอข้อมูลจริง"
+  },
+  {
+    "id": "reports",
+    "group": "หลัก",
+    "name": "Reports / Export / Monthly Email",
+    "features": "Login/Register/Traffic รายวัน, PDF/CSV, หน้าปก และตั้งส่งรายเดือน; XLSX/PPTX เป็นแผนเพิ่ม",
+    "servers": [
+      "reports",
+      "database",
+      "tools"
+    ],
+    "status": "CSV/PDF ตัวอย่าง; ยังไม่มี Scheduler/SMTP จริง"
+  },
+  {
+    "id": "alerts",
+    "group": "หลัก",
+    "name": "Notification Channels",
+    "features": "ตั้งค่า Email, LINE Messaging API, Telegram, Webhook, ID/Token, threshold และ recovery",
+    "servers": [
+      "tools",
+      "reports",
+      "monitor"
+    ],
+    "status": "มีฟอร์ม; ยังไม่ส่งแจ้งเตือนจริง"
+  },
+  {
+    "id": "audit",
+    "group": "หลัก",
+    "name": "Audit / Retention / Privacy",
+    "features": "Authentication/Accounting/Admin log, Consent version, ควบคุมข้อมูลที่ Export และอายุเก็บ; Log 6–9 เดือนพร้อมวัด GB/day และกำหนด Hot/Archive",
+    "servers": [
+      "database",
+      "monitor",
+      "tools"
+    ],
+    "status": "แผน Backend และ Retention ตามข้อกำหนดจริง"
+  },
+  {
+    "id": "ai-config",
+    "group": "หลัก",
+    "name": "AI Portal / Config Assistant",
+    "features": "สร้างข้อเสนอ Config ชุดเดียวกับ Manual, แสดง diff และให้ผู้ดูแลตรวจ",
+    "servers": [
+      "ai",
+      "tools",
+      "inference"
+    ],
+    "status": "แผน Local AI ภายในองค์กร; รอเลือกโมเดล/PoC และ Internal API จริง"
+  },
+  {
+    "id": "ai-policy",
+    "group": "หลัก",
+    "name": "AI Policy / AP Assistant",
+    "features": "เตรียมข้อเสนอ Policy หรือ AP Config; ส่งไปผู้ดูแล/ระบบต้นทางอนุมัติ",
+    "servers": [
+      "ai",
+      "tools",
+      "manager",
+      "inference"
+    ],
+    "status": "แผน Local AI ภายในองค์กร; รอเลือกโมเดล/PoC และ Internal API จริง"
+  },
+  {
+    "id": "ai-analysis",
+    "group": "หลัก",
+    "name": "AI Reports / Dashboard / Troubleshooting",
+    "features": "สรุปรายงาน วิเคราะห์ Log/เหตุผิดปกติ และเสนอการตรวจแก้พร้อมหลักฐาน",
+    "servers": [
+      "ai",
+      "reports",
+      "monitor",
+      "tools",
+      "inference"
+    ],
+    "status": "แผน Local AI ภายในองค์กร; รอเลือกโมเดล/PoC และ Internal API จริง"
+  },
+  {
+    "id": "backup",
+    "group": "หลัก",
+    "name": "Backup / Restore / DR",
+    "features": "ระบบ Backup ใหม่, Retention 6–9 เดือน, application-consistent DB backup, สำเนาแยก และทดสอบกู้คืนตาม RPO/RTO",
+    "servers": [
+      "backup",
+      "database",
+      "media"
+    ],
+    "status": "แผนระบบ; ยังไม่มีการสำรองข้อมูลจริงจาก GUI"
+  },
+  {
+    "id": "ha",
+    "group": "หลัก",
+    "name": "High Availability",
+    "features": "Replica, Failover, Load balancing, Quorum และการทดสอบเสียหาย",
+    "servers": [
+      "edge",
+      "portal",
+      "tools",
+      "radius",
+      "database",
+      "media",
+      "reports"
+    ],
+    "status": "เป็นข้อกำหนดออกแบบต่อ; แผน 12 VM นี้ยังไม่ใช่ HA"
+  },
+  {
+    "id": "rf",
+    "group": "ต่อยอด",
+    "name": "Heatmap / RF / Traffic Analysis",
+    "features": "วิเคราะห์พื้นที่ใช้งานมาก/น้อย, RF, Application traffic และตำแหน่งอุปกรณ์",
+    "servers": [
+      "tools",
+      "monitor",
+      "ai"
+    ],
+    "status": "รอ Telemetry, ตำแหน่ง AP และสิทธิ์ข้อมูล"
+  },
+  {
+    "id": "payment",
+    "group": "ต่อยอด",
+    "name": "Payment / Billing",
+    "features": "QR / Payment Gateway, ตรวจ Transaction และสิทธิ์หลังชำระเงิน",
+    "servers": [
+      "tools",
+      "reports",
+      "database"
+    ],
+    "status": "ขอบเขตต่อยอด; รอระบบชำระเงินจริง"
+  }
 ]

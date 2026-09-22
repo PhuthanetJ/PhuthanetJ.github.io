@@ -150,4 +150,7 @@ tr {
         width: calc(100% - 24px);
         padding: 25px
     }
+
+    .body { overflow-x: auto; }
+    .body table { min-width: 640px; }
 }

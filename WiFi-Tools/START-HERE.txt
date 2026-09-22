@@ -1,0 +1,23 @@
+Wi-Fi Tools — Desktop & Mobile
+
+1. แตก ZIP ทั้งหมดก่อนเปิด ห้ามเปิด index.html ภายในหน้าดูตัวอย่างของ ZIP
+2. เก็บโฟลเดอร์ html, css, js, data ไว้ข้าง index.html
+3. เปิด index.html ใน Browser
+4. Login: admin / Demo1234!
+
+มือถือ: ปุ่ม ☰ เปิดเมนูน้ำเงิน จอปรับอัตโนมัติ ไม่ต้องซูมย่อแบบ Desktop
+Dashboard เป็นข้อมูลจำลอง ตารางเลื่อนซ้าย–ขวาภายในกรอบได้
+ถ้าเปิดในแอป Files แล้วปุ่มกดไม่ได้ ให้ดูหัวข้อ Mobile ใน README.md
+ตัวเปิดไฟล์ต้องรองรับ JavaScript และอ่านไฟล์ข้างเคียงได้
+
+ข้อมูลเดิมรวมครบ: Banner / Video Quiz, Questionnaire, Portal Path,
+RADIUS Site / Allow Package, Report, Role และ Separate Servers
+ต้นแบบออฟไลน์ ไม่เชื่อม AP / RADIUS / SMS / Email / AI จริง
+
+ตรวจ JavaScript, JSON, HTML IDs และไฟล์อ้างอิงผ่าน
+รุ่นมือถือก่อนหน้า: ทดสอบตรรกะ 58 รายการผ่าน
+รุ่น Local AI/Backup นี้: ทดสอบโมดูลและสูตรพื้นที่ที่เปลี่ยน 3 รายการผ่าน ด้วย Node / DOM จำลอง
+ยังไม่ได้ตรวจการแสดงผลหรือการสัมผัสบน Browser / มือถือจริง
+
+แผนใหม่อยู่เมนู โมดูลตามสเปก และ Separate-Servers-Plan.md
+Local AI และ Backup ยังเป็นแผน ไม่ได้ติดตั้งหรือเชื่อมระบบจริง

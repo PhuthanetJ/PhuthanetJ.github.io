@@ -14,6 +14,8 @@
     <script defer src="../js/portal-bindings.js"></script>
     <script defer src="../js/app.js"></script>
     <script defer src="../js/pages/modules.js"></script>
+    <link rel="stylesheet" href="../css/mobile.css">
+    <script defer src="../js/mobile.js"></script>
 </head>
 
 <body>
@@ -42,9 +44,35 @@
                 </div>
                 <section id="page-content">
                     <section id="nt-view-modules" class="nt-view">
-                        <div class="nt-notice">ขอบเขตเพิ่มเติมจากเอกสาร MA NT Wi-Fi 2027 · สถานะทั้งหมดเป็นแผนออกแบบ
+                        <p class="nt-notice">แผน Local AI + Backup ใหม่ + Log/Backup 6–9 เดือน · ตารางใช้กรณีตัวอย่าง 9 เดือน · ยังไม่ผ่าน Load Test และยังไม่ใช่ HA</p>
+                        <div class="wt-server-summary" id="wt-server-summary" aria-label="ทรัพยากรรวม"></div>
+                        <div class="nt-tabs" role="tablist" aria-label="โมดูลและเซิร์ฟเวอร์">
+                            <button class="nt-tab active" type="button" role="tab" id="wt-servers-tab" aria-selected="true" aria-controls="wt-servers-panel">จำนวน VM / สเปกเครื่อง</button>
+                            <button class="nt-tab" type="button" role="tab" id="wt-modules-tab" aria-selected="false" aria-controls="wt-modules-panel">โมดูลที่ควรมี</button>
                         </div>
-                        <div class="nt-panel" id="nt-module-list"></div>
+                        <section id="wt-servers-panel" role="tabpanel" aria-labelledby="wt-servers-tab">
+                            <div class="nt-panel"><h3>สมมติฐานในการประเมิน</h3><ul class="wt-plan-notes" id="wt-plan-assumptions"></ul></div>
+                            <div class="nt-panel">
+                                <h3>Separate Servers — หนึ่ง VM ต่อบทบาท</h3>
+                                <p class="nt-help">vCPU / RAM / Disk เป็นค่าต่อ 1 VM · RAM หน่วย GiB · Disk หน่วย GB · Disk รวม = OS + Data · HDD/SSD ระบุแยกตามงาน</p>
+                                <div class="wt-plan-table"><table><thead><tr><th scope="col">VM / หน้าที่</th><th scope="col">OS ตัวอย่าง</th><th scope="col">จำนวน VM</th><th scope="col">vCPU</th><th scope="col">RAM<br>GiB</th><th scope="col">OS Disk<br>GB</th><th scope="col">Data Disk<br>GB</th><th scope="col">รวม Disk<br>GB</th><th scope="col">HDD / SSD</th><th scope="col">GPU / VRAM</th></tr></thead><tbody id="wt-server-rows"></tbody><tfoot id="wt-server-total"></tfoot></table></div>
+                                <p class="nt-help">* RADIUS Manager / FreeRADIUS ต้องตรวจเวอร์ชันและ Driver จริง ส่วน SQL Server 2022 บน Windows Server 2022 เป็นตัวอย่างของแผน ไม่ใช่การยืนยันฐานข้อมูลที่ใช้อยู่</p>
+                            </div>
+                            <div class="nt-panel"><h3>ตัวอย่างพื้นที่สำหรับ 6 และ 9 เดือน</h3><p class="nt-help">แสดง คำนวณได้ / งบจัดสรร หน่วย GB · Log 5 GB/วัน · Media เริ่ม 1 TB เพิ่มสุทธิ 5 GB/วัน · Backup Full 4 TB และ Incremental 20 GB/วัน · เผื่อ 30% และ boundary chain · ต้องแทนค่าจริงก่อนสั่งซื้อ</p><div class="wt-plan-table"><table><thead><tr><th>ระยะเก็บ</th><th>Log / Index</th><th>Media</th><th>Backup usable</th><th>ชุดสำรองในตัวอย่าง</th></tr></thead><tbody id="wt-capacity-rows"></tbody></table></div><p class="nt-help">ตัวอย่างเก็บจุดกู้คืนรายวันตลอดช่วง ไม่เท่ากับเก็บรายวัน 30 วันและรายเดือน 9 เดือน · Backup ยังไม่รวมสำเนาที่สองหรือ RAID · 1 TB = 1,000 GB</p></div>
+                            <div class="nt-panel"><h3>การประเมิน Storage และ Network</h3><ul class="wt-plan-notes" id="wt-plan-sizing"></ul></div>
+                            <div class="wt-plan-columns">
+                                <div class="nt-panel"><h3>หากต้องการ HA</h3><p class="nt-help">ยังไม่รวมจำนวน VM ของ HA ในยอดด้านบน</p><ul class="wt-plan-notes" id="wt-plan-ha"></ul></div>
+                                <div class="nt-panel"><h3>สิ่งที่ไม่รวมในจำนวน VM</h3><ul class="wt-plan-notes" id="wt-plan-exclusions"></ul></div>
+                            </div>
+                        </section>
+                        <section id="wt-modules-panel" role="tabpanel" aria-labelledby="wt-modules-tab" hidden>
+                            <div class="nt-panel">
+                                <h3>โมดูลตามขอบเขตงาน</h3><p class="nt-help">โมดูลหลายรายการใช้ VM บทบาทเดียวกันได้ จึงไม่นับ VM ซ้ำตามจำนวนฟังก์ชัน · กดรหัส VM เพื่อดูสเปก</p>
+                                <div class="wt-module-filters"><label class="nt-field">ค้นหาโมดูล<input id="wt-module-search" type="search" placeholder="เช่น RADIUS, Quiz, AI"></label><label class="nt-field">ขอบเขต<select id="wt-module-group"><option value="all">ทั้งหมด</option><option value="หลัก">หลัก</option><option value="ต่อยอด">ต่อยอด</option></select></label><span class="nt-help" id="wt-module-count" aria-live="polite"></span></div>
+                                <div class="wt-plan-table" id="nt-module-list"><table><thead><tr><th>โมดูล / ขอบเขต</th><th>ฟังก์ชันที่ควรมี</th><th>VM ที่รองรับ</th><th>สถานะปัจจุบัน</th></tr></thead><tbody id="wt-module-rows"></tbody></table></div>
+                            </div>
+                        </section>
+                        <details class="nt-panel"><summary>เอกสารอ้างอิงและที่มาของตัวเลข</summary><p class="nt-help">ฟังก์ชันอ้างอิงสเปกที่ได้รับและรายการแก้ไขในโปรเจกต์ ส่วนจำนวนและขนาด VM เป็นข้อเสนอใหม่ เอกสารผู้ผลิตใช้ตรวจ OS/Software เท่านั้น ไม่ได้ใช้รับรองขนาดงานนี้</p><ul id="wt-plan-sources" class="wt-plan-notes"></ul><p class="nt-help">มีสรุปสำหรับส่งทีม Infrastructure ในไฟล์ Separate-Servers-Plan.md ภายใน ZIP</p></details>
                     </section>
                 </section>
                 <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
