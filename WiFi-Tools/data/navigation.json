@@ -5,9 +5,9 @@
     "title": "Dashboard"
   },
   {
-    "id": "ap-sites",
-    "file": "ap-sites.html",
-    "title": "AP by Site"
+    "id": "radius",
+    "file": "radius-policy.html",
+    "title": "RADIUS & Policy"
   },
   {
     "id": "builder",
@@ -15,14 +15,9 @@
     "title": "Portal Configuration"
   },
   {
-    "id": "reports",
-    "file": "reports.html",
-    "title": "Reports"
-  },
-  {
-    "id": "radius",
-    "file": "radius-policy.html",
-    "title": "RADIUS & Policy"
+    "id": "voucher",
+    "file": "free-wifi-coupons.html",
+    "title": "Free WiFi & Coupon"
   },
   {
     "id": "access",
@@ -30,9 +25,14 @@
     "title": "Network Configuration"
   },
   {
-    "id": "voucher",
-    "file": "free-wifi-coupons.html",
-    "title": "Free WiFi & Coupon"
+    "id": "ap-sites",
+    "file": "ap-sites.html",
+    "title": "AP by Site"
+  },
+  {
+    "id": "reports",
+    "file": "reports.html",
+    "title": "Reports"
   },
   {
     "id": "monitor",
@@ -42,21 +42,21 @@
   {
     "id": "alerts",
     "file": "alerts.html",
-    "title": "การแจ้งเตือน"
+    "title": "Notifications"
   },
   {
     "id": "users",
     "file": "users.html",
-    "title": "User"
+    "title": "Administrator"
   },
   {
     "id": "settings",
     "file": "settings.html",
-    "title": "ตั้งค่าและไฟล์ Config"
+    "title": "Admin / Management"
   },
   {
     "id": "modules",
     "file": "modules.html",
-    "title": "โมดูลตามสเปก"
+    "title": "Specification"
   }
 ]

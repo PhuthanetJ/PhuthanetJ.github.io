@@ -50,3 +50,14 @@ Specified Date แสดงช่องวันที่ / Unlimited ซ่อ�
 ยังไม่เชื่อมการเริ่มนับวันหลัง Login ครั้งแรกกับ RADIUS จริง
 
 V017: RADIUS & Policy เรียงแท็บ NAS → Package → Site โดย NAS เป็นแท็บเริ่มต้น (ลิงก์ตรงไป Package ยังคงทำงาน)
+
+V019: RADIUS & Policy เพิ่ม Account และยอดรวม Account ต่อ Package/Site (ข้อมูลตัวอย่าง Offline)
+
+
+V026: RADIUS & Policy > Package: Upload/Download/Session Time/Session Limit/Idle Timeout/Time/Daily/Weekly/Monthly ค่า 0, เวลา 00:00 หรือเว้นว่าง = Unlimited ใน Offline Prototype.
+
+
+V027 Documentation: README.md ถูกจัดโครงสร้างใหม่และรวม Version History V010-V027.
+V028: RADIUS & Policy > Package เพิ่มค้นหา Package จาก Name หรือ Prefix Accounts ด้วยปุ่มค้นหา.
+
+V029: Sidebar Navigation reordered and labels renamed. Functional routes are unchanged.

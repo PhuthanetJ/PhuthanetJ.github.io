@@ -15,9 +15,11 @@
     <script defer src="../js/app.js"></script>
     <script defer src="../js/nas-model.js"></script>
     <script defer src="../js/radius-catalog-model.js"></script>
+    <script defer src="../js/account-model.js"></script>
     <script defer src="../js/pages/radius-policy.js"></script>
     <script defer src="../js/pages/radius-nas.js"></script>
     <script defer src="../js/pages/radius-catalog.js"></script>
+    <script defer src="../js/pages/radius-account.js"></script>
     <link rel="stylesheet" href="../css/mobile.css">
     <script defer src="../js/mobile.js"></script>
 </head>
@@ -31,31 +33,138 @@
                     class="nt-button primary" type="button" id="wt-logout">ออกจากระบบ</button></div>
         </header>
         <div class="nt-shell">
-            <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a
-                    class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav "
-                    href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav "
-                    href="reports.html" data-nav="reports">Reports</a><a class="nt-nav active" href="radius-policy.html"
-                    data-nav="radius">RADIUS & Policy</a><a class="nt-nav " href="ap-network.html"
-                    data-nav="access">Network Configuration</a><a class="nt-nav " href="free-wifi-coupons.html"
-                    data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="monitor-logs.html"
-                    data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html"
-                    data-nav="alerts">การแจ้งเตือน</a><a class="nt-nav " href="users.html" data-nav="users">User</a><a
-                    class="nt-nav " href="settings.html" data-nav="settings">ตั้งค่าและไฟล์ Config</a><a class="nt-nav "
-                    href="modules.html" data-nav="modules">โมดูลตามสเปก</a></nav>
+            <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a class="nt-nav active" href="radius-policy.html" data-nav="radius">RADIUS & Policy</a><a class="nt-nav " href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav " href="free-wifi-coupons.html" data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="ap-network.html" data-nav="access">Network Configuration</a><a class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav " href="reports.html" data-nav="reports">Reports</a><a class="nt-nav " href="monitor-logs.html" data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html" data-nav="alerts">Notifications</a><a class="nt-nav " href="users.html" data-nav="users">Administrator</a><a class="nt-nav " href="settings.html" data-nav="settings">Admin / Management</a><a class="nt-nav " href="modules.html" data-nav="modules">Specification</a></nav>
             <main class="nt-main">
                 <div class="nt-heading">
                     <h2>RADIUS & Policy</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
                 </div>
                 <section id="page-content">
-                    <p class="nt-notice">Site / Package / NAS เป็นข้อมูลตัวอย่างและ Draft แยกใน Browser · ยังไม่เชื่อม RADIUS Manager จริง · การแก้ไข Site / Package ในหน้านี้ยังไม่เปลี่ยน Portal Configuration, Dashboard หรือระบบจริง</p>
+                    <p class="nt-notice">Site / Package / Account / NAS เป็นข้อมูลตัวอย่างและ Draft แยกใน Browser · ยังไม่เชื่อม RADIUS Manager จริง · การแก้ไข Site / Package ในหน้านี้ยังไม่เปลี่ยน Portal Configuration, Dashboard หรือระบบจริง</p>
                     <div class="nt-tabs" role="tablist" aria-label="ข้อมูล RADIUS Manager">
                         <button type="button" class="nt-tab active" role="tab" id="radius-tab-nas"
                             aria-controls="radius-panel-nas" aria-selected="true">NAS</button>
                         <button type="button" class="nt-tab" role="tab" id="radius-tab-packages"
                             aria-controls="radius-panel-packages" aria-selected="false">Package</button>
+                        <button type="button" class="nt-tab" role="tab" id="radius-tab-account"
+                            aria-controls="radius-panel-account" aria-selected="false">Account</button>
                         <button type="button" class="nt-tab" role="tab" id="radius-tab-sites"
                             aria-controls="radius-panel-sites" aria-selected="false">Site</button>
                     </div>
+                    <section id="radius-panel-account" role="tabpanel" aria-labelledby="radius-tab-account" hidden>
+                        <div class="nt-panel">
+                            <div class="wt-radius-heading">
+                                <h3>Account</h3>
+                                <div class="wt-account-toolbar">
+                                    <span id="radius-account-count" class="nt-help"></span>
+                                    <button type="button" class="nt-button primary" id="radius-account-create">CREATE</button>
+                                    <button type="button" class="nt-button" id="radius-account-generate">GENERATE</button>
+                                    <button type="button" class="nt-button" id="radius-account-import">IMPORT</button>
+                                    <button type="button" class="nt-button" id="radius-account-dispatch">DISPATCH</button>
+                                    <button type="button" class="nt-button" id="radius-account-export">EXPORT CSV</button>
+                                    <input type="file" id="radius-account-import-file" accept=".csv,text/csv" hidden>
+                                </div>
+                            </div>
+                            <p class="nt-notice">Account Draft อยู่เฉพาะ Browser และยังไม่เชื่อม RADIUS Manager จริง · <strong>ไม่ DISPATCH</strong> = Account ใช้ได้ทุก Site ที่มี Package นั้น · <strong>DISPATCH</strong> = จำกัด Account ให้ใช้ได้เฉพาะ Site ที่กำหนด แม้ Site อื่นจะมี Package เดียวกัน</p>
+                            <p id="radius-account-storage-status" class="nt-help" role="status" aria-live="polite"></p>
+                            <div id="radius-account-filter" class="wt-account-filter" hidden>
+                                <span id="radius-account-filter-label"></span>
+                                <button type="button" class="nt-button nt-compact" id="radius-account-filter-clear">ดู Account ทั้งหมด</button>
+                            </div>
+                            <div id="radius-account-breakdown" class="wt-account-breakdown" hidden>
+                                <h4 id="radius-account-breakdown-title">Account ตาม Package</h4>
+                                <div id="radius-account-breakdown-rows" class="wt-account-breakdown-rows"></div>
+                            </div>
+                            <label class="nt-field wt-radius-search">ค้นหา Account
+                                <input id="radius-account-search" type="search" placeholder="Username, Package, Status, Dispatch Site">
+                            </label>
+                            <div class="wt-radius-table">
+                                <table class="wt-account-list">
+                                    <thead><tr><th class="wt-account-select"><input id="radius-account-select-all" type="checkbox" aria-label="เลือก Account ที่แสดงทั้งหมด"></th><th>Username</th><th>Package</th><th>Status</th><th>DISPATCH</th></tr></thead>
+                                    <tbody id="radius-account-rows"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <dialog class="wt-radius-dialog wt-account-dialog" id="radius-account-create-dialog" aria-labelledby="radius-account-create-title">
+                            <div class="wt-radius-heading"><h3 id="radius-account-create-title">CREATE Account</h3><button type="button" class="nt-button" id="radius-account-create-close">ปิด</button></div>
+                            <p class="nt-help">สร้าง Account 1 รายการ · ค่าเริ่มต้นยังไม่ DISPATCH</p>
+                            <form id="radius-account-create-form" novalidate autocomplete="off">
+                                <div class="nt-form-grid">
+                                    <label class="nt-field">Username *<input id="radius-account-create-username" name="username" maxlength="128" required autocomplete="off"></label>
+                                    <label class="nt-field">Package *<select id="radius-account-create-package" name="packageId" required></select></label>
+                                    <label class="nt-field">Status<select id="radius-account-create-status" name="status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></label>
+                                </div>
+                                <p id="radius-account-create-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-account-create-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">CREATE</button></div>
+                            </form>
+                        </dialog>
+                        <dialog class="wt-radius-dialog wt-account-dialog" id="radius-account-generate-dialog" aria-labelledby="radius-account-generate-title">
+                            <div class="wt-radius-heading"><h3 id="radius-account-generate-title">GENERATE Account</h3><button type="button" class="nt-button" id="radius-account-generate-close">ปิด</button></div>
+                            <p class="nt-help">สร้าง Username อัตโนมัติจาก User Prefix ของ Package + เลข 8 หลัก · สูงสุด 1,000 Account ต่อครั้ง · ค่าเริ่มต้นยังไม่ DISPATCH</p>
+                            <form id="radius-account-generate-form" novalidate autocomplete="off">
+                                <div class="nt-form-grid">
+                                    <label class="nt-field">Package *<select id="radius-account-generate-package" name="packageId" required></select></label>
+                                    <label class="nt-field">จำนวน Account *<input id="radius-account-generate-count" name="count" type="number" min="1" max="1000" step="1" value="10" required></label>
+                                    <label class="nt-field">Status<select id="radius-account-generate-status" name="status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></label>
+                                </div>
+                                <p id="radius-account-generate-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-account-generate-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">GENERATE</button></div>
+                            </form>
+                        </dialog>
+                        <dialog class="wt-radius-dialog wt-account-dialog" id="radius-account-dispatch-dialog" aria-labelledby="radius-account-dispatch-title">
+                            <div class="wt-radius-heading"><h3 id="radius-account-dispatch-title">DISPATCH Account</h3><button type="button" class="nt-button" id="radius-account-dispatch-close">ปิด</button></div>
+                            <p id="radius-account-dispatch-help" class="nt-notice"></p>
+                            <form id="radius-account-dispatch-form" novalidate>
+                                <label class="nt-field">กำหนด Site<select id="radius-account-dispatch-site" name="siteId"></select></label>
+                                <p class="nt-help">เลือก “ไม่ DISPATCH” เพื่อให้ Account กลับมาใช้ได้ทุก Site ที่มี Package ของ Account นั้น</p>
+                                <p id="radius-account-dispatch-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-account-dispatch-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">บันทึก DISPATCH</button></div>
+                            </form>
+                        </dialog>
+                        <dialog class="wt-radius-dialog wt-account-detail-dialog" id="radius-account-detail-dialog" aria-labelledby="radius-account-detail-title">
+                            <div class="wt-radius-heading">
+                                <h3 id="radius-account-detail-title">Account Detail</h3>
+                                <button type="button" class="nt-button" id="radius-account-detail-close">ปิด</button>
+                            </div>
+                            <p class="nt-help">รายละเอียด Account และ Session เป็นข้อมูล Draft / ตัวอย่างใน Browser ยังไม่ใช่ข้อมูลสดจาก RADIUS</p>
+                            <div class="wt-account-detail-grid">
+                                <dl><dt>Username</dt><dd id="radius-account-detail-username">—</dd></dl>
+                                <dl><dt>Package</dt><dd id="radius-account-detail-package">—</dd></dl>
+                                <dl class="wt-account-status-card"><dt>Status</dt><dd>
+                                    <div class="wt-account-status-toggle" id="radius-account-detail-status" role="group" aria-label="เลือก Status ของ Account">
+                                        <button type="button" id="radius-account-status-active" data-account-status="Active" aria-pressed="false">Active</button>
+                                        <button type="button" id="radius-account-status-inactive" data-account-status="Inactive" aria-pressed="false">Inactive</button>
+                                    </div>
+                                    <span id="radius-account-status-note" class="nt-help" role="status" aria-live="polite"></span>
+                                </dd></dl>
+                                <dl><dt>Package Type</dt><dd id="radius-account-detail-package-type">—</dd></dl>
+                                <dl><dt>Package Price</dt><dd id="radius-account-detail-package-price">—</dd></dl>
+                                <dl><dt>Session Time</dt><dd id="radius-account-detail-session-time">—</dd></dl>
+                                <dl><dt>First Login</dt><dd id="radius-account-detail-first-login">—</dd></dl>
+                                <dl><dt>Expired Date</dt><dd id="radius-account-detail-expired-date">—</dd></dl>
+                                <dl><dt>Time Used</dt><dd id="radius-account-detail-time-used">—</dd></dl>
+                                <dl><dt>Last Login</dt><dd id="radius-account-detail-last-login">—</dd></dl>
+                                <dl><dt>Created Date</dt><dd id="radius-account-detail-created-date">—</dd></dl>
+                                <dl><dt>Remain</dt><dd id="radius-account-detail-remain">—</dd></dl>
+                            </div>
+                            <section class="wt-account-session-panel" aria-labelledby="radius-account-session-title">
+                                <div class="wt-radius-heading">
+                                    <h4 id="radius-account-session-title">Sessions</h4>
+                                    <div class="wt-account-session-actions">
+                                        <span id="radius-account-session-count" class="nt-help">0 Session</span>
+                                        <button type="button" class="nt-button nt-compact" id="radius-account-session-refresh" aria-label="Refresh Session ของ Account นี้">↻ Refresh</button>
+                                    </div>
+                                </div>
+                                <p id="radius-account-session-refresh-status" class="nt-help" role="status" aria-live="polite"></p>
+                                <div class="wt-radius-table">
+                                    <table class="wt-account-session-table">
+                                        <thead><tr><th class="wt-session-seq">ลำดับ</th><th>MAC</th><th>Last seen</th></tr></thead>
+                                        <tbody id="radius-account-session-rows"></tbody>
+                                    </table>
+                                </div>
+                            </section>
+                            <div class="wt-nas-form-actions"><button type="button" class="nt-button primary" id="radius-account-detail-back">กลับ</button></div>
+                        </dialog>
+                    </section>
                     <section id="radius-panel-sites" role="tabpanel" aria-labelledby="radius-tab-sites" hidden>
                         <div class="nt-panel">
                             <div class="wt-radius-heading">
@@ -74,6 +183,7 @@
                                             <th>Concurrent</th>
                                             <th>Description</th>
                                             <th>Allow Package</th>
+                                            <th class="wt-account-number">Accounts</th>
                                             <th>จัดการ</th>
                                         </tr>
                                     </thead>
@@ -125,9 +235,15 @@
                         <div class="nt-panel">
                             <div class="wt-radius-heading"><h3>จัดการ Package (Draft)</h3><div class="wt-nas-actions"><span id="radius-package-count" class="nt-help"></span><button type="button" class="nt-button primary" id="radius-package-add">เพิ่ม Package</button></div></div>
                             <p class="nt-help">Created Date ของข้อมูลตัวอย่างเดิมที่ไม่มีวันสร้างจะแสดงเป็น — (ไม่สร้างวันที่ย้อนหลังขึ้นเอง)</p>
+                            <form id="radius-package-search-form" class="wt-package-search-bar" role="search">
+                                <label class="nt-field wt-radius-search">ค้นหา Package
+                                    <input id="radius-package-search" type="search" placeholder="Name, Prefix Accounts" autocomplete="off">
+                                </label>
+                                <button type="submit" class="nt-button" id="radius-package-search-button">ค้นหา</button>
+                            </form>
                             <div class="wt-radius-table">
                                 <table class="wt-package-list">
-                                    <thead><tr><th>Status</th><th>Name</th><th>Prefix Accounts</th><th>Created Date</th></tr></thead>
+                                    <thead><tr><th>Status</th><th>Name</th><th>Prefix Accounts</th><th class="wt-account-number">Accounts</th><th>Created Date</th></tr></thead>
                                     <tbody id="radius-package-rows"></tbody>
                                 </table>
                             </div>
@@ -151,15 +267,15 @@
                                     <label class="nt-field">Package Type *<select name="packageType" required>
                                         <option value="">เลือก Package Type</option><option value="Prepaid">Prepaid</option><option value="Postpaid">Postpaid</option>
                                     </select></label>
-                                    <label class="nt-field">Upload<input name="upload" maxlength="255"></label>
-                                    <label class="nt-field">Download<input name="download" maxlength="255"></label>
-                                    <label class="nt-field">Session Time<input name="sessionTime" maxlength="255"></label>
-                                    <label class="nt-field">Session Limit<input name="sessionLimit" maxlength="255"></label>
-                                    <label class="nt-field">Idle Timeout<input name="idleTimeout" maxlength="255"></label>
-                                    <label class="nt-field">Time (hours:minutes)<input name="time" maxlength="255"></label>
-                                    <label class="nt-field">Daily time (hours:minutes)<input name="dailyTime" maxlength="255"></label>
-                                    <label class="nt-field">Weekly time (hours:minutes)<input name="weeklyTime" maxlength="255"></label>
-                                    <label class="nt-field">Monthly time (hours:minutes)<input name="monthlyTime" maxlength="255"></label>
+                                    <label class="nt-field">Upload<input name="upload" maxlength="255" placeholder="0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Download<input name="download" maxlength="255" placeholder="0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Session Time<input name="sessionTime" maxlength="255" placeholder="0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Session Limit<input name="sessionLimit" maxlength="255" placeholder="0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Idle Timeout<input name="idleTimeout" maxlength="255" placeholder="0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Time (hours:minutes)<input name="time" maxlength="255" placeholder="00:00 / 0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Daily time (hours:minutes)<input name="dailyTime" maxlength="255" placeholder="00:00 / 0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Weekly time (hours:minutes)<input name="weeklyTime" maxlength="255" placeholder="00:00 / 0 / เว้นว่าง = Unlimited"></label>
+                                    <label class="nt-field">Monthly time (hours:minutes)<input name="monthlyTime" maxlength="255" placeholder="00:00 / 0 / เว้นว่าง = Unlimited"></label>
                                     <label class="nt-field">Expiration *<select name="expiration" id="radius-package-expiration" required>
                                         <option value="">เลือก Expiration</option><option value="1st Login">1st Login</option>
                                         <option value="Specified Date">Specified Date</option><option value="Unlimited">Unlimited</option>
@@ -169,6 +285,7 @@
                                     <label class="nt-field">Price<input name="price" maxlength="255"></label>
                                     <label class="nt-field">Status<select name="status"><option value="Active">Active</option><option value="Disabled">Disabled</option></select></label>
                                 </div>
+                                <p id="radius-package-unlimited-help" class="nt-help"><strong>Unlimited:</strong> Upload, Download, Session Time, Session Limit, Idle Timeout, Time, Daily time, Weekly time และ Monthly time หากใส่ <code>0</code>, ค่าเวลาศูนย์ เช่น <code>00:00</code> หรือเว้นว่าง ระบบต้นแบบจะตีความเป็น <strong>Unlimited</strong>.</p>
                                 <p id="radius-package-expiration-help" class="nt-help">1st Login: กำหนดจำนวน Days นับจากการเข้าสู่ระบบครั้งแรก (ค่าเริ่มต้นในฟอร์ม 30 วัน) · Specified Date: ระบุวันที่หมดอายุ · Unlimited: ไม่กำหนดวันหมดอายุ · เป็นการตั้งค่า Draft เท่านั้น ยังไม่บังคับใช้งานบน RADIUS จริง</p>
                                 <p id="radius-package-legacy-help" class="nt-help" hidden>Package เดิมใช้ข้อมูล Type / Expiration แบบข้อความ กรุณาเลือกค่าจากรายการก่อนบันทึก (ค่าที่มีอยู่ยังคงเดิมจนกว่าจะบันทึก)</p>
                                 <label class="nt-field">Description<textarea name="description" maxlength="2000" rows="3"></textarea></label>

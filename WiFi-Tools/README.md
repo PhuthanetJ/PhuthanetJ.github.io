@@ -1,47 +1,20 @@
-# Wi-Fi Tools — Desktop & Mobile Offline Prototype
+# Wi-Fi Tools — Offline Prototype
 
-## รุ่น Desktop / Mobile (18 กันยายน 2569)
+**Current release:** V029  
+**Functional baseline:** V029  
+**Updated:** 23 September 2026 / 23 กันยายน 2569
 
-หน้าเว็บชุดเดียวปรับตามความกว้างจออัตโนมัติ ธีมน้ำเงินเข้ม–ขาวตามภาพอ้างอิง หน้าจอไม่เกิน 780px ใช้ปุ่ม ☰ เปิดเมนูด้านซ้าย ปิดด้วยปุ่มปิด แตะพื้นหลัง หรือ Escape ส่วน Desktop แสดงแถบเมนูตลอดเวลา
+Wi-Fi Tools เป็นต้นแบบระบบบริหาร Wi-Fi แบบ Offline สำหรับทดลอง UI/UX, Config, Portal, RADIUS & Policy, Report และงานบริหารที่เกี่ยวข้อง โดยออกแบบให้เปิดใช้งานจากไฟล์ HTML/CSS/JavaScript ใน Browser ได้โดยไม่ต้องเชื่อม Backend จริง
 
-- Dashboard: การ์ดสรุป 2 คอลัมน์สำหรับจอ 341–780px ส่วนกราฟ สถานะบริการ ช่องทางรับสิทธิ์ คูปอง และเหตุการณ์เรียงลงมา ตัวอักษรและปุ่มยังมีขนาดอ่านและกดได้
-- Login, AP, Portal Configuration, RADIUS, Reports, User, การแจ้งเตือน, Config และแผน VM ใช้โครงสร้างมือถือร่วมกัน
-- ตารางกว้างเลื่อนซ้าย–ขวาภายในกรอบ ไม่ย่อทั้งหน้าให้ตัวอักษรเล็ก
-- ฟอร์มมือถือเรียงคอลัมน์เดียว ส่วน Portal Preview อยู่ถัดจากฟอร์ม การเลือก Desktop / Mobile ใน Preview เป็นการเลือกหน้าตาของ Portal แยกจากการปรับหน้าจัดการตามขนาดจอ
-- ไฟล์ที่เพิ่ม: `css/mobile.css`, `js/mobile.js` โหลดหลังไฟล์แต่ละเมนู ไม่มี CDN หรือการดึงข้อมูลจากภายนอก
-- รูปแบบเดิมและข้อมูลล่าสุดทั้งหมดรวมอยู่ด้วย: Banner / Video Quiz, Questionnaire ที่แก้ไขได้, Config ตาม Portal Path, Site / Allow Package และ Separate Servers
+> **สถานะสำคัญ:** โครงการนี้ยังเป็น Offline Prototype / Draft ข้อมูลจำนวนมากเป็นตัวอย่างหรือเก็บใน Browser (`localStorage`) และยังไม่ใช่ระบบ Production ห้ามใช้ RADIUS Secret, Password, Token หรือข้อมูลสำคัญจริงในต้นแบบนี้
 
-ดาวน์โหลด ZIP แล้ว **แตกไฟล์ทั้งหมดก่อนเปิด** ให้ `index.html`, `html`, `css`, `js`, `data` อยู่ในโครงสร้างเดียวกัน ห้ามเปิดจากหน้าดูตัวอย่างภายใน ZIP หรือคัดลอกเฉพาะ HTML เพราะ Browser ต้องอ่านไฟล์ CSS/JS ข้างเคียงด้วย
+---
 
-บนมือถือ ต้องใช้ Browser/ตัวเปิดไฟล์ที่รัน JavaScript และเข้าถึงไฟล์ข้างเคียงได้ หากแอป Files เปิดเป็นหน้าดูตัวอย่างและปุ่มไม่ทำงาน ให้เปิดโฟลเดอร์นี้ผ่านเว็บเซิร์ฟเวอร์ใน LAN บน PC เช่น `python -m http.server 8080 --bind 0.0.0.0` (ต้องมี Python และใช้เครือข่ายที่เชื่อถือได้) แล้วเปิด `http://<IP-PC>:8080` ใน Browser มือถือ ไม่ต้องใช้อินเทอร์เน็ต แอปไฟล์บางชนิดบนมือถือไม่รองรับเว็บหลายไฟล์ จึงไม่รับรองการเปิด ZIP โดยตรงบนทุกอุปกรณ์
+## 1. เริ่มใช้งาน
 
-ตรวจโครงสร้างไฟล์และทดสอบตรรกะเมนูมือถือ รวมเปิด/ปิดเมนู, Escape, การวนโฟกัส, เปลี่ยนความกว้างจอ และ Role ที่ซ่อนเมนูด้วย DOM จำลอง ยังไม่ได้ทดสอบการแสดงผลด้วย Browser หรือมือถือจริงในสภาพแวดล้อมนี้
-
-## V011 — ส่วนงาน (ตัวเลือกบน Header)
-
-- เปลี่ยน Header จาก `Site ที่ตั้งค่า` เป็น **ส่วนงาน** ทุกหน้าที่มี Header รวมถึงหน้าตั้งค่า
-- ตัวเลือก: `ALL` (ค่าเริ่มต้น), `กรุงเทพและปริมณฑล`, `ภาคกลาง`, `ภาคตะวันออก`, `ภาคเหนือ`, `ภาคตะวันออกเฉียงเหนือ`, `ภาคใต้`
-- เก็บค่าที่เลือกใน Draft ของ Browser เพื่อให้เลือกค้างไว้เมื่อเปลี่ยนหน้า; ข้อมูล V010 เดิมที่ไม่มีค่าจะเริ่มต้น `ALL`
-- **ขอบเขต:** เป็นตัวเลือกส่วนงานใน UI เท่านั้น เพราะข้อมูลตัวอย่าง `radius-sites.json` มีเพียง Demo Site A/B/C ไม่มีฟิลด์ระบุส่วนงาน/ภูมิภาค จึงยังไม่กรอง Dashboard, Reports, สิทธิ์ หรือ Config ตามภูมิภาค และไม่ได้เปลี่ยน Site ที่กำลังแก้ไข การกรองจริงต้องกำหนดความสัมพันธ์ระหว่าง Site กับส่วนงานและแหล่งข้อมูลจริงก่อน
-
-## V013 — RADIUS & Policy → NAS (Offline CRUD)
-
-- เพิ่มแท็บ **NAS** ต่อจาก Site และ Package; Site/Package ยังเป็น Snapshot อ่านอย่างเดียวตามเดิม
-- ตาราง NAS แสดง **Name/Host, Shortname, Secret (แสดง •••••••• เท่านั้น), Server** พร้อมปุ่ม **แก้ไข/ลบ** และค้นหา
-- ปุ่ม **เพิ่ม NAS** เปิดฟอร์มแปดพารามิเตอร์: Name/Host, Shortname, Type, Ports, Secret, Server, Community, Description
-- ต้องกรอก Name/Host, Shortname, Secret สำหรับรายการใหม่; แก้ไขโดยเว้น Secret ว่างจะรักษาค่าเดิม กรอกใหม่เพื่อเปลี่ยนค่าเดิม
-- ตรวจ Name/Host และ Shortname ไม่ซ้ำ, Ports (ถ้ากรอก) เป็นเลข 1–65535 คั่น comma, ความยาวข้อความ และยืนยันก่อนลบ
-- ต้นแบบให้ **System Admin** เข้าถึงแท็บ NAS; บัญชีอื่นจะไม่อ่าน/แสดงข้อมูล NAS ผ่านหน้าจอ แต่การตรวจสิทธิ์ที่ Browser **ไม่ใช่ระบบ Security สำหรับ Production**
-- NAS Draft เริ่มต้นว่างจาก `data/radius-nas.json` และถูกบันทึกแยกใน `localStorage` ของ Browser นี้ โดยไม่ได้ส่งไป RADIUS Manager และไม่ได้รวมใน Portal Config Export หรือ `window.name`
-- **ข้อควรระวังด้านความปลอดภัย:** `localStorage` ไม่เข้ารหัสและผู้ใช้ Browser/เครื่องเดียวกันอาจอ่าน Secret ได้ ต้องใช้ **Secret จำลองเท่านั้น** ห้ามกรอก RADIUS Secret จริง ก่อนใช้ Production ต้องพัฒนา Backend, RBAC ฝั่ง Server, การจัดเก็บ Secret ที่ปลอดภัย, API และ Audit Log ตาม RADIUS Manager รุ่นจริง
-- หาก Browser ไม่อนุญาต `localStorage` หรือข้อมูลเก่าอ่านไม่ออก ปิดการแก้ไข NAS และแสดงเหตุผล ไม่เขียนทับข้อมูลที่อ่านไม่ออก
-- ไฟล์เกี่ยวข้อง: `html/radius-policy.html`, `js/pages/radius-policy.js`, `js/pages/radius-nas.js`, `js/nas-model.js`, `css/radius-policy.css`, `data/radius-nas.json`, `js/offline-data.js`, `tests/nas.test.js`
-
-## เริ่มใช้งาน
-
-แตก ZIP ทั้งหมด แล้วเปิด `index.html` ด้วย Chrome หรือ Edge ไม่ต้องติดตั้ง Node.js หรือ Web Server
-
-เข้าสู่ระบบด้วย `admin` / `Demo1234!` รหัสนี้เป็นรหัสทดสอบของทุกบัญชี รวมถึงบัญชีที่สร้างเพิ่มในต้นแบบ
+1. แตก ZIP ทั้งหมดก่อนเปิดใช้งาน โดยคงโครงสร้าง `index.html`, `html`, `css`, `js`, `data` ไว้ด้วยกัน
+2. เปิด `index.html` ด้วย Chrome หรือ Edge
+3. บัญชีตัวอย่างหลัก: `admin` / `Demo1234!`
 
 | Username | Role | Site | Gen Report | Export |
 |---|---|---|---|---|
@@ -50,192 +23,613 @@
 | viewer | Site Viewer | B | ไม่ได้ | ไม่ได้ |
 | reporter | Site Viewer | A และ C | ได้ | ได้ |
 
-Login และสิทธิ์เป็นการจำลองบน Browser ไม่ใช่ระบบป้องกันข้อมูลสำหรับ Production ผู้ที่มีไฟล์อ่านข้อมูล JSON ตัวอย่างได้ การใช้งานจริงต้องตรวจ Session, Role และ Site ที่ Backend
+Login / Role / Permission เป็นการจำลองฝั่ง Browser เท่านั้น ไม่ใช่ Backend authorization สำหรับ Production
 
-## สิ่งที่เพิ่มและแก้ไข
+### Mobile
 
-- เปลี่ยนชื่อเป็น Wi-Fi Tools
-- ย้ายโหลด Config, ดาวน์โหลด JSON, โหลดค่าตั้งต้น และวิธีใช้งานไปเมนู **ตั้งค่าและไฟล์ Config** ไม่มีแถบ Offline แบบเดิมบนทุกหน้า
-- Login/Logout และเมนู User: เพิ่ม/แก้ผู้ใช้ Role, Site, Status และสิทธิ์ Export/Gen Report
-- System Admin จัดการทั้งหมด; Site Admin จัดการเฉพาะ Site ที่มอบหมาย; Site Viewer ดูเฉพาะ Site ที่มอบหมาย
-- Site Admin ไม่สามารถแต่งตั้ง System Admin หรือขยายสิทธิ์ไป Site อื่น และไม่สามารถเพิ่มสิทธิ์ Export/Gen Report ที่ตนเองไม่ได้รับ
-- Config, คูปอง และค่าช่องทางแจ้งเตือนแยกตาม Site
-- Dashboard กด Site เพื่อดู AP → ยี่ห้อ → รุ่น พร้อม IP, MAC, Firmware, Status, Clients และ Last seen
-- Free WiFi & Coupon มี Site Name ให้เลือก และคูปองตัวอย่างผูกกับ Site
-- RADIUS & Policy มี dropdown ชื่อ Package และแสดงข้อมูลอ่านอย่างเดียว พร้อม Site ที่ใช้ Package ภายในขอบเขตสิทธิ์
-- การแจ้งเตือนมีค่าตั้งแยก In-app, Telegram, LINE Messaging API, Email/SMTP และ Webhook พร้อมช่อง ID/Token ที่เกี่ยวข้อง
-- Report กรองช่วงวันที่ แล้วสรุปรวมรายวันหรือรายวันแยก Site พร้อมกราฟและตาราง
-- Export CSV ดาวน์โหลดโดยตรง; PDF เปิดหน้า Report Preview แล้วกด **พิมพ์ / บันทึก PDF** เลือก **Save as PDF** ใน Browser
-- หน้าปก PDF มีมาตรฐาน ผู้บริหาร และรูปภาพ ปรับชื่อรายงาน หัวข้อรอง หน่วยงาน สี Logo และรูปหน้าปกได้
-- ตั้งรายงานรายเดือน: Site, วัน 1–28, เวลา Asia/Bangkok, Email ผู้รับหลายคน, PDF/CSV และหน้าปก แก้ไขหรือเปิด/ปิดรายการได้
-- รายเดือนใช้ข้อมูลเดือนปฏิทินก่อนหน้าและแสดงกำหนดส่งครั้งถัดไปตามค่าตั้ง
+หน้าจอไม่เกินประมาณ 780px ใช้เมนูแบบ Mobile และตารางกว้างสามารถเลื่อนซ้าย–ขวาภายในกรอบได้ ตัวเลือก **ส่วนงาน** บน Mobile ใช้ตัวเลือกแบบ Touch-friendly แยกจาก Native `<select>` เพื่อแก้กรณีกดเลือกไม่ได้บนมือถือ
 
-## Site และ Allow Package จาก RADIUS Manager
-
-- **RADIUS & Policy → Site** แสดง Name, VLAN ID, Location, Concurrent และ Description แบบอ่านอย่างเดียวตามโครงสร้างในภาพอ้างอิง
-- กด **ดู Allow Package** ของ Site เพื่อแสดง Name, Prefix และ Limit กดชื่อ Package เพื่อดูรายละเอียดในแท็บ Package
-- **Portal Configuration → ทั่วไป & Path** เลือก Site ได้หลายรายการ แล้วแสดงเฉพาะชื่อ Policy / Package จาก Allow Package ของแต่ละ Site อัตโนมัติ ไม่มีช่องเลือก Package เอง
-- ชื่อ Package ในหน้า Portal ไม่แสดง Prefix, Limit หรือค่ารายละเอียด Package ส่วนข้อมูลเหล่านี้ยังดูได้ใน RADIUS & Policy
-- แหล่งข้อมูล Site และความสัมพันธ์ Allow Package คือ `data/radius-sites.json` ส่วนชื่อและรายละเอียด Package คือ `data/radius-packages.json`
-- `data/sites.json` เป็นรายการ ID/Name สำหรับรองรับโค้ดเดิม สคริปต์ build จะสร้างจาก `radius-sites.json` ทุกครั้ง ไม่ใช้เป็นแหล่งข้อมูล Site อีกชุด
-- Config schemaVersion 7 เก็บ `bindings.siteIds` และระบุ `packageSource: radius-manager-allow-package`; `packageIds` เป็นค่าที่คำนวณจาก Allow Package
-- โหลด Draft / Config รุ่นเดิมได้ รายการ Package ที่เคยเลือกเองจะถูกแทนด้วย Allow Package ปัจจุบันของ Site การแก้ Package IDs ในไฟล์นำเข้าไม่สามารถเปลี่ยนความสัมพันธ์นี้ได้
-- Site ที่ไม่มี Allow Package จะแสดงว่าไม่มีรายการ ส่วน Site ที่ยังไม่มีข้อมูลจะแสดงว่ายังไม่มีข้อมูล ไม่ดึง Package จากรายชื่อรวมมาทดแทน
-- รายชื่อ Package ที่อ่านได้เป็นข้อมูลการกำหนด Allow Package ไม่ใช่การยืนยันว่า Package Active หรือใช้งานอินเทอร์เน็ตได้ การตรวจสิทธิ์จริงยังเป็นหน้าที่ของ RADIUS Manager / Backend
-- **ตั้งค่าและไฟล์ Config** เปิด Portal ชุดเดียวกันผ่านทุก Site ที่ผูกไว้ได้ การแก้ไข / Export Config ร่วมต้องมีสิทธิ์ครบทุก Site
-- Site เจ้าของ Config ต้องอยู่ในรายการเสมอ หากต้องการนำ Site ที่กำลังเปิดออก ให้เปิด Config จาก Site เจ้าของก่อน
-
-ข้อมูล Site / Allow Package / Package ที่แถมมาเป็น Snapshot ตัวอย่าง โครงสร้างอ้างอิงภาพที่ผู้ใช้ส่งมา ยังไม่ได้เชื่อม API ของ RADIUS Manager และไม่ได้สมมติว่า Site ในภาพใดเป็นเจ้าของรายการ Package ในอีกภาพ
-
-## Banner หลายรายการ
-
-- ไปที่ **Portal Configuration → ดีไซน์ → Banner** กด **เพิ่มรูปภาพ / วิดีโอ** เลือกได้หลายไฟล์
-- รองรับรูป PNG / JPG / WebP (ไม่เกิน 3 MB ต่อไฟล์) และวิดีโอ MP4 / WebM (ไม่เกิน 15 MB ต่อไฟล์) รวมไม่เกิน 30 MB และ 20 รายการต่อ Site
-- แต่ละรายการมีชื่อ, ลิงก์ปลายทาง HTTP/HTTPS, เปิด–ปิด, เปลี่ยนไฟล์, ลบ และเลื่อนลำดับ
-- Preview แสดงเฉพาะรายการที่เปิด เรียงลำดับและเลื่อนก่อนหน้า/ถัดไปแยกตาม Banner area รูปภาพที่เปิด Clickable กดเปิดลิงก์ได้ ส่วนวิดีโอมีปุ่มเล่นและควบคุมเสียง พร้อมลิงก์ปลายทาง หรือเปิดคำถามที่ผูกไว้เมื่อกดดำเนินการต่อ
-- สื่อทุกไฟล์ฝังใน Config JSON จึงเปิดได้ออฟไลน์ ส่วนลิงก์ปลายทางต้องใช้การเชื่อมต่อตามเว็บไซต์นั้น วิดีโอต้องใช้ Codec ที่ Browser รองรับ
-- Banner วิดีโอไม่บังคับให้ดูจบก่อนรับสิทธิ์ ตัวเลือก Video Ads ก่อนรับสิทธิ์ยังเป็นต้นแบบเดิม
-- Config รุ่นใหม่ใช้ schemaVersion 7; Config / Draft รุ่นเดิมที่มี Banner เดียวจะย้ายมาเป็นรายการแรกให้โดยอัตโนมัติ
-- ไฟล์สื่อขนาดใหญ่อาจเกินพื้นที่เก็บของ Browser ระบบจะแจ้งเมื่อบันทึก Draft ถาวรไม่ได้ ให้ดาวน์โหลด Config JSON ก่อนปิดแท็บ แล้วโหลดกลับผ่านเมนูตั้งค่า (ไฟล์ Config ไม่เกิน 60 MB)
-
-## เงื่อนไข Free WiFi และการเลือก Config
-
-- ไปที่ **Portal Configuration → Quiz & เงื่อนไข** เพื่อแก้ข้อความลิงก์ยอมรับและเนื้อหาเงื่อนไขเต็ม แยกภาษาไทย/อังกฤษ
-- ใน Preview กดข้อความยอมรับหรือช่องติ๊กเพื่อเปิดหน้าต่างอ่านเงื่อนไข จากนั้นกด **ยอมรับเงื่อนไข** จึงรับสิทธิ์ได้ การปิดหน้าต่างหรือกด Escape ยังไม่ถือว่ายอมรับ
-- เนื้อหาแสดงเป็นข้อความธรรมดา รองรับหลายบรรทัด การเปลี่ยนข้อความหรือรุ่นเงื่อนไขทำให้ต้องยอมรับใหม่ใน Preview
-- เมนู **ตั้งค่าและไฟล์ Config** เลือก **Portal Path เท่านั้น** แล้วกด **เลือก Config นี้** ก่อนโหลด/ดาวน์โหลด รายการ Path มาจาก Config ที่ผู้ใช้มีสิทธิ์เข้าถึง ส่วน Site เป็นข้อมูลที่ผูกใน Path และแสดงแบบอ่านอย่างเดียว
-- แต่ละ Site มี Config ตั้งต้นของตน และเลือก Portal ที่ผูกมาจาก Site อื่นได้ด้วย ชื่อและ Portal Path ของ Config ร่วมจะอ้างอิงชุดเดียวกัน เมื่อแก้ Path ตัวเลือกและชื่อไฟล์ดาวน์โหลดจะเปลี่ยนตาม
-- โหลดค่าตั้งต้นจะคง Portal Path และ Site ที่ผูกไว้ และ JSON รวมเนื้อหาเงื่อนไขทั้งสองภาษา
-- Draft และ JSON รุ่นเดิมที่ยังไม่มีเนื้อหาเงื่อนไขเต็มยังโหลดได้ โดยเติมเนื้อหาตัวอย่างให้แก้ไขต่อ
-
-## Package ที่แสดง
-
-ชื่อ Policy, User Prefix, Username format, Package Expired, Package Type, Upload, Download, Session Time, Session Limit, Idle Timeout, Time, Daily time, Weekly time, Monthly time, Expiration, Price, Description, Status และ Site ที่ใช้ Policy
-
-Time/Daily/Weekly/Monthly เป็น hours:minutes โดยค่าศูนย์แสดงว่าไม่จำกัด ค่าอื่นเป็นตัวอย่าง ต้องตรวจ Mapping และหน่วยกับ RADIUS Manager รุ่นจริงก่อนเชื่อมต่อ
-
-## ส่วนที่ยังเป็นต้นแบบ
-
-- RADIUS Manager ยังไม่เชื่อม ใช้ `data/radius-packages.json` เป็น Snapshot ตัวอย่าง และไม่มีการแก้ Package จาก Tools
-- AP, Dashboard, Logs และ Report เป็นข้อมูลตัวอย่าง รายงานมีข้อมูล 15–17 กันยายน 2569
-- การแจ้งเตือนและรายงานรายเดือนบันทึกเฉพาะค่าตั้ง ยังไม่มี Scheduler/SMTP และยังไม่ส่งข้อความหรือ Email จริง
-- Token/Password ในหน้าแจ้งเตือนอยู่ชั่วคราว ไม่บันทึกถาวรหรือรวมใน Config JSON ต้องกรอกใหม่เมื่อเปิดหน้าอีกครั้ง
-- การบันทึก Draft เก็บใน Browser ไม่เขียนทับไฟล์ต้นฉบับ การย้ายโฟลเดอร์หรือเปลี่ยน Browser อาจไม่พบค่าเดิม
-- JSON ในเมนูตั้งค่าเก็บเฉพาะ Portal, รูปภาพและค่าของ Site ปัจจุบัน ไม่รวมผู้ใช้ ช่องทางแจ้งเตือน หรือรายการรายเดือน ซึ่งเก็บใน Browser สำหรับต้นแบบ
-- AI, OTP, Social Login และการรับสิทธิ์ Portal ยังคงเป็นการจำลอง ไม่มีการปล่อยอินเทอร์เน็ตจริง
-
-## โครงสร้าง
-
-- `html/`: HTML แยกทุกหน้า รวม Login, User, ตั้งค่า, AP และหน้า Print
-- `css/`: CSS กลางและแยกตามหน้า
-- `js/app.js`: Session, Config ตาม Site, การบันทึกและ Import/Export
-- `js/domain.js`: กฎสิทธิ์ การรวมรายงาน และวันส่งรายเดือน
-- `js/portal-bindings.js`: การผูก Site, อ่าน Allow Package และการเลือก Config ร่วม
-- `js/pages/portal-general.js`: ตัวเลือก Site และชื่อ Package อัตโนมัติในทั่วไป & Path
-- `js/banner-model.js`: รูปแบบข้อมูล สื่อ ลิงก์ และข้อจำกัด Banner
-- `js/pages/portal-banners.js`: ตัวจัดการ Banner, Banner area, Preview และหน้าต่าง Quiz
-- `js/pages/portal-questionnaires.js`: สร้าง แก้ไข และลบคำถามที่ผูกกับวิดีโอ
-- `js/pages/`: JavaScript เฉพาะแต่ละหน้า
-- `data/`: JSON แยก Config, Sites, Users, Roles, Package, AP, Report, Logs และค่าช่องทาง
-- `js/offline-data.js`: สร้างจาก JSON เพื่อเปิด `file://` ได้โดยไม่เรียก fetch
-- `scripts/build-offline-data.js`: สร้างไฟล์ข้อมูลหลังแก้ JSON
-- `tests/domain.test.js`: ทดสอบตรรกะหลัก
-
-หลังแก้ JSON ให้รันจากโฟลเดอร์โปรเจกต์:
+หาก Browser บนมือถือเปิดไฟล์หลายไฟล์จาก `file://` ไม่สมบูรณ์ สามารถเปิดผ่าน Web Server ภายใน LAN เช่น:
 
 ```bash
-node scripts/build-offline-data.js
+python -m http.server 8080 --bind 0.0.0.0
 ```
 
-Node.js จำเป็นสำหรับ build/test เท่านั้น ถ้ามี Draft ของ Config เดิมใน Browser ให้เลือก Site แล้วกดโหลดค่าตั้งต้นเพื่อใช้ Config ใหม่ การทดลอง Users ชุดใหม่ให้เปิดใน Browser Profile ใหม่หรือโฟลเดอร์ใหม่เพื่อไม่ใช้ข้อมูลที่เคยเก็บไว้
+จากนั้นเปิด `http://<IP-PC>:8080` บนมือถือในเครือข่ายที่เชื่อถือได้
 
-## การตรวจสอบ
+---
 
-ใน RADIUS & Policy → Site กด **ดู Allow Package** เพื่อเปิดหน้าต่างรายการของ Site นั้น เช่น Demo Site A มี Free WiFi 1 Hour และ Staff Monthly ส่วน Demo Site B มี Free WiFi 1 Hour และ Visitor Daily กดชื่อ Package เพื่อดูรายละเอียดแบบอ่านอย่างเดียว ปิดหน้าต่างด้วยปุ่มปิดหรือ Escape ข้อมูลและความสัมพันธ์ทั้งหมดเป็นตัวอย่าง ไม่ใช่ข้อมูลที่ดึงจากระบบจริง
+## 2. ส่วนงาน
 
-การแก้ปุ่ม Allow Package มี regression test เรียก event handler ของหน้าโดยใช้ DOM จำลอง ครอบคลุมการเปิดซ้ำ การเปลี่ยน Site การปิด การเปิดรายละเอียด และขอบเขตสิทธิ์ ไม่ใช่การทดสอบบน Browser จริง
+Header ใช้ชื่อ **ส่วนงาน** โดยมีตัวเลือก:
 
-ตรวจ Syntax ของ JavaScript, JSON, HTML IDs, ไฟล์อ้างอิงและ Link พร้อมทดสอบตรรกะ ครอบคลุม Role/Site, Report, Login, การย้าย Draft รุ่นเดิม, เงื่อนไขใน JSON, การเลือก Config ตามสิทธิ์, Banner หลายชนิด, ลิงก์, การย้าย Banner เดิม และการแจ้งพื้นที่เก็บ Draft ไม่พอ
+- `ALL` — ค่าเริ่มต้น
+- กรุงเทพและปริมณฑล
+- ภาคกลาง
+- ภาคตะวันออก
+- ภาคเหนือ
+- ภาคตะวันออกเฉียงเหนือ
+- ภาคใต้
+
+ค่าที่เลือกถูกเก็บใน Browser และคงค่าเมื่อเปลี่ยนหน้า
+
+> ปัจจุบันส่วนงานเป็น **UI selector เท่านั้น** ยังไม่มี Mapping ระหว่าง Site กับส่วนงาน/ภูมิภาค จึงยังไม่กรอง Dashboard, Reports, Config หรือสิทธิ์จริงตามภูมิภาค
+
+---
+
+## 3. Portal Configuration
+
+ลำดับแท็บปัจจุบัน:
+
+1. **ทั่วไป & Path** — เปิดเป็นค่าเริ่มต้น
+2. ดีไซน์
+3. ข้อความ & ภาษา
+4. Login / OTP
+5. Quiz & เงื่อนไข
+
+### ทั่วไป & Path
+
+- เลือก Config ตาม **Portal Path**
+- Site เป็นข้อมูลที่ผูกกับ Portal Path
+- เลือก Site ได้หลายรายการตามสิทธิ์
+- Package ที่แสดงมาจาก Allow Package ของ Site
+- Config ร่วมหลาย Site ใช้ Portal Path ชุดเดียวกัน
+
+### ดีไซน์ / Banner / Video
+
+- รองรับ Banner หลายรายการ
+- รองรับรูป PNG / JPG / WebP และวิดีโอ MP4 / WebM
+- กำหนด Banner area เช่น `b01`, `b02`, `login`, `modal`, `first`
+- เปิด/ปิด, เรียงลำดับ, เปลี่ยนไฟล์, ลบ และกำหนดลิงก์ได้
+- วิดีโอสามารถผูก Questionnaire / Quiz ได้
+- Flow หลัก: **วิดีโอ → ดำเนินการต่อ → คำถาม → ส่งคำตอบ → ดำเนินการต่อ**
+
+### Quiz & เงื่อนไข
+
+- Questionnaire / Quiz แก้ไขได้
+- คำถามของ Portal และคำถามที่ผูกกับ Video ใช้คลังคำถามร่วมกัน
+- แก้ข้อความเงื่อนไขการใช้งานไทย/อังกฤษได้
+- Config ปัจจุบันใช้ schemaVersion 7 และรองรับ Migration จาก Config รุ่นเก่าในขอบเขตที่โค้ดกำหนด
+
+---
+
+## 4. RADIUS & Policy
+
+ลำดับแท็บปัจจุบัน:
+
+**NAS → Package → Account → Site**
+
+NAS เป็นแท็บเริ่มต้น
+
+> Site / Package / Account / NAS ในเมนูนี้เป็น Draft แยกใน Browser และยังไม่เชื่อม RADIUS Manager จริง การแก้ Site / Package ในหน้านี้ยังไม่เปลี่ยน Portal Configuration, Dashboard หรือระบบ Production
+
+### 4.1 NAS
+
+รองรับ **เพิ่ม / แก้ไข / ลบ / ค้นหา**
+
+ตารางแสดง:
+
+- Name/Host
+- Shortname
+- Secret — แสดงแบบปิดบัง
+- Server
+
+พารามิเตอร์ NAS:
+
+1. Name/Host
+2. Shortname
+3. Type
+4. Ports
+5. Secret
+6. Server
+7. Community
+8. Description
+
+Validation หลัก:
+
+- Name/Host และ Shortname ห้ามซ้ำ
+- Ports ถ้ากรอกต้องเป็นเลข 1–65535 และรองรับหลายค่าคั่น comma
+- แก้ไข NAS โดยเว้น Secret ว่างจะคงค่าเดิม
+
+**Security:** NAS Secret ถูกเก็บใน `localStorage` ของ Prototype ซึ่งไม่เข้ารหัส จึงต้องใช้ Secret จำลองเท่านั้น
+
+### 4.2 Package
+
+รองรับ **เพิ่ม / แก้ไข / ลบ** และ **ค้นหา Package** จาก Name หรือ Prefix Accounts
+
+ตาราง Package แสดง:
+
+- Status
+- Name
+- Prefix Accounts
+- Accounts
+- Created Date
+
+จำนวนในคอลัมน์ **Accounts** อยู่กึ่งกลางและกดได้ เมื่อกดจะเปิดแท็บ Account พร้อม Filter เฉพาะ Account ของ Package นั้น
+
+#### พารามิเตอร์ Package
+
+| พารามิเตอร์ | รายละเอียด |
+|---|---|
+| ชื่อ Policy / Package | ชื่อ Package |
+| User Prefix | Prefix สำหรับ GENERATE Username |
+| Username format | รูปแบบ Username |
+| Package Expired | ข้อมูล Package Expired ตาม Draft |
+| Package Type | `Prepaid` / `Postpaid` |
+| Upload | `0` / ว่าง = Unlimited |
+| Download | `0` / ว่าง = Unlimited |
+| Session Time | `0` / ว่าง = Unlimited |
+| Session Limit | `0` / ว่าง = Unlimited |
+| Idle Timeout | `0` / ว่าง = Unlimited |
+| Time (hours:minutes) | `0`, `00:00` หรือว่าง = Unlimited |
+| Daily time | `0`, `00:00` หรือว่าง = Unlimited |
+| Weekly time | `0`, `00:00` หรือว่าง = Unlimited |
+| Monthly time | `0`, `00:00` หรือว่าง = Unlimited |
+| Expiration | `1st Login` / `Specified Date` / `Unlimited` |
+| Days | แสดงเฉพาะ `1st Login`, 1–36500 วัน |
+| Expiration Date | แสดงเฉพาะ `Specified Date` |
+| Price | ราคา Package |
+| Status | `Active` / `Disabled` |
+| Description | รายละเอียด Package |
+
+#### Expiration
+
+- `1st Login` → ระบุ `Days`; ค่าเริ่มต้นเมื่อเลือกโหมดใหม่คือ 30 วัน
+- `Specified Date` → ระบุ Expiration Date
+- `Unlimited` → ไม่กำหนดวันหมดอายุ
+
+#### Unlimited semantics
+
+พารามิเตอร์ต่อไปนี้ใช้กติกาเดียวกัน:
+
+`Upload / Download / Session Time / Session Limit / Idle Timeout / Time / Daily time / Weekly time / Monthly time`
+
+ถ้าเป็น `0`, ค่าเวลาศูนย์ เช่น `00:00`, หรือเว้นว่าง → Prototype ตีความเป็น **Unlimited**
+
+> เมื่อเชื่อม RADIUS จริง ต้องกำหนด Mapping ใหม่ว่าค่า Unlimited จะใช้ `0`, `NULL`, ไม่สร้าง Attribute หรือรูปแบบอื่นตาม Schema/Implementation จริง
+
+### 4.3 Account
+
+รองรับ:
+
+- **CREATE** — สร้าง Account ทีละรายการ
+- **GENERATE** — สร้างหลาย Account จาก `User Prefix + เลข 8 หลัก` สูงสุด 1,000 Account/ครั้ง
+- **IMPORT** — Import CSV
+- **DISPATCH** — กำหนด Account ให้ใช้ได้เฉพาะ Site
+- **EXPORT CSV** — Export รายการ Account ตาม Filter ปัจจุบัน
+- Search / Filter / Select Account
+
+CSV Import ใช้ Header:
+
+```csv
+username,package,status,dispatch_site
+```
+
+`package` และ `dispatch_site` รองรับ ID หรือชื่อที่แสดงใน Draft
+
+#### Account Status
+
+Account ใช้สถานะ:
+
+- `Active`
+- `Inactive`
+
+ข้อมูล Draft เก่าที่ใช้ `Disabled` จะถูก Migration เป็น `Inactive` ใน Account model
+
+#### DISPATCH Logic
+
+**ไม่ DISPATCH**
+
+Account ใช้ได้ทุก Site ที่มี Package ของ Account นั้น
+
+```text
+Account A → Package X
+Site A มี Package X → ใช้ได้
+Site B มี Package X → ใช้ได้
+Site C ไม่มี Package X → ใช้ไม่ได้
+```
+
+**DISPATCH ไป Site A**
+
+```text
+Account A → Package X → Dispatch Site A
+Site A → ใช้ได้
+Site B → ใช้ไม่ได้ แม้มี Package X
+Site C → ใช้ไม่ได้
+```
+
+DISPATCH จึงเป็นตัวจำกัดขอบเขต Site ของ Account โดยไม่ได้เปลี่ยน Package ของ Account
+
+#### Account Detail
+
+กด Username เพื่อเปิดรายละเอียด:
+
+- Username
+- Package
+- Status — Toggle `Active / Inactive`
+- Package Type
+- Package Price
+- Session Time
+- First Login
+- Expired Date
+- Time Used
+- Last Login
+- Created Date
+- Remain
+
+ค่าที่ไม่มีข้อมูลแสดง `—` และ Prototype ไม่สร้างข้อมูล Login ย้อนหลังเอง
+
+#### Sessions
+
+ใน Account Detail มีตาราง Sessions:
+
+| ลำดับ | MAC | Last seen |
+|---:|---|---|
+
+มีปุ่ม **Refresh** เพื่ออ่านข้อมูล Session ล่าสุดจาก Account Draft ปัจจุบัน
+
+> Refresh ยังไม่อ่าน `radacct` หรือข้อมูลสดจาก FreeRADIUS
+
+### 4.4 Site
+
+รองรับ **เพิ่ม / แก้ไข / ลบ Site**
+
+พารามิเตอร์หลัก:
+
+- Name
+- VLAN ID
+- Location
+- Concurrent
+- Description
+- Allow Package
+
+ตาราง Site แสดงจำนวน Account ที่ Site ใช้งานได้ โดยคำนึงถึง:
+
+1. Package ต้องอยู่ใน Allow Package ของ Site
+2. ถ้า Account มี DISPATCH ต้องตรง Site
+
+คอลัมน์ Accounts กดได้ เมื่อกดจะเปิดแท็บ Account พร้อม Filter ตาม Site และแสดง **Account ตาม Package** เฉพาะในหน้าที่เข้าไปดู ไม่แสดง Breakdown ค้างในตาราง Site
+
+---
+
+## 5. Dashboard / AP / Report / User / Notification
+
+### Dashboard / AP
+
+- Dashboard แสดงข้อมูลสรุปตัวอย่าง
+- กด Site เพื่อดู AP → Vendor → Model
+- แสดงข้อมูลเช่น IP, MAC, Firmware, Status, Clients และ Last seen
+
+### Reports
+
+- กรองช่วงวันที่
+- สรุปรวมรายวัน หรือแยก Site
+- Export CSV
+- PDF ผ่าน Report Preview และ Browser Print / Save as PDF
+- รองรับหน้าปกหลายรูปแบบ
+- ตั้งค่ารายงานรายเดือนแบบ Draft ได้
+
+### User / Role
+
+- Login / Logout
+- เพิ่ม/แก้ผู้ใช้ใน Prototype
+- Role: System Admin / Site Admin / Site Viewer
+- จำกัด Site, Export และ Generate Report ตามสิทธิ์ที่กำหนดใน Draft
+
+### Notification
+
+มีค่าตั้งตัวอย่างสำหรับ:
+
+- In-app
+- Telegram
+- LINE Messaging API
+- Email / SMTP
+- Webhook
+
+ยังไม่มีระบบส่งข้อความจริง
+
+### Free WiFi & Coupon
+
+- เลือก Site Name ได้
+- Coupon ตัวอย่างผูกกับ Site
+
+---
+
+## 6. ตั้งค่าและไฟล์ Config
+
+- เลือก Config ตาม **Portal Path**
+- โหลด Config JSON
+- ดาวน์โหลด Config JSON
+- โหลดค่าตั้งต้น
+- มีวิธีใช้งาน / Scope ในต้นแบบ
+- Site เป็นความสัมพันธ์ภายใน Portal Path ไม่ใช่ตัวเลือกหลักของหน้าตั้งค่า
+
+Draft ของ Browser ไม่ได้เขียนทับไฟล์ต้นฉบับ การย้ายโฟลเดอร์, เปลี่ยน Origin หรือเปลี่ยน Browser/Profile อาจทำให้ไม่พบ Draft เดิม
+
+---
+
+## 7. โมดูลตามสเปก / Separate Servers
+
+มีแผนตัวอย่างสำหรับ:
+
+- Local AI ภายในองค์กร
+- Separate Servers
+- Media / Video ปริมาณมาก
+- Log / Backup retention 6–9 เดือน
+
+รายละเอียดสมมติฐานและ Capacity อยู่ใน:
+
+- `Separate-Servers-Plan.md`
+- `data/server-plan.json`
+- `data/modules.json`
+
+ตัวเลขในแผนเป็น Capacity Planning ตัวอย่าง ไม่ใช่ผล Load Test หรือสเปกจัดซื้อที่ยืนยันแล้ว
+
+---
+
+## 8. Data / Storage / Security Model
+
+### Data Source ปัจจุบัน
+
+- JSON ใน `data/` = ข้อมูลตั้งต้น/ตัวอย่าง
+- `js/offline-data.js` = Bundle ข้อมูลเพื่อให้เปิด `file://` ได้โดยไม่ต้อง Fetch
+- `localStorage` = Draft ที่ผู้ใช้แก้ใน Browser
+
+### ข้อจำกัดด้าน Security
+
+Prototype นี้ไม่มี Backend Security จริง จึงไม่ควรเก็บ:
+
+- RADIUS Secret จริง
+- Password จริง
+- API Token จริง
+- SMTP Credential จริง
+- Production Customer Data
+
+ก่อนนำไป Production ต้องมีอย่างน้อย Backend API, Authentication/Session, Server-side RBAC, Audit Log, Secret Management, Database Transaction/Validation และ Integration กับ RADIUS Manager / FreeRADIUS จริง
+
+---
+
+## 9. โครงสร้างไฟล์หลัก
+
+```text
+WiFi-Tools/
+├── index.html
+├── html/                  # หน้า UI แยกตามเมนู
+├── css/                   # CSS กลางและรายหน้า
+├── js/
+│   ├── app.js             # Session / Config / ส่วนงาน / state หลัก
+│   ├── mobile.js          # Mobile behavior และ Division picker
+│   ├── radius-catalog-model.js
+│   ├── nas-model.js
+│   ├── account-model.js
+│   └── pages/             # Logic เฉพาะแต่ละหน้า
+├── data/                  # Demo JSON / CSV
+├── tests/                 # Node automated tests
+├── docs/
+├── scripts/
+├── Separate-Servers-Plan.md
+└── README.md
+```
+
+ไฟล์สำคัญของ RADIUS & Policy:
+
+- `html/radius-policy.html`
+- `css/radius-policy.css`
+- `js/pages/radius-policy.js`
+- `js/pages/radius-catalog.js`
+- `js/pages/radius-nas.js`
+- `js/pages/radius-account.js`
+- `js/radius-catalog-model.js`
+- `js/nas-model.js`
+- `js/account-model.js`
+- `data/radius-sites.json`
+- `data/radius-packages.json`
+- `data/radius-nas.json`
+- `data/radius-accounts.json`
+
+---
+
+## 10. Testing
+
+รัน Automated Tests:
 
 ```bash
 node --test tests/*.test.js
 ```
 
-ยังไม่ได้เปิดทดสอบการแสดงผล การกดครบทุกหน้า หรือ PDF ที่ Browser สร้างจริงในสภาพแวดล้อมนี้
+ผลตรวจ Functional Baseline V028:
 
+```text
+Tests: 109
+Pass: 109
+Fail: 0
+```
 
-## เพิ่ม Banner area และ Video Quiz (แก้ต่อจาก WiFi-Tools-Edite.zip)
+ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account, DISPATCH, Account Detail, Session และ Package Unlimited semantics
 
-1. เข้า **Portal Configuration → ดีไซน์** แล้วเพิ่มรูปภาพหรือวิดีโอ
-2. เลือก **Banner area** ต่อรายการตามตารางด้านล่าง เปิด Enabled เพื่อแสดง
-3. สำหรับวิดีโอ เปิด **Clickable → เมื่อดำเนินการต่อ → Quiz / Questionnaires** แล้วเลือกคำถามได้หลายรายการ
-4. กด **ดูตัวอย่าง** ในการ์ด Banner เพื่อไปยังตำแหน่งนั้น กด **ดำเนินการต่อ** เพื่อไปยังคำถามของวิดีโอโดยตรง ไม่มีปุ่มเปิด Quiz ซ้อนบนวิดีโอ สำหรับ 1st page / modal ใช้ปุ่มด้านบนหน้าต่าง ส่วนตำแหน่งอื่นใช้ปุ่มใต้สื่อ
-5. ต้องตอบครบทุกข้อ และ Quiz ต้องตอบถูกจึงแสดงผลผ่าน แบบสอบถามไม่มีคำตอบถูกหรือผิด เมื่อผ่านจะมีปุ่มดำเนินการต่อไปยัง Modal ถัดไปหรือกลับ Portal การปิดหน้าคำถามก่อนผ่านจะกลับหน้าวิดีโอ ผลอยู่เฉพาะใน Preview ไม่ส่งเข้าสู่ระบบหรือ Reports และไม่ได้เป็นเงื่อนไขปล่อยอินเทอร์เน็ตจริง
-6. แก้ชื่อ คำถาม ตัวเลือก หรือเฉลยใน **Quiz & เงื่อนไข → แก้ไข Questionnaire / Quiz** แล้วกด **บันทึกคำถาม** ก่อนออกจากฟอร์ม คำถามที่ยังผูกกับ Banner จะลบไม่ได้จนกว่าจะยกเลิกการเลือก
-7. บันทึก Draft หรือไปเมนูตั้งค่าเพื่อดาวน์โหลด Config JSON ตาม Portal เดิม
+> Automated Tests ใช้ Node / DOM จำลองในหลายส่วน ไม่เท่ากับการทดสอบ End-to-End บน Browser, Mobile Device หรือ RADIUS Production จริง
 
-| Banner area | ตำแหน่งในต้นแบบ |
-| --- | --- |
-| b01 | ส่วนหัว / คอลัมน์ข้างฟอร์มเมื่อใช้ Desktop |
-| b02 | ใต้ฟอร์มรับสิทธิ์ |
-| login | เหนือฟอร์มเข้าสู่ระบบ / รับสิทธิ์ |
-| modal | หน้าต่างบน Portal เปิดจากปุ่มเปิด Modal หรือดูตัวอย่าง |
-| 1st page (`first`) | หน้าต่างก่อนเข้าสู่ Portal ทดลองผ่านปุ่มทดลอง 1st page หรือดูตัวอย่าง เมื่อกดดำเนินการต่อจะเปิด modal ถ้ามีรายการที่เปิดอยู่ |
+---
 
-ตำแหน่งเหล่านี้เป็นการกำหนดในต้นแบบตามชื่อ area จากภาพอ้างอิง ไม่ใช่การอ่านตำแหน่งจาก Template จริง การเปลี่ยนค่าระหว่างแก้ดีไซน์จะไม่เปิดหน้าต่างเองเพื่อไม่แย่งการพิมพ์ ให้กดปุ่มทดลองที่ Preview
+# 11. Version History
 
-Config schemaVersion 7 เพิ่ม `area`, `clickable`, `action` และ `questionnaireIds` ใน `assets.banners` และเก็บรายการคำถามใน `lists.questionnaires` ทุกค่าผูกกับ Config ของ Portal ที่เลือก นำเข้า Config รุ่น 1–6 ได้ โดย Banner เก่าใช้ b01 และเปิด Clickable เฉพาะรายการที่มีลิงก์เดิม หน้า Portal และวิดีโอใช้คลังคำถาม `lists.questionnaires` ชุดเดียวกัน โดยหน้า Portal เลือกคำถามด้วย `lists.portalQuestionnaireIds` ส่วนวิดีโอเลือกด้วย `questionnaireIds` ของ Banner นั้น แก้คำถามเดียวแล้วทุกตำแหน่งที่อ้างอิงเปลี่ยนตาม คำถาม Portal เดิมจะย้ายเข้าคลังอัตโนมัติเมื่อโหลด Draft / Config รุ่นเก่า โดยไม่เปลี่ยนรายการคำถามที่วิดีโอเคยเลือก
+> Version History ด้านล่างระบุ **สิ่งที่เพิ่ม/เปลี่ยนในแต่ละรุ่น ณ เวลานั้น** ไม่ใช่คำอธิบาย Current Behavior หากข้อมูลเก่าขัดกับส่วน Current Features ด้านบน ให้ยึดส่วน Current Features
 
-มีคำถามตั้งต้น Customer age, WiFi purpose และ WiFi Quiz สำหรับทดลอง แก้ไขหรือลบได้ การผูกวิดีโอไม่อ้างอิงบริการภายนอก ส่วน URL ปลายทางใช้เครือข่ายตามเว็บไซต์นั้น
+## V010 — Baseline: Local AI Backup / Offline Prototype
 
-ทดสอบ event handler ด้วย DOM จำลองใน `tests/banner-ui.test.js` รวมการย้าย area, เปิด Modal/Quiz, ตอบไม่ครบ/ผิด/ถูก, Clickable เปิด–ปิด, สร้าง/แก้/ลบคำถาม และสิทธิ์อ่านอย่างเดียว พร้อมทดสอบ migration และ Config round-trip ยังไม่ได้ตรวจหน้าตา การเล่น Codec หรือการกดบน Browser จริง
+- Baseline ที่ใช้เริ่มพัฒนาชุด V011 เป็นต้นไป
+- Desktop / Mobile responsive prototype
+- Dashboard, AP, Portal Configuration, Reports, User/Role, Notification, Free WiFi/Coupon, Config และ Modules
+- Banner / Video Quiz / Questionnaire
+- Portal Config ตาม Portal Path และ Site / Allow Package snapshot
+- Separate Servers / Local AI / Backup retention planning
+- RADIUS & Policy ใน Baseline ยังเป็นข้อมูล Snapshot/Read-only เป็นหลัก
 
+## V011 — Division / ส่วนงาน
 
-## เปลี่ยนขั้นตอนวิดีโอและการเลือก Config
+- เปลี่ยน Header จาก `Site ที่ตั้งค่า` เป็น **ส่วนงาน**
+- เพิ่ม `ALL` เป็นค่าเริ่มต้นและ 6 ภูมิภาค
+- เก็บค่าที่เลือกใน Browser Draft
+- ยังไม่ทำ Site-to-Division Mapping จริง
 
-- **วิดีโอ → ดำเนินการต่อ → คำถาม → ส่งคำตอบ → ดำเนินการต่อ** โดยใช้คำถามที่เลือกใน Banner รายการที่กำลังแสดง ถ้าไม่มีการผูก Questionnaires ขั้นดำเนินการต่อจะไปหน้าถัดไปตามเดิม
-- **Quiz & เงื่อนไข** เป็นตำแหน่งหลักสำหรับเพิ่ม/แก้คำถาม พร้อมช่องชื่อ ประเภท คำถาม ตัวเลือก และเฉลย แสดงว่าคำถามนั้นใช้กับหน้า Portal หรือ Banner ใด และมีตัวเลือกคำถามก่อนรับสิทธิ์จากคลังเดียวกัน
-- ปุ่ม **แก้ไข Questionnaires** ในการ์ดวิดีโอเปิดไปยังฟอร์มดังกล่าวโดยตรง
-- **ตั้งค่าและไฟล์ Config** เลือก Portal Path ได้จากรายการรวมตามสิทธิ์โดยไม่ต้องเลือก Site ก่อน หนึ่ง Config ที่ใช้หลาย Site จะแสดงในรายการครั้งเดียว และยังคงข้อจำกัดสิทธิ์แก้ไข/Export ของ Config ร่วม
-- Config ใช้รหัสภายในเดิมเพื่อรักษาความสัมพันธ์และการนำเข้าไฟล์ แต่ผู้ใช้เลือกด้วย Portal Path บนหน้า Settings
+## V012 — Portal Configuration Tab Order
 
-## โมดูลตามสเปก / Separate Servers — Local AI และ Retention 6–9 เดือน
+- ย้าย **ทั่วไป & Path** เป็นแท็บแรก
+- เปิดทั่วไป & Path เป็นค่าเริ่มต้น
+- ดีไซน์ย้ายเป็นแท็บที่สอง
 
-ปรับตามข้อกำหนด AI ภายในองค์กร, Backup ใหม่, วิดีโอมาก และ Log/Backup 6–9 เดือน ดูสมมติฐานและสูตรในหน้า **โมดูลตามสเปก** และ `Separate-Servers-Plan.md`
+## V013 — NAS CRUD
 
-งบตัวอย่าง 9 เดือน: **12 VM / 78 vCPU / RAM 316 GiB / GPU 1 ใบ VRAM 48 GB / Disk 71,560 GB** รวม Backup usable 60,000 GB หนึ่งสำเนาแล้ว ยังไม่รวม RAID/HA/DR/สำเนาที่สอง ตัวเลขนี้ยังไม่ใช่สเปกจัดซื้อหรือผล Load Test ขึ้นกับสมมติฐาน Media/Log/Backup และ PoC โมเดลจริง
+- เพิ่มแท็บ NAS ใน RADIUS & Policy
+- รองรับเพิ่ม/แก้ไข/ลบ/ค้นหา NAS
+- เพิ่ม 8 NAS parameters: Name/Host, Shortname, Type, Ports, Secret, Server, Community, Description
+- Secret ในตารางแสดงแบบปิดบัง
 
-หาก GPU ใช้เครื่องจริงแยก จะเป็น 11 VM + 1 GPU Physical Server ไม่ใช่ 12 VM + เครื่องเพิ่มอีกหนึ่ง ยอด vCPU ไม่ใช่จำนวน Physical core ระบบตัวอย่างยังไม่รัน AI หรือ Backup จริง
+## V014 — Site / Package CRUD
 
-ข้อมูลอยู่ใน `data/server-plan.json` และ `data/modules.json`; แก้แล้วรัน `node scripts/build-offline-data.js` อัปเดตไฟล์ออฟไลน์
+- Site รองรับเพิ่ม/แก้ไข/ลบ
+- Package รองรับเพิ่ม/แก้ไข/ลบ
+- Site เลือก Allow Package ได้
+- เมื่อลบ Package จะลบความสัมพันธ์ Allow Package ภายใน Draft หลังยืนยัน
 
-## V014 — RADIUS & Policy → Site / Package (Offline CRUD)
+## V015 — Package Table / Type / Expiration
 
-- แท็บ **Site**: เพิ่ม / แก้ไข / ลบ Site Draft โดยใช้ Name, VLAN ID (1–4094 หรือว่าง), Location, Concurrent, Description และเลือก Allow Package แบบ checkbox; ดู Allow Package ของ Site ได้เหมือนเดิม
-- แท็บ **Package**: เพิ่ม / แก้ไข / ลบ Package Draft พร้อมพารามิเตอร์ 18 ช่องจากรายละเอียด Package เดิม; แก้ไขชื่อ Package ซ้ำไม่ได้
-- หากลบ Package ที่อ้างอิงใน Allow Package ของ Site Draft จะมีข้อความยืนยันบอกจำนวน Site ที่ได้รับผล และลบความสัมพันธ์ภายใน Draft เท่านั้น
-- เฉพาะ System Admin ในต้นแบบเท่านั้นที่เห็นปุ่มจัดการและโหลด Draft; ระบบสิทธิ์ฝั่ง Browser นี้ไม่ใช่ Backend authorization สำหรับ Production
-- เก็บข้อมูลลง `localStorage` คีย์ `wifi-tools:radius-catalog-demo:v1:<base URL>`; เริ่มจากชุดข้อมูลตัวอย่าง แล้วบันทึก snapshot แยกของเมนู RADIUS & Policy เพื่อ **ไม่เปลี่ยน Portal Configuration, Dashboard, รายชื่อ Site / Role ส่วนอื่น หรือ RADIUS จริง**. การแก้ไขใหม่จะคงอยู่เฉพาะ Browser/Origin/Path เดิมเท่านั้น ถ้าต้องการให้เชื่อมทุกเมนูต้องออกแบบ data source, migration, RBAC และ API ของ RADIUS Manager เพิ่ม ไม่ใช่ความสามารถ V014
-- NAS CRUD ของ V013 ยังอยู่เหมือนเดิมและใช้คีย์แยก; ไม่มีการอัปโหลด Secret จริงไปที่ใด
-- การตรวจสอบ: Node automated tests + `node --check` ผ่าน; ลองเปิด Chromium ทั้ง file:// และ localhost แล้วได้รับ ERR_BLOCKED_BY_ADMINISTRATOR จากสภาพแวดล้อม จึงยังไม่ยืนยันผล Browser UI จริง
+- ตาราง Package แสดง Status, Name, Prefix Accounts, Created Date
+- เพิ่ม Package Type แบบ Dropdown: `Prepaid / Postpaid`
+- Expiration แบบ Dropdown: `1st Login / Specified Date / Unlimited`
+- `Specified Date` แสดง Expiration Date
+- Package ใหม่บันทึก Created Date; ข้อมูลเก่าที่ไม่มีวันที่แสดง `—`
 
-## V015 — RADIUS & Policy → Package: ตารางและพารามิเตอร์
+## V016 — Expiration: 1st Login + Days
 
-- แท็บ Package แสดงตาราง **Status, Name, Prefix Accounts, Created Date** (Prefix Accounts ใช้ค่าจาก User Prefix เดิม ไม่ใช่จำนวน Account) กดชื่อในตารางเพื่อเลือกดูรายละเอียด/แก้ไข/ลบ
-- `Created Date` ของ Package ที่เพิ่มใหม่จะบันทึกเวลาจริงขณะสร้างใน Browser และเก็บไว้เมื่อแก้ไข ส่วนข้อมูลตัวอย่างและ Draft V014 ที่ไม่ได้เก็บวันที่สร้างจะแสดง `—` รวมถึงหลังแก้ไข ไม่แต่งวันที่ย้อนหลัง
-- ฟอร์ม Package Type เปลี่ยนเป็น Dropdown **Prepaid / Postpaid**; ฟอร์ม Expiration เป็น **1st Login / Specified Date / Unlimited**; เลือก Specified Date จะแสดงช่องวันหมดอายุและบังคับเลือกวันที่จริง เลือกอย่างอื่นจะซ่อนช่องและล้างวันที่
-- โหลด Draft V014 ที่บันทึกไว้ใน Browser ได้โดยไม่แปลงข้อความ Package Type/Expiration เดิมโดยพลการ หากต้องการแก้ไข Package เดิม ต้องเลือกสองฟิลด์ใหม่จาก Dropdown ก่อนบันทึก
-- CRUD ยังบันทึกใน `localStorage` แยกจาก Portal Configuration / RADIUS จริง ไม่เรียก Backend หรือเปลี่ยนข้อมูล Production; บัญชี System Admin เป็นการจำลองสิทธิ์ใน Browser ไม่ใช่ RBAC Production
-- ไฟล์ที่เปลี่ยน: `html/radius-policy.html`, `js/pages/radius-policy.js`, `js/pages/radius-catalog.js`, `js/radius-catalog-model.js`, `css/radius-policy.css`, `tests/radius-catalog.test.js`, `README.md`, `START-HERE.txt`
-- ทดสอบ Node Automated Tests และตรวจ Syntax/JSON; การเปิด Browser จริงในสภาพแวดล้อมนี้ถูกบล็อก (`ERR_BLOCKED_BY_ADMINISTRATOR`) จึงไม่อ้างว่าทดสอบ UI จริงแล้ว
+- `1st Login` แสดงช่อง Days
+- Days รองรับ 1–36500
+- ค่าเริ่มต้นในฟอร์มเมื่อเลือกใหม่ = 30 วัน
+- `Specified Date` และ `Unlimited` ซ่อน Days
 
+## V017 — RADIUS Tab Order รุ่นแรก
 
-### V016 — RADIUS & Policy / Package: Expiration 1st Login
-- เมื่อเลือก `1st Login` แสดงช่อง `Days` (จำนวนเต็ม 1–36500; เมื่อผู้ใช้เลือกโหมดนี้ใหม่ ค่าในฟอร์มเริ่มต้น 30) และบันทึกเป็น `expirationDays` ใน Offline Draft
-- `Specified Date` แสดงเฉพาะวันที่ และ `Unlimited` ไม่แสดงวันที่หรือ Days; เปลี่ยนโหมดแล้วเคลียร์ฟิลด์ที่ไม่เกี่ยวข้อง
-- Draft จาก V015 ยังอ่านได้โดยไม่เติม Days เอง หากแก้ Package เดิมที่เลือก 1st Login แต่ไม่มี Days ต้องกรอกก่อนบันทึก
-- Days หมายถึงช่วงเวลานับตั้งแต่ Login สำเร็จครั้งแรกตามความต้องการ UI เท่านั้น ยังไม่เชื่อมระบบยืนยันตัวตน/บังคับ Expiration บน RADIUS จริง
+- เรียงแท็บเป็น **NAS → Package → Site**
+- NAS เป็นแท็บเริ่มต้น
+- Deep link ไป Package ยังทำงาน
 
-### V017 — RADIUS & Policy: ลำดับแท็บ
-- แสดงแท็บตามลำดับ **NAS → Package → Site** และเข้าเมนูตามปกติให้แสดง NAS เป็นค่าเริ่มต้น
-- ลิงก์เจาะจง `?package=...` ยังคงเปิดแท็บ Package ได้; ไม่มีการแก้ไข NAS, Package, Site Draft หรือระบบ RADIUS จริง
+## V018 — Mobile Division Fix
+
+- แก้ Dropdown ส่วนงานบน Mobile ที่กดเลือกไม่ได้
+- เพิ่ม Touch-friendly Division picker
+- Desktop ยังคงใช้ Native select
+
+## V019 — Account Tab + Account Counts
+
+- เพิ่มแท็บ Account แบบ Read-only ในช่วงแรก
+- Package เพิ่มจำนวน Account
+- Site เพิ่มยอดรวม Account จาก Package ที่ Allow
+- เพิ่ม Breakdown Account ตาม Package
+
+## V020 — Clickable Account Counts
+
+- จัดตัวเลขคอลัมน์ Accounts ให้อยู่กลาง
+- จำนวน Account ใน Package กดเพื่อเปิด Account ที่ Filter ตาม Package
+- จำนวน Account ใน Site กดเพื่อเปิด Account ที่ Filter ตาม Site
+- เพิ่มทางกลับไปดู Account ทั้งหมด
+
+## V021 — Site Account Breakdown Drill-down
+
+- ซ่อน `Account ตาม Package` ออกจากตาราง Site
+- แสดง Breakdown เฉพาะเมื่อกดจำนวน Accounts ของ Site แล้วเข้าแท็บ Account
+- สามารถ Filter ต่อจาก Site ลงไป Package ได้
+
+## V022 — Account Actions + DISPATCH
+
+- Account รองรับ CREATE / GENERATE / IMPORT / DISPATCH / EXPORT CSV
+- GENERATE ใช้ User Prefix + เลข 8 หลัก
+- เพิ่ม Logic DISPATCH เพื่อจำกัด Account ให้ใช้ได้เฉพาะ Site
+- ถ้าไม่ DISPATCH Account ใช้ได้ทุก Site ที่ Allow Package นั้น
+- จำนวน Account ของ Site เริ่มคำนึงถึง DISPATCH
+
+## V023 — Account Detail + Sessions
+
+- Username กดเปิด Account Detail ได้
+- เพิ่มข้อมูล Package, Status, Package Based, Package Price, Session Time, First Login, Expired Date, Time Used, Last Login, Created Date, Remain
+- เพิ่ม Session history: ลำดับ, MAC, Last seen
+- ค่าที่ไม่มีข้อมูลแสดง `—`
+
+## V024 — Package Type / Account Status / Session Refresh
+
+- เปลี่ยนชื่อ `Package Based` ใน Account Detail เป็น **Package Type**
+- Account Status เปลี่ยนเป็น Toggle `Active / Inactive`
+- Account Draft เก่าที่เป็น `Disabled` Migration เป็น `Inactive`
+- เพิ่มปุ่ม **Refresh** ใน Sessions
+
+## V025 — Final RADIUS Tab Order
+
+- เรียงแท็บเป็น **NAS → Package → Account → Site**
+- NAS ยังคงเป็นแท็บเริ่มต้น
+- Deep link Package ยังคงทำงาน
+
+## V026 — Package Unlimited Semantics
+
+- `Upload / Download / Session Time / Session Limit / Idle Timeout / Time / Daily / Weekly / Monthly` ใช้ค่า `0`, ค่าเวลาศูนย์ หรือว่าง = **Unlimited**
+- ฟอร์มเพิ่ม Placeholder / Help text อธิบายกติกา
+- Package Detail และ Account Detail แสดง `Unlimited` แทนค่าศูนย์/ว่างในจุดที่รองรับ
+
+## V027 — README / Documentation Rebuild
+
+- ไม่เปลี่ยน Functional Code จาก V026
+- จัด README ใหม่ให้ Current Features แยกจาก Version History
+- เพิ่มประวัติครบ V010–V027
+- แก้ข้อความเก่าที่ขัดกับความสามารถปัจจุบัน เช่น Site/Package Read-only, Account Status และชื่อ Package Type
+- รวมข้อจำกัด Offline Prototype / Security / Testing ให้ชัดเจน
+
+## V028 — Package Search
+
+- เพิ่มช่องค้นหาและปุ่ม **ค้นหา** ใน `RADIUS & Policy > Package`
+- ค้นหาแบบไม่สนตัวพิมพ์เล็ก/ใหญ่จาก **Name** หรือ **Prefix Accounts**
+- ตารางและตัวนับ Package แสดงเฉพาะผลลัพธ์ที่ตรงคำค้น
+- ไม่เปลี่ยน Package ที่เลือกในส่วนรายละเอียด และไม่กระทบ CRUD / Account Count เดิม
+
+---
+
+## 12. Current Limitations / Next Production Work
+
+สิ่งที่ **ยังไม่ทำจริง** ใน Functional Baseline V028:
+
+- ไม่มี Backend API
+- ไม่มี Database CRUD จริง
+- ยังไม่เชื่อม RADIUS Manager / FreeRADIUS
+- Sessions Refresh ยังไม่อ่าน `radacct`
+- Package Expiration / Rate Limit / Quota ยังไม่บังคับจริงบน RADIUS
+- Division ยังไม่ Mapping กับ Site
+- Notification ยังไม่ส่งจริง
+- Monthly report ยังไม่มี Scheduler จริง
+- AI ยังไม่รันจริง
+- Backup / Retention เป็น Capacity Plan
+- Browser-side Role/Permission ไม่ใช่ Security boundary
+
+ก่อน Production ต้องยืนยัน Schema, API, Attribute Mapping, Version และ Behavior ของ RADIUS Manager / FreeRADIUS ที่จะเชื่อมจริงก่อนนำ Logic Draft ไปใช้
+
+## Sidebar Navigation
+
+Current order:
+
+1. Dashboard
+2. RADIUS & Policy
+3. Portal Configuration
+4. Free WiFi & Coupon
+5. Network Configuration
+6. AP by Site
+7. Reports
+8. Monitor & Logs
+9. Notifications
+10. Administrator
+11. Admin / Management
+12. Specification
+
+The filenames/routes remain unchanged; only the sidebar order and display labels were updated.
+
+## Version History
+
+### V029 — Sidebar Navigation Reorder & Rename
+- Reordered the main Sidebar Navigation to: Dashboard → RADIUS & Policy → Portal Configuration → Free WiFi & Coupon → Network Configuration → AP by Site → Reports → Monitor & Logs → Notifications → Administrator → Admin / Management → Specification.
+- Renamed sidebar labels: การแจ้งเตือน → Notifications, User → Administrator, ตั้งค่าและไฟล์ Config → Admin / Management, โมดูลตามสเปก → Specification.
+- Existing page filenames/routes remain unchanged.

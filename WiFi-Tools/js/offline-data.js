@@ -935,9 +935,9 @@ window.NT_DATA = {
       "title": "Dashboard"
     },
     {
-      "id": "ap-sites",
-      "file": "ap-sites.html",
-      "title": "AP by Site"
+      "id": "radius",
+      "file": "radius-policy.html",
+      "title": "RADIUS & Policy"
     },
     {
       "id": "builder",
@@ -945,14 +945,9 @@ window.NT_DATA = {
       "title": "Portal Configuration"
     },
     {
-      "id": "reports",
-      "file": "reports.html",
-      "title": "Reports"
-    },
-    {
-      "id": "radius",
-      "file": "radius-policy.html",
-      "title": "RADIUS & Policy"
+      "id": "voucher",
+      "file": "free-wifi-coupons.html",
+      "title": "Free WiFi & Coupon"
     },
     {
       "id": "access",
@@ -960,9 +955,14 @@ window.NT_DATA = {
       "title": "Network Configuration"
     },
     {
-      "id": "voucher",
-      "file": "free-wifi-coupons.html",
-      "title": "Free WiFi & Coupon"
+      "id": "ap-sites",
+      "file": "ap-sites.html",
+      "title": "AP by Site"
+    },
+    {
+      "id": "reports",
+      "file": "reports.html",
+      "title": "Reports"
     },
     {
       "id": "monitor",
@@ -972,22 +972,22 @@ window.NT_DATA = {
     {
       "id": "alerts",
       "file": "alerts.html",
-      "title": "การแจ้งเตือน"
+      "title": "Notifications"
     },
     {
       "id": "users",
       "file": "users.html",
-      "title": "User"
+      "title": "Administrator"
     },
     {
       "id": "settings",
       "file": "settings.html",
-      "title": "ตั้งค่าและไฟล์ Config"
+      "title": "Admin / Management"
     },
     {
       "id": "modules",
       "file": "modules.html",
-      "title": "โมดูลตามสเปก"
+      "title": "Specification"
     }
   ],
   "notification-channels": [
@@ -1102,6 +1102,138 @@ window.NT_DATA = {
       ]
     }
   ],
+  "radius-accounts": {
+    "source": "RADIUS Manager",
+    "connected": false,
+    "accounts": [
+      {
+        "id": "acct-001",
+        "username": "FREE00000001",
+        "packageId": "pkg-0",
+        "status": "Active",
+        "createdAt": "2026-01-26T09:21:47.000Z",
+        "firstLogin": "2026-09-20T01:15:00.000Z",
+        "expiredDate": "2026-10-20T01:15:00.000Z",
+        "timeUsed": "00:35",
+        "lastLogin": "2026-09-23T03:40:00.000Z",
+        "remain": "00:25",
+        "sessions": [
+          {
+            "mac": "AA:BB:CC:DD:EE:01",
+            "lastSeen": "2026-09-23T03:40:00.000Z"
+          },
+          {
+            "mac": "AA:BB:CC:DD:EE:11",
+            "lastSeen": "2026-09-21T07:18:00.000Z"
+          }
+        ]
+      },
+      {
+        "id": "acct-002",
+        "username": "FREE00000002",
+        "packageId": "pkg-0",
+        "status": "Active",
+        "createdAt": "2026-01-26T09:25:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-003",
+        "username": "FREE00000003",
+        "packageId": "pkg-0",
+        "status": "Active",
+        "createdAt": "2026-01-26T09:30:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-004",
+        "username": "FREE00000004",
+        "packageId": "pkg-0",
+        "status": "Inactive",
+        "createdAt": "2026-01-26T09:35:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-005",
+        "username": "STF00000001",
+        "packageId": "pkg-1",
+        "status": "Active",
+        "createdAt": "2026-02-01T02:10:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-006",
+        "username": "STF00000002",
+        "packageId": "pkg-1",
+        "status": "Active",
+        "createdAt": "2026-02-01T02:15:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-007",
+        "username": "STF00000003",
+        "packageId": "pkg-1",
+        "status": "Active",
+        "createdAt": "2026-02-01T02:20:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-008",
+        "username": "VST00000001",
+        "packageId": "pkg-2",
+        "status": "Active",
+        "createdAt": "2026-03-05T04:00:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      },
+      {
+        "id": "acct-009",
+        "username": "VST00000002",
+        "packageId": "pkg-2",
+        "status": "Active",
+        "createdAt": "2026-03-05T04:05:00.000Z",
+        "firstLogin": "",
+        "expiredDate": "",
+        "timeUsed": "",
+        "lastLogin": "",
+        "remain": "",
+        "sessions": []
+      }
+    ]
+  },
   "radius-nas": {
     "nas": []
   },

@@ -9,6 +9,15 @@
     const packageFields = ['policyName', 'userPrefix', 'usernameFormat', 'packageExpired', 'packageType', 'upload', 'download', 'sessionTime', 'sessionLimit', 'idleTimeout', 'time', 'dailyTime', 'weeklyTime', 'monthlyTime', 'expiration', 'expirationDate', 'expirationDays', 'price', 'description', 'status'];
     const packageTypes = ['Prepaid', 'Postpaid'];
     const expirationModes = ['1st Login', 'Specified Date', 'Unlimited'];
+    const unlimitedFields = ['upload', 'download', 'sessionTime', 'sessionLimit', 'idleTimeout', 'time', 'dailyTime', 'weeklyTime', 'monthlyTime'];
+    function isUnlimitedValue(value) {
+        const raw = String(value ?? '').trim();
+        if (!raw) return true;
+        const compact = raw.toLowerCase().replace(/\s+/g, ' ');
+        if (/^0+(?:\.0+)?(?:\s*(?:bps|kbps|mbps|gbps))?$/.test(compact)) return true;
+        if (/^0+(?::0+){1,2}$/.test(compact)) return true;
+        return false;
+    }
     function validDay(value) {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
         const [year, month, day] = value.split('-').map(Number);
@@ -117,5 +126,5 @@
         return check(saved);
     }
     function serialize(snapshot) { return JSON.stringify({ schemaVersion: 1, ...check(snapshot) }); }
-    return { packageFields, packageTypes, expirationModes, validDay, initial, check, load, serialize, upsertSite, upsertPackage, removeSite, removePackage };
+    return { packageFields, packageTypes, expirationModes, unlimitedFields, isUnlimitedValue, validDay, initial, check, load, serialize, upsertSite, upsertPackage, removeSite, removePackage };
 });

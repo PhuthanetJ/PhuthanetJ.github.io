@@ -122,3 +122,262 @@
 #nt-portal .wt-expiration-days-control { display: flex; align-items: center; gap: 10px; min-width: 0; }
 #nt-portal .wt-expiration-days-control input { width: min(100%, 145px); min-width: 0; }
 #nt-portal .wt-expiration-days-control span { white-space: nowrap; }
+
+/* V019: Account tab and account aggregation in Package/Site tables. */
+#nt-portal .wt-account-list { min-width: 520px; }
+#nt-portal .wt-account-number { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+#nt-portal .wt-site-account-breakdown { display: grid; gap: 4px; min-width: 210px; }
+#nt-portal .wt-site-account-breakdown span { display: block; }
+#nt-portal #radius-panel-sites table { min-width: 980px; }
+@media (max-width: 780px) {
+    #nt-portal .wt-account-list { min-width: 480px; }
+    #nt-portal .wt-site-account-breakdown { min-width: 190px; }
+}
+
+/* V020: center Account counts and make each count open the Account tab with a matching filter. */
+#nt-portal .wt-account-number {
+    text-align: center;
+}
+#nt-portal th.wt-account-number,
+#nt-portal td.wt-account-number {
+    vertical-align: middle;
+}
+#nt-portal .wt-account-count-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 38px;
+    padding: 5px 10px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #005bc7;
+    font: inherit;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+#nt-portal .wt-account-count-link:hover,
+#nt-portal .wt-account-count-link:focus-visible {
+    background: #edf5ff;
+    outline: 2px solid #86b7fe;
+    outline-offset: 1px;
+}
+#nt-portal .wt-account-filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 0 14px;
+    padding: 10px 12px;
+    border: 1px solid #b6cce5;
+    border-radius: 8px;
+    background: #f5f9ff;
+}
+#nt-portal .wt-account-filter[hidden] { display: none; }
+
+
+/* V021: Site table hides Package breakdown; show it only after opening a Site Account count. */
+#nt-portal .wt-account-breakdown {
+    margin: 10px 0 14px;
+    padding: 12px;
+    border: 1px solid #d4deea;
+    border-radius: 9px;
+    background: #fbfcfe;
+}
+#nt-portal .wt-account-breakdown[hidden] { display: none; }
+#nt-portal .wt-account-breakdown h4 { margin: 0 0 10px; }
+#nt-portal .wt-account-breakdown-rows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 8px;
+}
+#nt-portal .wt-account-breakdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 11px;
+    border: 1px solid #cbd8e6;
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+#nt-portal .wt-account-breakdown-item:hover,
+#nt-portal .wt-account-breakdown-item:focus-visible {
+    border-color: #86b7fe;
+    background: #f4f8ff;
+    outline: 2px solid #cfe2ff;
+    outline-offset: 1px;
+}
+#nt-portal .wt-account-breakdown-item strong {
+    min-width: 36px;
+    text-align: center;
+    color: #005bc7;
+    font-variant-numeric: tabular-nums;
+}
+
+/* V022: Account actions and DISPATCH scope. */
+#nt-portal .wt-account-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+#nt-portal .wt-account-list { min-width: 760px; }
+#nt-portal .wt-account-list th,
+#nt-portal .wt-account-list td { vertical-align: middle; }
+#nt-portal .wt-account-select { width: 54px; text-align: center; }
+#nt-portal .wt-account-select input { width: 18px; height: 18px; cursor: pointer; }
+#nt-portal .wt-account-dialog { width: min(680px, calc(100vw - 28px)); }
+#nt-portal .wt-account-dialog .nt-form-grid { margin: 14px 0; }
+@media (max-width: 780px) {
+    #nt-portal .wt-account-toolbar { justify-content: flex-start; }
+    #nt-portal .wt-account-toolbar .nt-help { flex-basis: 100%; }
+    #nt-portal .wt-account-toolbar .nt-button { min-height: 44px; }
+    #nt-portal .wt-account-dialog { padding: 15px; }
+    #nt-portal .wt-account-dialog .nt-form-grid { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .wt-account-list { min-width: 700px; }
+}
+
+/* V023: Account detail drill-down and Session history. */
+#nt-portal .wt-account-detail-link {
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #005bc7;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+#nt-portal .wt-account-detail-link:hover,
+#nt-portal .wt-account-detail-link:focus-visible {
+    color: #003f8f;
+    outline: 2px solid #86b7fe;
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+#nt-portal .wt-account-detail-dialog {
+    width: min(1050px, calc(100vw - 28px));
+    max-height: min(92vh, 980px);
+}
+#nt-portal .wt-account-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 16px 0 20px;
+}
+#nt-portal .wt-account-detail-grid dl {
+    min-width: 0;
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #d5deea;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+#nt-portal .wt-account-detail-grid dt {
+    margin-bottom: 7px;
+    color: #52657a;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+#nt-portal .wt-account-detail-grid dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-weight: 650;
+}
+#nt-portal .wt-account-session-panel {
+    margin-top: 6px;
+    padding-top: 16px;
+    border-top: 1px solid #d5deea;
+}
+#nt-portal .wt-account-session-panel h4 { margin: 0; }
+#nt-portal .wt-account-session-table { min-width: 560px; }
+#nt-portal .wt-account-session-table .wt-session-seq {
+    width: 86px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+@media (max-width: 900px) {
+    #nt-portal .wt-account-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    #nt-portal .wt-account-detail-dialog { padding: 14px; }
+    #nt-portal .wt-account-detail-grid { grid-template-columns: minmax(0, 1fr); }
+    #nt-portal .wt-account-session-table { min-width: 500px; }
+}
+
+
+
+/* V024: Account Status segmented toggle and Session Refresh control. */
+#nt-portal .wt-account-status-card dd { display: grid; gap: 7px; }
+#nt-portal .wt-account-status-toggle {
+    display: inline-grid;
+    grid-template-columns: repeat(2, minmax(92px, 1fr));
+    width: min(100%, 230px);
+    padding: 3px;
+    border: 1px solid #b7c6d8;
+    border-radius: 999px;
+    background: #edf2f7;
+}
+#nt-portal .wt-account-status-toggle button {
+    min-height: 36px;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #42566d;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+#nt-portal .wt-account-status-toggle button.active {
+    background: #0b67c2;
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .16);
+}
+#nt-portal .wt-account-status-toggle button[data-account-status="Inactive"].active { background: #596a7c; }
+#nt-portal .wt-account-status-toggle button:focus-visible { outline: 2px solid #86b7fe; outline-offset: 2px; }
+#nt-portal .wt-account-status-toggle button:disabled { cursor: not-allowed; opacity: .7; }
+#nt-portal .wt-account-session-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+#nt-portal #radius-account-session-refresh { min-height: 38px; }
+#nt-portal #radius-account-session-refresh-status { min-height: 1.2em; margin: 6px 0 8px; }
+@media (max-width: 600px) {
+    #nt-portal .wt-account-status-toggle { width: 100%; max-width: 280px; }
+    #nt-portal .wt-account-session-actions { width: 100%; justify-content: space-between; }
+}
+
+
+/* V028: Package search controls. */
+#nt-portal .wt-package-search-bar {
+    display: flex;
+    align-items: end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 12px 0 14px;
+}
+#nt-portal .wt-package-search-bar .wt-radius-search {
+    flex: 1 1 300px;
+    margin: 0;
+}
+#nt-portal .wt-package-search-bar .nt-button {
+    min-height: 42px;
+}
+@media (max-width: 560px) {
+    #nt-portal .wt-package-search-bar { align-items: stretch; }
+    #nt-portal .wt-package-search-bar .wt-radius-search,
+    #nt-portal .wt-package-search-bar .nt-button { width: 100%; max-width: none; }
+}

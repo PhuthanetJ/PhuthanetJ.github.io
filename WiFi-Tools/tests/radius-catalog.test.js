@@ -52,8 +52,8 @@ test('Validate saved Draft, reject tampering and preserve empty intentional dele
     assert.throws(() => model.check({ sites: base.sites, packages: base.packages.slice(1) }), /Package/);
 });
 
-test('V015: Package table has four requested columns and type/expiration selects with date field', () => {
-    for (const label of ['Status', 'Name', 'Prefix Accounts', 'Created Date']) assert.match(html, new RegExp('<th>' + label + '</th>'));
+test('V019: Package table includes Account count plus requested package fields', () => {
+    for (const label of ['Status', 'Name', 'Prefix Accounts', 'Accounts', 'Created Date']) assert.match(html, new RegExp('<th[^>]*>' + label + '</th>'));
     assert.match(html, /id="radius-package-rows"/);
     assert.match(html, /name="packageType"[^>]*>/);
     assert.match(html, /<option value="Prepaid">Prepaid<\/option>/);
@@ -147,4 +147,26 @@ test('V016: reads V015 first-login Draft with missing Days without inventing 30,
     const updated = model.upsertPackage(migrated, { ...migrated.packages[0], expirationDays: '7' }, migrated.packages[0].id);
     assert.equal(updated.record.expirationDays, '7');
     assert.throws(() => model.check({ ...updated.snapshot, packages: [{ ...updated.record, expirationDays: 'abc' }, ...migrated.packages.slice(1)] }), /Days/);
+});
+
+
+test('V026: zero or blank Package limit values are treated as Unlimited', () => {
+    for (const value of ['', '   ', '0', '00', '0.0', '00:00', '0:00', '00:00:00', '0 Mbps', '0 kbps']) {
+        assert.equal(model.isUnlimitedValue(value), true, `expected ${JSON.stringify(value)} to be Unlimited`);
+    }
+    for (const value of ['1', '00:01', '1 Mbps', '0.1', '10 Mbps']) {
+        assert.equal(model.isUnlimitedValue(value), false, `expected ${JSON.stringify(value)} to be limited`);
+    }
+    assert.deepEqual(model.unlimitedFields, ['upload', 'download', 'sessionTime', 'sessionLimit', 'idleTimeout', 'time', 'dailyTime', 'weeklyTime', 'monthlyTime']);
+});
+
+test('V026: Package form documents Unlimited semantics for all nine limit fields', () => {
+    for (const field of model.unlimitedFields) {
+        assert.match(html, new RegExp('name="' + field + '"[^>]*placeholder="[^"]*Unlimited'));
+    }
+    assert.match(html, /id="radius-package-unlimited-help"/);
+    assert.match(html, /Upload, Download, Session Time, Session Limit, Idle Timeout, Time, Daily time, Weekly time และ Monthly time/);
+    const detailJs = fs.readFileSync(path.join(__dirname, '../js/pages/radius-policy.js'), 'utf8');
+    assert.match(detailJs, /displayPackageValue/);
+    assert.match(detailJs, /'session-time': pkg \? displayPackageValue\('sessionTime', pkg\.sessionTime\)/);
 });
