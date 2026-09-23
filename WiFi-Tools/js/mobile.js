@@ -47,6 +47,83 @@
     backdrop.setAttribute('aria-hidden', 'true');
     root.append(backdrop);
 
+    // Mobile fallback for the division selector: use explicit touch-friendly buttons
+    // instead of relying on the device's native <select> popup. The original select
+    // remains the only data source and still handles persistence via its change event.
+    const divisionSelect = root.querySelector('#wt-current-division');
+    const originalDivisionLabel = divisionSelect?.closest('label');
+    let closeDivision = () => {};
+    if (divisionSelect && originalDivisionLabel && divisionSelect.options.length) {
+        originalDivisionLabel.classList.add('wt-division-original');
+        const picker = document.createElement('div');
+        picker.className = 'wt-division-mobile';
+        const title = document.createElement('span');
+        title.className = 'wt-division-title';
+        title.textContent = 'ส่วนงาน';
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'wt-division-trigger';
+        trigger.id = 'wt-division-mobile-trigger';
+        trigger.setAttribute('aria-haspopup', 'true');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-controls', 'wt-division-mobile-choices');
+        const choices = document.createElement('div');
+        choices.id = 'wt-division-mobile-choices';
+        choices.className = 'wt-division-choices';
+        choices.setAttribute('role', 'group');
+        choices.setAttribute('aria-label', 'เลือกส่วนงาน');
+        choices.hidden = true;
+        const buttons = [];
+        const sync = () => {
+            trigger.textContent = divisionSelect.selectedOptions[0]?.textContent || 'ALL';
+            buttons.forEach(button => {
+                const selected = button.dataset.division === divisionSelect.value;
+                button.setAttribute('aria-pressed', String(selected));
+                button.classList.toggle('selected', selected);
+            });
+        };
+        closeDivision = (returnFocus = false) => {
+            if (choices.hidden) return;
+            choices.hidden = true;
+            trigger.setAttribute('aria-expanded', 'false');
+            if (returnFocus) trigger.focus();
+        };
+        Array.from(divisionSelect.options).forEach(option => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'wt-division-choice';
+            button.dataset.division = option.value;
+            button.textContent = option.textContent;
+            button.addEventListener('click', () => {
+                divisionSelect.value = option.value;
+                // Reuse the existing app.js change handler; no independent mobile state.
+                divisionSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                sync();
+                closeDivision(true);
+            });
+            buttons.push(button);
+            choices.append(button);
+        });
+        picker.append(title, trigger, choices);
+        originalDivisionLabel.after(picker);
+        divisionSelect.addEventListener('change', sync);
+        trigger.addEventListener('click', () => {
+            if (!media.matches) return;
+            choices.hidden = !choices.hidden;
+            trigger.setAttribute('aria-expanded', String(!choices.hidden));
+        });
+        document.addEventListener('click', event => {
+            if (!picker.contains(event.target)) closeDivision();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !choices.hidden) {
+                event.preventDefault();
+                closeDivision(true);
+            }
+        });
+        sync();
+    }
+
     let opened = false;
     let previousOverflow = '';
     let inertBefore = [];
@@ -58,6 +135,7 @@
         root.classList.toggle('wt-menu-open', opened);
         toggle.setAttribute('aria-expanded', String(opened));
         if (opened) {
+            closeDivision();
             previousOverflow = document.body.style.overflow;
             document.body.style.overflow = 'hidden';
             inertBefore = content.map(el => el.inert);
@@ -95,6 +173,7 @@
         }
     });
     function resize() {
+        if (!media.matches) closeDivision();
         const focusWasInMenu = nav.contains(document.activeElement);
         setOpen(false, false);
         nav.inert = media.matches;

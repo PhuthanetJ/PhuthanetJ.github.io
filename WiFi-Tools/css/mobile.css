@@ -29,6 +29,9 @@
 
 #nt-portal .wt-scroll-hint { display: none; }
 
+/* Desktop retains its original native division select. */
+#nt-portal .wt-division-mobile { display: none; }
+
 @media screen and (max-width: 780px) {
     #nt-portal {
         border-radius: 0;
@@ -71,6 +74,81 @@
     }
 
     #nt-portal .wt-header select { flex: 1; min-width: 0; }
+
+    /* An explicit picker avoids native select popup failures on mobile WebViews. */
+    #nt-portal.wt-mobile-ready .wt-header > .wt-division-original { display: none; }
+    #nt-portal.wt-mobile-ready .wt-division-mobile {
+        grid-column: 1 / -1;
+        position: relative;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        font-size: 14px;
+    }
+    #nt-portal .wt-division-title { white-space: nowrap; }
+    #nt-portal .wt-division-trigger {
+        min-width: 0;
+        width: 100%;
+        min-height: 48px;
+        padding: 10px 38px 10px 12px;
+        position: relative;
+        text-align: left;
+        border: 1px solid #a8bdd6;
+        border-radius: 6px;
+        color: #172b46;
+        background: #fff;
+        font-size: 16px;
+        line-height: 1.5;
+        touch-action: manipulation;
+    }
+    #nt-portal .wt-division-trigger::after {
+        content: '▾';
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+    #nt-portal .wt-division-choices {
+        position: absolute;
+        z-index: 21;
+        top: calc(100% + 4px);
+        right: 0;
+        left: 0;
+        max-height: min(360px, 55vh);
+        max-height: min(360px, 55dvh);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid #a8bdd6;
+        border-radius: 7px;
+        background: white;
+        box-shadow: 0 8px 24px #14263e30;
+        -webkit-overflow-scrolling: touch;
+    }
+    #nt-portal .wt-division-choice {
+        display: block;
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 14px;
+        text-align: left;
+        border: 0;
+        border-bottom: 1px solid #e5ecf5;
+        color: #172b46;
+        background: white;
+        font-size: 16px;
+        line-height: 1.5;
+        touch-action: manipulation;
+    }
+    #nt-portal .wt-division-choice:last-child { border-bottom: 0; }
+    #nt-portal .wt-division-choice.selected,
+    #nt-portal .wt-division-choice:focus-visible {
+        color: #084fba;
+        background: #eaf3ff;
+        font-weight: 600;
+    }
     #nt-portal #wt-current-user { font-size: 14px; overflow-wrap: anywhere; }
     #nt-portal .wt-header > .nt-badge { display: none; }
     #nt-portal #wt-logout { grid-column: 2; font-size: 14px; }
