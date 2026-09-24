@@ -217,7 +217,22 @@
                     RADIUS</label>
                   <label class="nt-check"><input type="checkbox" data-bind="otp">SMS / OTP</label>
                   <label class="nt-check"><input type="checkbox" data-bind="thaid">thaiD Login</label>
-                  <label class="nt-check"><input type="checkbox" data-bind="registerEnabled">แสดงปุ่ม ลงทะเบียน Free Wi-Fi</label>
+                  <label class="nt-check"><input type="checkbox" data-bind="registerEnabled">ลงทะเบียน Free Wi-Fi</label>
+                  <div id="wt-register-fields" class="wt-register-fields" hidden>
+                    <h3>Registration Fields</h3>
+                    <p class="nt-help">เลือก Field ที่ต้องการแสดงในแบบฟอร์มลงทะเบียน</p>
+                    <div class="wt-register-field-picker">
+                      <label class="nt-check"><input type="checkbox" data-bind="registerNameEnabled">Name</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerGenderEnabled">Gender</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerThaiCitizenIdEnabled">Thai Citizen ID</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerPassportEnabled">Passport</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerBirthdayEnabled">Birthday</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerMobileEnabled">Mobile Phone</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerEmailEnabled">Email</label>
+                      <label class="nt-check"><input type="checkbox" data-bind="registerProvinceEnabled">Province</label>
+                    </div>
+                    <div class="nt-help">Province เป็น Dropdown ครบ 77 จังหวัด แบ่งตามภูมิภาคของโครงการ</div>
+                  </div>
                   <hr class="nt-rule">
                   <h3>Social Login</h3>
                   <p class="nt-help">เลือก Provider ที่ต้องการให้แสดงบนหน้า Portal</p>
@@ -256,6 +271,12 @@
                     Config ของ Site นี้</div>
                   <hr class="nt-rule">
                   <h3>Questionnaire / Quiz</h3>
+                  <label class="nt-field">ภาษา Questionnaire / Quiz<select id="wt-questionnaire-language">
+                      <option value="th">ไทย</option>
+                      <option value="en">English</option>
+                      <option value="zh">Chinese</option>
+                      <option value="ja">Japanese</option>
+                    </select></label>
                   <label class="nt-check"><input type="checkbox"
                       data-bind="surveyEnabled">แสดงคำถามก่อนรับสิทธิ์</label>
                   <p class="nt-help">เลือกคำถามจากรายการเดียวกับวิดีโอ และแก้ไขชื่อ คำถาม ตัวเลือก หรือเฉลยในฟอร์มด้านล่าง</p>
@@ -267,7 +288,6 @@
                       <div class="nt-row"><button type="button" class="nt-button" id="wt-question-new">＋ สร้าง Questionnaire</button><button type="button" class="nt-button" id="wt-question-delete">ลบคำถาม</button></div>
                       <label class="nt-field">ชื่อ<input id="wt-question-name" maxlength="160"></label>
                       <label class="nt-field">ประเภท<select id="wt-question-type"><option value="survey">Questionnaire · แบบสอบถาม</option><option value="quiz">Quiz · มีคำตอบถูก</option></select></label>
-                      <label class="nt-field">ภาษา<select id="wt-question-language"><option value="th">ไทย</option><option value="en">English</option><option value="zh">Chinese</option><option value="ja">Japanese</option></select></label>
                       <label class="nt-field">คำถาม<textarea id="wt-question-text" maxlength="2000" rows="3"></textarea></label>
                       <label class="nt-field">ตัวเลือก · หนึ่งรายการต่อบรรทัด<textarea id="wt-question-answers" rows="5"></textarea></label>
                       <label class="nt-field" id="wt-question-correct-field">คำตอบที่ถูก<select id="wt-question-correct"></select></label>
@@ -391,6 +411,13 @@
       <video id="wt-video-ad-media" controls playsinline preload="metadata"></video>
       <p id="wt-video-ad-status" class="nt-help" role="status"></p>
       <div class="wt-terms-actions"><button type="button" class="nt-button" id="wt-video-ad-cancel">ปิด</button><button type="button" class="nt-button primary" id="wt-video-ad-continue" hidden>ดำเนินการต่อ</button></div>
+    </dialog>
+    <dialog id="wt-register-dialog" class="wt-terms-dialog wt-register-dialog" aria-labelledby="wt-register-title">
+      <form id="wt-register-form" method="dialog">
+        <header><h2 id="wt-register-title">ลงทะเบียน Free Wi-Fi</h2><p>Offline Preview · ยังไม่ส่งข้อมูลไป Backend</p></header>
+        <div id="wt-register-form-fields" class="wt-register-form-fields"></div>
+        <div class="wt-terms-actions"><button type="button" class="nt-button" id="wt-register-cancel">ปิด</button><button type="submit" class="nt-button primary" id="wt-register-submit">ลงทะเบียน</button></div>
+      </form>
     </dialog>
     <dialog id="nt-terms-dialog" class="wt-terms-dialog" aria-labelledby="nt-terms-title">
       <header>

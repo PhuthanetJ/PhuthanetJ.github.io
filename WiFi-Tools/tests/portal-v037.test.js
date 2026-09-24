@@ -23,7 +23,7 @@ test('V037 Questionnaire language accepts four supported languages and rejects i
   for (const language of ['th','en','zh','ja']) assert.equal(B.parseQuestions([{...baseQuestion, language}])[0].language, language);
   assert.equal(B.parseQuestions([baseQuestion])[0].language, 'th');
   assert.throws(() => B.parseQuestions([{...baseQuestion, language:'xx'}]), /ภาษา Questionnaire/);
-  assert.match(html, /id="wt-question-language"/);
+  assert.match(html, /id="wt-questionnaire-language"/);
 });
 
 test('V037 Video Ads is bound to a Video Banner and gated by watch seconds', () => {
@@ -31,5 +31,5 @@ test('V037 Video Ads is bound to a Video Banner and gated by watch seconds', () 
   assert.match(html, /data-bind="videoSeconds"/);
   assert.match(html, /id="wt-video-ad-continue" hidden>ดำเนินการต่อ/);
   assert.equal(config.state.videoBannerId, '');
-  assert.equal(config.schemaVersion, 8);
+  assert.equal(config.schemaVersion, 9);
 });

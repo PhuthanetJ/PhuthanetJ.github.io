@@ -1,7 +1,7 @@
 # Wi-Fi Tools — Offline Prototype
 
-**Current release:** V038  
-**Functional baseline:** V038  
+**Current release:** V039  
+**Functional baseline:** V039  
 **Updated:** 24 September 2026 / 24 กันยายน 2569
 
 Wi-Fi Tools เป็นต้นแบบระบบบริหาร Wi-Fi แบบ Offline สำหรับทดลอง UI/UX, Config, Portal, RADIUS & Policy, Report และงานบริหารที่เกี่ยวข้อง โดยออกแบบให้เปิดใช้งานจากไฟล์ HTML/CSS/JavaScript ใน Browser ได้โดยไม่ต้องเชื่อม Backend จริง
@@ -106,7 +106,8 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 
 - **Social Login** รวม Provider: LINE / Google / Apple และเลือกเปิดแต่ละ Provider ได้; Preview แสดงเป็นปุ่มวงกลมพร้อม Icon
 - **thaiD Login** แยกจากกลุ่ม Social Login และยังเปิด/ปิดได้อิสระ
-- `ฟังก์ชั่น Register` ควบคุมปุ่ม **ลงทะเบียน Free Wi-Fi** บน Preview
+- **ลงทะเบียน Free Wi-Fi** เปิด/ปิด Registration Form และเลือก Field ที่จะแสดงได้: Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email, Province
+- Province เป็น Dropdown ครบ 77 จังหวัด แบ่งเป็น กรุงเทพและปริมณฑล / ภาคกลาง / ภาคตะวันออก / ภาคเหนือ / ภาคตะวันออกเฉียงเหนือ / ภาคใต้
 - V037 เปลี่ยน `Facebook Login` เป็น `thaiD Login` และ Migration Draft/Config รุ่นเก่าที่เคยเปิด Facebook จะย้าย flag มาเป็น thaiD
 - Provider และ Register ยังเป็น Offline UI และยังไม่เชื่อม OAuth/thaiD/Register Backend จริง
 
@@ -137,9 +138,9 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 - Questionnaire / Quiz แก้ไขได้
 - คำถามของ Portal และคำถามที่ผูกกับ Video ใช้คลังคำถามร่วมกัน
 - Terms & Conditions ใช้ Dropdown เลือกภาษาได้: ไทย / English / Chinese / Japanese
-- Questionnaire / Quiz แต่ละรายการกำหนดภาษาได้: ไทย / English / Chinese / Japanese
+- Questionnaire / Quiz ใช้ Dropdown เลือกภาษาที่กำลังแก้แบบเดียวกับ Terms & Conditions: ไทย / English / Chinese / Japanese และรายการคำถามจะแสดงตามภาษาที่เลือก
 - Video Ads เลือก Video Banner จากคลัง Banner และกำหนดจำนวนวินาทีที่ต้องดูก่อนจะแสดงปุ่ม “ดำเนินการต่อ”
-- Config ปัจจุบันใช้ schemaVersion 8 และรองรับ Migration จาก Config รุ่นเก่าในขอบเขตที่โค้ดกำหนด
+- Config ปัจจุบันใช้ schemaVersion 9 และรองรับ Migration จาก Config รุ่นเก่าในขอบเขตที่โค้ดกำหนด
 
 ---
 
@@ -775,3 +776,12 @@ The filenames/routes remain unchanged; only the sidebar order and display labels
 - เมื่อเปิด Register, Portal Preview แสดงปุ่ม `ลงทะเบียน Free Wi-Fi`; Offline Prototype แสดงเพียง feedback และยังไม่เชื่อม Register Backend
 - ไม่เปลี่ยน Config schema เพราะใช้ state flags เดิม (`line`, `google`, `apple`, `thaid`, `registerEnabled`)
 - Automated / Regression Tests: **140/140 ผ่าน**
+
+
+## V039 — Registration Fields + Questionnaire Language Selector
+- `Login / OTP`: เปลี่ยน Label Register เป็น **ลงทะเบียน Free Wi-Fi** และเมื่อเปิดจะแสดง Registration Field Configuration
+- Registration Fields รองรับ Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email และ Province
+- Province ใช้ Dropdown ครบ 77 จังหวัด แบ่งเป็น 6 กลุ่มภูมิภาคของโครงการ
+- Portal Preview กด `ลงทะเบียน Free Wi-Fi` แล้วเปิด Registration Form ตาม Field ที่เลือก; ยังเป็น Offline Preview และไม่ส่ง Backend
+- `Quiz & เงื่อนไข`: Questionnaire / Quiz เพิ่ม Dropdown เลือกภาษาแบบเดียวกับ Terms & Conditions และกรองรายการคำถามตามภาษา
+- Config schema เพิ่มเป็น **schemaVersion 9** เพื่อเก็บ Registration Field flags และรองรับ Migration จาก Draft เดิม

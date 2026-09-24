@@ -393,7 +393,7 @@ window.NT_DATA = {
   ],
   "config": {
     "format": "wifi-tools-config",
-    "schemaVersion": 8,
+    "schemaVersion": 9,
     "version": 1,
     "state": {
       "name": "Free Wi-Fi",
@@ -406,6 +406,14 @@ window.NT_DATA = {
       "guest": true,
       "member": false,
       "registerEnabled": false,
+      "registerNameEnabled": true,
+      "registerGenderEnabled": true,
+      "registerThaiCitizenIdEnabled": true,
+      "registerPassportEnabled": true,
+      "registerBirthdayEnabled": true,
+      "registerMobileEnabled": true,
+      "registerEmailEnabled": true,
+      "registerProvinceEnabled": true,
       "otp": false,
       "accountSmsEnabled": false,
       "accountEmailEnabled": false,
@@ -1976,6 +1984,123 @@ window.NT_DATA = {
       "name": "Demo Site C"
     }
   ],
+  "thailand-provinces": {
+    "regions": [
+      {
+        "id": "bangkok-metro",
+        "name": "กรุงเทพและปริมณฑล",
+        "provinces": [
+          "กรุงเทพมหานคร",
+          "นครปฐม",
+          "นนทบุรี",
+          "ปทุมธานี",
+          "สมุทรปราการ",
+          "สมุทรสาคร"
+        ]
+      },
+      {
+        "id": "central",
+        "name": "ภาคกลาง",
+        "provinces": [
+          "อ่างทอง",
+          "ชัยนาท",
+          "กาญจนบุรี",
+          "ลพบุรี",
+          "นครนายก",
+          "พระนครศรีอยุธยา",
+          "เพชรบุรี",
+          "ประจวบคีรีขันธ์",
+          "ราชบุรี",
+          "สมุทรสงคราม",
+          "สระบุรี",
+          "สิงห์บุรี",
+          "สุพรรณบุรี"
+        ]
+      },
+      {
+        "id": "east",
+        "name": "ภาคตะวันออก",
+        "provinces": [
+          "ฉะเชิงเทรา",
+          "ชลบุรี",
+          "ระยอง",
+          "จันทบุรี",
+          "ตราด",
+          "ปราจีนบุรี",
+          "สระแก้ว"
+        ]
+      },
+      {
+        "id": "north",
+        "name": "ภาคเหนือ",
+        "provinces": [
+          "เชียงใหม่",
+          "เชียงราย",
+          "ลำปาง",
+          "ลำพูน",
+          "แม่ฮ่องสอน",
+          "น่าน",
+          "พะเยา",
+          "แพร่",
+          "อุตรดิตถ์",
+          "ตาก",
+          "สุโขทัย",
+          "พิษณุโลก",
+          "พิจิตร",
+          "เพชรบูรณ์",
+          "นครสวรรค์",
+          "อุทัยธานี",
+          "กำแพงเพชร"
+        ]
+      },
+      {
+        "id": "northeast",
+        "name": "ภาคตะวันออกเฉียงเหนือ",
+        "provinces": [
+          "กาฬสินธุ์",
+          "ขอนแก่น",
+          "ชัยภูมิ",
+          "นครพนม",
+          "นครราชสีมา",
+          "บึงกาฬ",
+          "บุรีรัมย์",
+          "มหาสารคาม",
+          "มุกดาหาร",
+          "ยโสธร",
+          "ร้อยเอ็ด",
+          "เลย",
+          "ศรีสะเกษ",
+          "สกลนคร",
+          "สุรินทร์",
+          "หนองคาย",
+          "หนองบัวลำภู",
+          "อำนาจเจริญ",
+          "อุดรธานี",
+          "อุบลราชธานี"
+        ]
+      },
+      {
+        "id": "south",
+        "name": "ภาคใต้",
+        "provinces": [
+          "กระบี่",
+          "ชุมพร",
+          "ตรัง",
+          "นครศรีธรรมราช",
+          "นราธิวาส",
+          "ปัตตานี",
+          "พังงา",
+          "พัทลุง",
+          "ภูเก็ต",
+          "ระนอง",
+          "สตูล",
+          "สงขลา",
+          "สุราษฎร์ธานี",
+          "ยะลา"
+        ]
+      }
+    ]
+  },
   "users": [
     {
       "id": "u-admin",

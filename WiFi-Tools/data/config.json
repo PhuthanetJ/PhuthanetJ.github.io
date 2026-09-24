@@ -1,6 +1,6 @@
 {
   "format": "wifi-tools-config",
-  "schemaVersion": 8,
+  "schemaVersion": 9,
   "version": 1,
   "state": {
     "name": "Free Wi-Fi",
@@ -13,6 +13,14 @@
     "guest": true,
     "member": false,
     "registerEnabled": false,
+    "registerNameEnabled": true,
+    "registerGenderEnabled": true,
+    "registerThaiCitizenIdEnabled": true,
+    "registerPassportEnabled": true,
+    "registerBirthdayEnabled": true,
+    "registerMobileEnabled": true,
+    "registerEmailEnabled": true,
+    "registerProvinceEnabled": true,
     "otp": false,
     "accountSmsEnabled": false,
     "accountEmailEnabled": false,

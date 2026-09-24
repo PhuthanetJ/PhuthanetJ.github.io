@@ -112,3 +112,10 @@ V038 — Social Login + Register
 - Preview แสดง Social Login เป็นปุ่มวงกลมพร้อม Icon
 - thaiD Login แยกจาก Social Login
 - เปิดฟังก์ชั่น Register แล้วแสดงปุ่ม ลงทะเบียน Free Wi-Fi ใน Preview
+
+
+V039 — Registration Fields + Questionnaire Language
+- Login/OTP: ลงทะเบียน Free Wi-Fi สามารถเลือก Field ที่แสดงได้: Name/Gender/Thai Citizen ID/Passport/Birthday/Mobile Phone/Email/Province
+- Province Dropdown ครบ 77 จังหวัด แบ่งตาม 6 ภูมิภาคของโครงการ
+- Questionnaire / Quiz มี Dropdown เลือกภาษาแบบ Terms & Conditions
+- Config schemaVersion 9

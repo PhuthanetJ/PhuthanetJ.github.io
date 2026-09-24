@@ -14,7 +14,26 @@
         zh: ['termsZh', 'termsBodyZh'], ja: ['termsJa', 'termsBodyJa']
     };
     let language = 'th', previewMode = 'normal', proposal = null, acceptedTerms = '', videoContinue = null, watchedSeconds = 0, lastVideoTime = 0;
-    const termsDialog = q('#nt-terms-dialog'), videoDialog = q('#wt-video-ad-dialog'), videoMedia = q('#wt-video-ad-media');
+    const termsDialog = q('#nt-terms-dialog'), videoDialog = q('#wt-video-ad-dialog'), videoMedia = q('#wt-video-ad-media'), registerDialog = q('#wt-register-dialog');
+    const provinceRegions = NT_DATA['thailand-provinces']?.regions || [];
+    const registerFieldKeys = ['registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled'];
+    function syncRegisterFields() { const panel = q('#wt-register-fields'); if (panel) panel.hidden = !state.registerEnabled; }
+    function provinceOptions() { return provinceRegions.map(region => '<optgroup label="' + esc(region.name) + '">' + region.provinces.map(name => '<option value="' + esc(name) + '">' + esc(name) + '</option>').join('') + '</optgroup>').join(''); }
+    function registrationMarkup() {
+        const fields = [];
+        if (state.registerNameEnabled) fields.push('<label class="nt-field">Name<input name="name" autocomplete="name"></label>');
+        if (state.registerGenderEnabled) fields.push('<label class="nt-field">Gender<select name="gender"><option value="">เลือก Gender</option><option>ชาย</option><option>หญิง</option><option>ไม่ระบุ</option></select></label>');
+        if (state.registerThaiCitizenIdEnabled) fields.push('<label class="nt-field">Thai Citizen ID<input name="thaiCitizenId" inputmode="numeric" maxlength="13"></label>');
+        if (state.registerPassportEnabled) fields.push('<label class="nt-field">Passport<input name="passport" autocomplete="off"></label>');
+        if (state.registerBirthdayEnabled) fields.push('<label class="nt-field">Birthday<input name="birthday" type="date"></label>');
+        if (state.registerMobileEnabled) fields.push('<label class="nt-field">Mobile Phone<input name="mobile" type="tel" inputmode="tel" autocomplete="tel"></label>');
+        if (state.registerEmailEnabled) fields.push('<label class="nt-field">Email<input name="email" type="email" autocomplete="email"></label>');
+        if (state.registerProvinceEnabled) fields.push('<label class="nt-field">Province<select name="province"><option value="">เลือกจังหวัด</option>' + provinceOptions() + '</select></label>');
+        return fields.join('');
+    }
+    function openRegister() { q('#wt-register-form-fields').innerHTML = registrationMarkup(); registerDialog.showModal(); }
+    q('#wt-register-cancel').addEventListener('click', () => registerDialog.close());
+    q('#wt-register-form').addEventListener('submit', event => { event.preventDefault(); registerDialog.close(); feedback((ui[language] || ui.en).registerDemo, true); });
     const termsSignature = () => JSON.stringify([state.termsVersion, ...languages.flatMap(lang => termFields[lang].map(key => state[key]))]);
     const termLink = lang => state[termFields[lang]?.[0]] || '';
     const termBody = lang => state[termFields[lang]?.[1]] || '';
@@ -105,7 +124,7 @@
         qa('.nt-public-button, .nt-public-register-button').forEach(el => el.style.borderRadius = state.shape === 'pill' ? '24px' : state.shape === 'square' ? '0' : '7px');
         qa('[data-lang]').forEach(el => el.addEventListener('click', () => { language = el.dataset.lang; q('#nt-edit-language').value = language; fillCopy(); preview(); }));
         qa('[data-public-auth]').forEach(el => el.addEventListener('click', () => feedback(text.providerDemo + el.dataset.publicAuth, false)));
-        q('#nt-public-register')?.addEventListener('click', () => feedback(text.registerDemo, true));
+        q('#nt-public-register')?.addEventListener('click', openRegister);
         q('#nt-public-connect')?.addEventListener('click', () => {
             if (state.termsEnabled && (acceptedTerms !== termsSignature() || !q('#nt-public-accept').checked)) return feedback(text.termsRequired, false);
             if (state.surveyEnabled) { const result = WiFiQuestionnaireUI.gradePortal(language); if (result.missing.length || !lists.portalQuestionnaireIds.some(id => lists.questionnaires.find(item => item.id === id)?.language === language)) return feedback(text.questionsRequired, false); if (!result.ok) return feedback(text.quizInvalid, false); }
@@ -141,7 +160,7 @@
     function setDevice(mode) { const desktop = mode === 'desktop'; q('#nt-phone').classList.toggle('nt-desktop-screen', desktop); q('#nt-phone').classList.toggle('nt-mobile-screen', !desktop); q('.nt-preview-wrap').classList.toggle('nt-mobile-mode', !desktop); q('#nt-device-desktop').setAttribute('aria-pressed', String(desktop)); q('#nt-device-mobile').setAttribute('aria-pressed', String(!desktop)); q('#nt-preview-device-label').textContent = desktop ? 'Desktop' : 'Mobile'; }
     q('#nt-device-desktop').addEventListener('click', () => setDevice('desktop')); q('#nt-device-mobile').addEventListener('click', () => setDevice('mobile'));
     q('#nt-preview-expand').addEventListener('click', () => { const expanded = q('.nt-editor-grid').classList.toggle('nt-preview-expanded'); q('#nt-preview-expand').textContent = expanded ? 'ย่อ Preview' : 'ขยาย Preview'; q('#nt-preview-expand').setAttribute('aria-pressed', String(expanded)); });
-    NT.onChange(() => { previewMode = 'normal'; fillTermsEditor(); fillVideoAdOptions(); preview(); });
-    NT.onLoad(() => { proposal = null; acceptedTerms = ''; fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
-    fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); setDevice('desktop');
+    NT.onChange(() => { previewMode = 'normal'; syncRegisterFields(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
+    NT.onLoad(() => { proposal = null; acceptedTerms = ''; syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
+    syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); setDevice('desktop');
 })();

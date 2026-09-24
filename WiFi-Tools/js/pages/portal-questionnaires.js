@@ -2,7 +2,7 @@
     'use strict'; if (!window.NT) return;
     const { q, esc, lists, assets, can, changed } = NT, B = WiFiBanners;
     const languageNames = { th: 'ไทย', en: 'English', zh: 'Chinese', ja: 'Japanese' };
-    let editingId = '';
+    let editingId = '', questionnaireLanguage = q('#wt-questionnaire-language')?.value || 'th';
     const message = text => { q('#wt-question-message').textContent = text; };
     function answers() { return q('#wt-question-answers').value.split(/\r?\n/).map(a => a.trim()).filter(Boolean); }
     function correctOptions(value = q('#wt-question-correct').value) {
@@ -20,19 +20,22 @@
         q('#wt-question-select').value = editingId;
         q('#wt-question-name').value = item?.name || '';
         q('#wt-question-type').value = item?.type || 'survey';
-        q('#wt-question-language').value = item?.language || 'th';
         q('#wt-question-text').value = item?.question || '';
         q('#wt-question-answers').value = item?.answers.join('\n') || ''; correctOptions(item?.correctAnswer || '');
-        for (const key of ['name', 'type', 'language', 'text', 'answers', 'correct', 'new', 'save']) q('#wt-question-' + key).disabled = !can('editSite');
+        for (const key of ['name', 'type', 'text', 'answers', 'correct', 'new', 'save']) q('#wt-question-' + key).disabled = !can('editSite');
         q('#wt-question-delete').disabled = !can('editSite') || !editingId; usage();
     }
+    function languageItems() { return lists.questionnaires.filter(item => item.language === questionnaireLanguage); }
     function renderChoices() {
-        q('#wt-portal-question-choices').innerHTML = lists.questionnaires.length ? lists.questionnaires.map(item => '<label class="nt-check"><input type="checkbox" data-portal-question="' + item.id + '"' + (lists.portalQuestionnaireIds.includes(item.id) ? ' checked' : '') + (can('editSite') ? '' : ' disabled') + '><span>[' + esc(languageNames[item.language] || item.language) + '] ' + esc(item.name) + ' · ' + esc(item.question) + '</span></label>').join('') : '<p>ยังไม่มีคำถาม สร้างได้ในฟอร์มด้านล่าง</p>';
+        const rows = languageItems();
+        q('#wt-portal-question-choices').innerHTML = rows.length ? rows.map(item => '<label class="nt-check"><input type="checkbox" data-portal-question="' + item.id + '"' + (lists.portalQuestionnaireIds.includes(item.id) ? ' checked' : '') + (can('editSite') ? '' : ' disabled') + '><span>' + esc(item.name) + ' · ' + esc(item.question) + '</span></label>').join('') : '<p>ยังไม่มีคำถามสำหรับภาษานี้ สร้างได้ในฟอร์มด้านล่าง</p>';
     }
     function render(id = editingId) {
-        q('#wt-question-select').innerHTML = '<option value="">สร้างคำถามใหม่</option>' + lists.questionnaires.map(item => '<option value="' + item.id + '">[' + esc(languageNames[item.language] || item.language) + '] ' + esc(item.name) + '</option>').join('');
-        renderChoices(); load(id);
+        const rows = languageItems();
+        q('#wt-question-select').innerHTML = '<option value="">สร้างคำถามใหม่</option>' + rows.map(item => '<option value="' + item.id + '">' + esc(item.name) + '</option>').join('');
+        renderChoices(); load(rows.some(item => item.id === id) ? id : (rows[0]?.id || ''));
     }
+    q('#wt-questionnaire-language').addEventListener('change', event => { questionnaireLanguage = event.target.value; render(''); message(''); });
     q('#wt-portal-question-choices').addEventListener('change', event => {
         const id = event.target.dataset.portalQuestion; if (!can('editSite') || !lists.questionnaires.some(item => item.id === id)) return renderChoices();
         const selected = lists.portalQuestionnaireIds.filter(key => key !== id); if (event.target.checked) selected.push(id);
@@ -45,7 +48,7 @@
         if (!can('editSite')) return;
         try {
             const id = editingId || 'q-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
-            const item = { id, name: q('#wt-question-name').value, type: q('#wt-question-type').value, language: q('#wt-question-language').value, question: q('#wt-question-text').value, answers: answers(), correctAnswer: q('#wt-question-correct').value };
+            const item = { id, name: q('#wt-question-name').value, type: q('#wt-question-type').value, language: questionnaireLanguage, question: q('#wt-question-text').value, answers: answers(), correctAnswer: q('#wt-question-correct').value };
             const next = lists.questionnaires.slice(), index = next.findIndex(row => row.id === id); if (index < 0) next.push(item); else next[index] = item;
             lists.questionnaires = B.parseQuestions(next); changed(); WiFiBannerUI.refresh(); render(id); message('บันทึกคำถามแล้ว · อัปเดตทุก Portal / วิดีโอที่ใช้คำถามนี้ใน Config เดียวกัน');
         } catch (e) { message(e.message); }
@@ -70,6 +73,6 @@
         for (const item of questions) { const select = q('#wt-public-question-' + item.id); if (select?.value !== '') answers[item.id] = item.answers[Number(select.value)]; }
         return B.grade(questions, answers);
     }
-    window.WiFiQuestionnaireUI = { portalMarkup, gradePortal, edit: id => { q('#nt-tab-engage').click(); load(id || lists.questionnaires[0]?.id); q('#wt-question-editor').scrollIntoView({ block: 'center' }); q('#wt-question-name').focus(); } };
-    NT.onLoad(() => render(lists.questionnaires[0]?.id)); render(lists.questionnaires[0]?.id);
+    window.WiFiQuestionnaireUI = { portalMarkup, gradePortal, edit: id => { q('#nt-tab-engage').click(); const item = lists.questionnaires.find(row => row.id === id); questionnaireLanguage = item?.language || questionnaireLanguage; q('#wt-questionnaire-language').value = questionnaireLanguage; render(item?.id || ''); q('#wt-question-editor').scrollIntoView({ block: 'center' }); q('#wt-question-name').focus(); } };
+    NT.onLoad(() => { questionnaireLanguage = q('#wt-questionnaire-language').value || 'th'; render(''); }); render('');
 })();

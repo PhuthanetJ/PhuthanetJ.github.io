@@ -15,7 +15,7 @@ test('V038 groups LINE Google Apple under Social Login and keeps thaiD separate'
 });
 
 test('V038 Free Wi-Fi registration button follows registerEnabled', () => {
-  assert.match(html, /data-bind="registerEnabled">แสดงปุ่ม ลงทะเบียน Free Wi-Fi/);
+  assert.match(html, /data-bind="registerEnabled">ลงทะเบียน Free Wi-Fi/);
   assert.match(js, /if \(state\.registerEnabled\) html \+= '[^']*nt-public-register/);
   assert.match(js, /register: 'ลงทะเบียน Free Wi-Fi'/);
   assert.match(js, /#nt-public-register/);

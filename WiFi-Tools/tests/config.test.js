@@ -69,7 +69,7 @@ test('A shared Portal opens the same config from either assigned site and keeps 
     a.NT.setBindings({ siteIds: ['a', 'b'], packageIds: ['pkg-0', 'pkg-1', 'pkg-2'] }); a.NT.choosePortal('b', 'a');
     const b = app(a.name, 'settings'); assert.equal(b.NT.currentSite, 'b'); assert.equal(b.NT.currentPortalId, 'a'); assert.equal(b.NT.state.name, 'Shared lobby');
     assert.equal(JSON.stringify(b.NT.db.configs.b), originalB);
-    const doc = JSON.parse(JSON.stringify(b.NT.snapshot())); assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 8);
+    const doc = JSON.parse(JSON.stringify(b.NT.snapshot())); assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 9);
     assert.deepEqual(b.NT.parseConfig(doc).bindings, { siteIds: ['a', 'b'], packageSource: 'radius-manager-allow-package', packageIds: ['pkg-0', 'pkg-1', 'pkg-2'] });
     assert.deepEqual(Array.from(b.NT.portalChoices('b'), p => p.id), ['a', 'b']);
 });

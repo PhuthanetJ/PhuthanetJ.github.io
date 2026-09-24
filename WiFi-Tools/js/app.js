@@ -82,7 +82,7 @@
     reconcilePortalConfigs();
     if (!divisions.some(([id]) => id === db.currentDivision)) db.currentDivision = 'all';
     // Existing drafts and JSON exports may predate newer Portal state fields.
-    const migratedStateKeys = ['termsBodyTh', 'termsBodyEn', 'termsZh', 'termsJa', 'termsBodyZh', 'termsBodyJa', 'registerEnabled', 'accountSmsEnabled', 'accountEmailEnabled', 'videoBannerId'];
+    const migratedStateKeys = ['termsBodyTh', 'termsBodyEn', 'termsZh', 'termsJa', 'termsBodyZh', 'termsBodyJa', 'registerEnabled', 'registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled', 'accountSmsEnabled', 'accountEmailEnabled', 'videoBannerId'];
     for (const saved of Object.values(db.configs)) {
         delete saved.state.policyName;
         if (saved.state.thaid === undefined) saved.state.thaid = typeof saved.state.facebook === 'boolean' ? saved.state.facebook : D.clone(NT_DATA.config.state.thaid);
@@ -161,6 +161,7 @@
         if (value.termsEnabled && termFields.some(k => typeof value[k] !== 'string' || !value[k].trim() || value[k].length > 6000)) issues.push('กรอกข้อความลิงก์และเนื้อหาเงื่อนไข Terms & Conditions ให้ครบทุกภาษา ไม่เกิน 6,000 ตัวอักษร');
         if (!/^\/portal\/[a-z0-9]+(?:[-/][a-z0-9]+)*$/.test(value.path)) issues.push('Path ต้องอยู่ใต้ /portal/');
         if (!['guest', 'member', 'otp', 'line', 'google', 'thaid', 'apple'].some(k => value[k])) issues.push('เปิดวิธีรับสิทธิ์อย่างน้อย 1 วิธี');
+        if (value.registerEnabled && !['registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled'].some(k => value[k])) issues.push('เลือก Registration Field อย่างน้อย 1 รายการ');
         if (!Number.isFinite(value.hours) || value.hours < 1 || value.hours > 24) issues.push('เวลา 1–24 ชั่วโมง');
         try {
             const parsedBanners = WiFiBanners.parse(banners), parsedQuestions = WiFiBanners.parseQuestions(questions);
@@ -175,9 +176,9 @@
         } catch (e) { issues.push(e.message); }
         return issues;
     }
-    function snapshot() { return { format: 'wifi-tools-config', schemaVersion: 8, siteId: ownerSiteId, portalId: currentPortalId, version, bindings: P.normalize(config.bindings, { owner: ownerSiteId, sites, packages }), state, copy, assets, lists }; }
+    function snapshot() { return { format: 'wifi-tools-config', schemaVersion: 9, siteId: ownerSiteId, portalId: currentPortalId, version, bindings: P.normalize(config.bindings, { owner: ownerSiteId, sites, packages }), state, copy, assets, lists }; }
     function parseConfig(doc) {
-        if (!doc || !['wifi-tools-config', 'nt-wifi-offline-config'].includes(doc.format) || ![1, 2, 3, 4, 5, 6, 7, 8].includes(doc.schemaVersion) || !doc.state || !doc.copy || !doc.assets || !doc.lists) throw Error('Config ไม่ถูกต้อง');
+        if (!doc || !['wifi-tools-config', 'nt-wifi-offline-config'].includes(doc.format) || ![1, 2, 3, 4, 5, 6, 7, 8, 9].includes(doc.schemaVersion) || !doc.state || !doc.copy || !doc.assets || !doc.lists) throw Error('Config ไม่ถูกต้อง');
         if (doc.siteId && doc.siteId !== ownerSiteId || doc.portalId && doc.portalId !== currentPortalId) throw Error('เลือก Portal Path / Config ให้ตรงกับไฟล์ก่อนนำเข้า');
         const next = { state: {}, copy: { th: {}, en: {}, zh: {}, ja: {} }, assets: {}, lists: { wg: [], mac: [] } };
         next.bindings = P.normalize(doc.bindings === undefined && doc.schemaVersion < 4 ? P.defaults(ownerSiteId, sites, packages) : doc.bindings, { owner: ownerSiteId, sites: NT_DATA.sites, packages, allowed: getUser() ? allowedIds() : undefined });
