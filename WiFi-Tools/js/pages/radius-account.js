@@ -1,4 +1,4 @@
-/* V024: Account Draft actions. CREATE / GENERATE / IMPORT / DISPATCH / EXPORT CSV + Account Status update. */
+/* V035: Account Draft actions + strict relation integrity + hardened CSV export. */
 (function () {
     'use strict';
     if (!window.NT || !window.WiFiRadiusPage || !window.WiFiAccountModel) return;
@@ -103,7 +103,11 @@
             dispatchSite: indexes.dispatchSite >= 0 ? values[indexes.dispatchSite] : ''
         }));
     }
-    function csvCell(value) { return '"' + String(value ?? '').replace(/"/g, '""') + '"'; }
+    function csvCell(value) {
+        const raw = String(value ?? '');
+        const safe = /^\s*[=+\-@]/.test(raw) ? "'" + raw : raw;
+        return '"' + safe.replace(/"/g, '""') + '"';
+    }
     function exportCsv() {
         const visible = page.getVisibleAccounts();
         if (!visible.length) { NT.toast('ไม่มี Account ในรายการปัจจุบันสำหรับ EXPORT'); return; }

@@ -1,6 +1,6 @@
 {
   "format": "wifi-tools-config",
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "version": 1,
   "state": {
     "name": "Free Wi-Fi",
@@ -12,10 +12,12 @@
     "shape": "rounded",
     "guest": true,
     "member": false,
+    "registerEnabled": false,
     "otp": false,
+    "accountSmsEnabled": false,
+    "accountEmailEnabled": false,
     "line": false,
     "google": false,
-    "facebook": false,
     "apple": false,
     "smsProvider": "",
     "otpTtl": 180,
@@ -50,7 +52,13 @@
     "alertChannel": "In-app",
     "alertRecovery": true,
     "termsBodyTh": "เงื่อนไขการใช้งาน Free WiFi\n\n1. สิทธิ์ใช้งานเป็นไปตามระยะเวลาและพื้นที่ให้บริการที่ระบุบนหน้า Portal\n2. ใช้งานเครือข่ายอย่างเหมาะสม และไม่รบกวนการใช้งานของผู้อื่น\n3. ไม่ใช้เครือข่ายเพื่อเข้าถึงระบบหรือข้อมูลที่ไม่ได้รับอนุญาต\n4. หากพบปัญหา ให้ติดต่อผู้ดูแลพื้นที่ให้บริการ\n\nข้อความตัวอย่าง — ผู้ดูแลสามารถแก้ไขให้ตรงกับเงื่อนไขบริการของแต่ละ Site",
-    "termsBodyEn": "Free WiFi terms of use\n\n1. Access is subject to the duration and service area shown on this portal.\n2. Use the network responsibly and do not disrupt other users.\n3. Do not use the network to access systems or data without permission.\n4. Contact the site administrator if you experience a problem.\n\nSample text — the administrator can edit these terms for each site."
+    "termsBodyEn": "Free WiFi terms of use\n\n1. Access is subject to the duration and service area shown on this portal.\n2. Use the network responsibly and do not disrupt other users.\n3. Do not use the network to access systems or data without permission.\n4. Contact the site administrator if you experience a problem.\n\nSample text — the administrator can edit these terms for each site.",
+    "thaid": false,
+    "termsZh": "我接受 Free WiFi 使用条款",
+    "termsJa": "Free WiFi 利用規約に同意します",
+    "termsBodyZh": "Free WiFi 使用条款\n\n1. 使用权限以 Portal 页面显示的服务时长和区域为准。\n2. 请合理使用网络，不影响其他用户。\n3. 不得利用网络访问未经授权的系统或数据。\n4. 如遇问题，请联系服务区域管理员。\n\n示例文本 — 管理员可根据各 Site 的服务条件进行修改。",
+    "termsBodyJa": "Free WiFi 利用規約\n\n1. 利用条件は Portal に表示される利用時間とサービスエリアに従います。\n2. 他の利用者の妨げにならないよう適切にネットワークを利用してください。\n3. 許可されていないシステムやデータへのアクセスに利用しないでください。\n4. 問題がある場合はサービスエリアの管理者へ連絡してください。\n\nサンプル文 — 管理者は Site ごとの条件に合わせて編集できます。",
+    "videoBannerId": ""
   },
   "copy": {
     "th": {
@@ -66,6 +74,20 @@
       "button": "Get free WiFi",
       "otp": "Request OTP",
       "error": "Unable to connect. Please try again."
+    },
+    "zh": {
+      "title": "免费 WiFi",
+      "subtitle": "随时随地保持连接。",
+      "button": "获取免费 WiFi",
+      "otp": "获取 OTP",
+      "error": "无法连接，请重试。"
+    },
+    "ja": {
+      "title": "無料 WiFi",
+      "subtitle": "いつでも、どこでもつながる。",
+      "button": "無料 WiFi を利用する",
+      "otp": "OTP を取得",
+      "error": "接続できません。もう一度お試しください。"
     }
   },
   "assets": {
@@ -90,7 +112,8 @@
           "40–59 ปี",
           "ตั้งแต่ 60 ปีขึ้นไป"
         ],
-        "correctAnswer": ""
+        "correctAnswer": "",
+        "language": "th"
       },
       {
         "id": "wifi-purpose",
@@ -102,7 +125,8 @@
           "เรียน",
           "ติดต่อสื่อสาร"
         ],
-        "correctAnswer": ""
+        "correctAnswer": "",
+        "language": "th"
       },
       {
         "id": "wifi-quiz",
@@ -114,7 +138,8 @@
           "เปิดเผยรหัสผ่านให้ผู้อื่น",
           "รบกวนการใช้งานเครือข่าย"
         ],
-        "correctAnswer": "อ่านและยอมรับเงื่อนไข"
+        "correctAnswer": "อ่านและยอมรับเงื่อนไข",
+        "language": "th"
       }
     ],
     "portalQuestionnaireIds": [

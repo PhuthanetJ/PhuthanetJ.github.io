@@ -31,7 +31,16 @@
     function resolve(configs, siteId, selectedId, allowed) { const rows = choices(configs, siteId, allowed); return rows.some(c => c.id === selectedId) ? selectedId : rows.some(c => c.id === siteId) ? siteId : rows[0]?.id; }
     function pathChoices(configs, allowed) {
         return Object.entries(configs).filter(([, c]) => c.bindings.siteIds.some(id => allowed.includes(id)))
-            .map(([id, c]) => ({ id, name: c.state.name, path: c.state.path, siteIds: c.bindings.siteIds.filter(id => allowed.includes(id)) }))
+            .map(([id, c]) => ({
+                id,
+                name: c.state.name,
+                path: c.state.path,
+                template: c.state.template || 'Custom',
+                ownerSiteId: c.ownerSiteId || c.bindings.siteIds[0],
+                siteCount: c.bindings.siteIds.length,
+                siteIds: c.bindings.siteIds.filter(id => allowed.includes(id)),
+                manageable: canManage(c.bindings, allowed)
+            }))
             .sort((a, b) => a.path.localeCompare(b.path));
     }
     return { packageSource, defaults, normalize, coverage, canManage, choices, resolve, pathChoices };

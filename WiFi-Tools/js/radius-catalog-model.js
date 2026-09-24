@@ -1,4 +1,4 @@
-/* V016: independent offline RADIUS Site/Package draft. Does NOT modify live systems or portal dataset. */
+/* Offline RADIUS Site/Package draft model. V031 shares validated Draft data with Portal Configuration; live systems are not modified. */
 (function (root, factory) {
     const api = factory();
     if (typeof module === 'object' && module.exports) module.exports = api;
@@ -93,6 +93,7 @@
     }
     function removeSite(snapshot, recordId) {
         if (!snapshot.sites.some(row => row.id === recordId)) throw Error('ไม่พบ Site ที่ต้องการลบ');
+        if (snapshot.sites.length <= 1) throw Error('ต้องมี Site อย่างน้อย 1 รายการ');
         const next = clone(snapshot); next.sites = next.sites.filter(row => row.id !== recordId);
         return next;
     }
@@ -104,7 +105,7 @@
     }
     function initial(data) { return check(clone({ sites: data['radius-sites'].sites, packages: data['radius-packages'].packages })); }
     function check(raw) {
-        if (!raw || typeof raw !== 'object' || !Array.isArray(raw.sites) || !Array.isArray(raw.packages) || raw.sites.length > 500 || raw.packages.length > 500) throw Error('รูปแบบ Site/Package Draft ไม่ถูกต้อง');
+        if (!raw || typeof raw !== 'object' || !Array.isArray(raw.sites) || !Array.isArray(raw.packages) || raw.sites.length < 1 || raw.sites.length > 500 || raw.packages.length > 500) throw Error('รูปแบบ Site/Package Draft ไม่ถูกต้อง หรือไม่มี Site เหลืออยู่');
         const sites = [], packages = [], ids = new Set();
         for (const row of raw.packages) {
             if (typeof row.id !== 'string' || !/^[a-z0-9-]{1,80}$/i.test(row.id) || ids.has(row.id)) throw Error('Package ID ไม่ถูกต้องหรือซ้ำ');

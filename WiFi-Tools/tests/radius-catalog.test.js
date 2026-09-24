@@ -45,7 +45,7 @@ test('Package CRUD add, edit, duplicate rejection and delete cascades only withi
 test('Validate saved Draft, reject tampering and preserve empty intentional deletions', () => {
     const base = original(); assert.deepEqual(model.load(model.serialize(base), baseline), base);
     assert.deepEqual(model.load(null, baseline), base);
-    assert.equal(model.load(model.serialize({ sites: [], packages: [] }), baseline).sites.length, 0);
+    assert.throws(() => model.serialize({ sites: [], packages: [] }), /ไม่มี Site/);
     assert.throws(() => model.load('{broken', baseline), /JSON/);
     assert.throws(() => model.load('{"schemaVersion":9,"sites":[],"packages":[]}', baseline), /Version/);
     assert.throws(() => model.check({ sites: [base.sites[0], base.sites[0]], packages: base.packages }), /ID/);

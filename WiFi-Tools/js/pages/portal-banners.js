@@ -1,6 +1,7 @@
 (function () {
     'use strict'; if (!window.NT) return;
-    const { q, qa, esc, assets, lists, can, changed, toast } = NT, B = WiFiBanners;
+    const { q, qa, esc, state, assets, lists, can, changed, toast } = NT, B = WiFiBanners;
+    const languageNames = { th: 'ไทย', en: 'English', zh: 'Chinese', ja: 'Japanese' };
     let busy = false, language = 'th', signature = '', replaceId = '', dialogArea = '', quizBannerId = '', quizContext = null, quizPassed = false;
     const selected = {}, fileInput = q('#wt-banner-files'), list = q('#wt-banner-list'), dialog = q('#wt-banner-dialog'), quizDialog = q('#wt-quiz-dialog');
     const active = area => assets.banners.filter(b => b.enabled && b.area === area);
@@ -17,13 +18,13 @@
                 '<label class="nt-field">Banner area<select' + field('area') + '>' + Object.entries(B.areas).map(([key, label]) => '<option value="' + key + '"' + (b.area === key ? ' selected' : '') + '>' + esc(label) + '</option>').join('') + '</select></label>' +
                 '<label class="nt-check"><input type="checkbox"' + field('clickable') + (b.clickable ? ' checked' : '') + '>Clickable · เปิดการกด Banner</label>' +
                 (b.clickable ? (b.type === 'video' ? '<label class="nt-field">เมื่อดำเนินการต่อ<select' + field('action') + '><option value="link"' + (b.action === 'link' ? ' selected' : '') + '>เปิดลิงก์</option><option value="questionnaires"' + (b.action === 'questionnaires' ? ' selected' : '') + '>Quiz / Questionnaires</option></select></label>' : '') +
-                    (b.action === 'questionnaires' ? '<fieldset class="wt-banner-question-choices"><legend>Questionnaires · เลือกได้หลายข้อ</legend>' + (lists.questionnaires.length ? lists.questionnaires.map(item => '<label class="nt-check"><input type="checkbox" data-banner-question="' + item.id + '"' + attr + (b.questionnaireIds.includes(item.id) ? ' checked' : '') + '><span>' + esc(item.name) + ' <small>(' + (item.type === 'quiz' ? 'Quiz' : 'แบบสอบถาม') + ')</small></span></label>').join('') : '<p>ยังไม่มีคำถาม สร้างและแก้ไขได้ในแท็บ Quiz &amp; เงื่อนไข</p>') + '<button type="button" class="nt-button nt-compact" data-banner-action="questions"' + attr + '>แก้ไข Questionnaires</button></fieldset>' : '<label class="nt-field">ลิงก์ปลายทาง<input type="url"' + field('link') + ' maxlength="2000" placeholder="https://example.com/promotion" value="' + esc(b.link) + '"></label>') : '') +
+                    (b.action === 'questionnaires' ? '<fieldset class="wt-banner-question-choices"><legend>Questionnaires · เลือกได้หลายข้อ</legend>' + (lists.questionnaires.length ? lists.questionnaires.map(item => '<label class="nt-check"><input type="checkbox" data-banner-question="' + item.id + '"' + attr + (b.questionnaireIds.includes(item.id) ? ' checked' : '') + '><span>[' + esc(languageNames[item.language] || item.language) + '] ' + esc(item.name) + ' <small>(' + (item.type === 'quiz' ? 'Quiz' : 'แบบสอบถาม') + ')</small></span></label>').join('') : '<p>ยังไม่มีคำถาม สร้างและแก้ไขได้ในแท็บ Quiz &amp; เงื่อนไข</p>') + '<button type="button" class="nt-button nt-compact" data-banner-action="questions"' + attr + '>แก้ไข Questionnaires</button></fieldset>' : '<label class="nt-field">ลิงก์ปลายทาง<input type="url"' + field('link') + ' maxlength="2000" placeholder="https://example.com/promotion" value="' + esc(b.link) + '"></label>') : '') +
                 '<div class="nt-row">' + [['preview', 'ดูตัวอย่าง'], ['replace', 'เปลี่ยนไฟล์'], ['up', 'ขึ้น ↑'], ['down', 'ลง ↓'], ['remove', 'ลบ']].map(([key, label]) => '<button type="button" class="nt-button nt-compact" data-banner-action="' + key + '"' + attr + '>' + label + '</button>').join('') + '</div></article>';
         }).join('') : '<p class="nt-help">ยังไม่มี Banner — เพิ่มรูปภาพหรือวิดีโอได้หลายไฟล์</p>';
         q('#wt-banner-count').textContent = assets.banners.length + ' / 20 รายการ · เปิด ' + assets.banners.filter(b => b.enabled).length;
         controls();
     }
-    function update(items) { assets.banners = B.parse(items); assets.banner = ''; changed(); renderList(); preview(); }
+    function update(items) { assets.banners = B.parse(items); assets.banner = ''; if (state && state.videoBannerId && !assets.banners.some(b => b.id === state.videoBannerId && b.type === 'video')) state.videoBannerId = ''; changed(); renderList(); preview(); }
     async function readFile(file) {
         const { mime, type } = B.fileType(file);
         const src = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = () => reject(Error('อ่านไฟล์ไม่สำเร็จ: ' + file.name)); reader.readAsDataURL(file.slice(0, file.size, mime)); });
@@ -136,7 +137,7 @@
         if (!questions.length || questions.some(item => !item)) { error('เลือก Questionnaire ของ Banner ให้ครบก่อนทดลอง'); return false; }
         quizBannerId = b.id; quizContext = { area: b.area, fromDialog }; quizPassed = false; q('#wt-quiz-next').hidden = true;
         q('#wt-quiz-title').textContent = b.name + ' · Quiz / Questionnaires'; q('#wt-quiz-result').textContent = '';
-        q('#wt-quiz-questions').innerHTML = questions.map((item, index) => '<fieldset class="wt-quiz-question"><legend>' + (index + 1) + '. ' + esc(item.question) + '</legend><p class="nt-help">' + esc(item.name) + ' · ' + (item.type === 'quiz' ? 'Quiz' : 'แบบสอบถาม') + '</p>' + item.answers.map((answer, i) => '<label class="nt-check"><input type="radio" name="question-' + item.id + '" value="' + i + '"><span>' + esc(answer) + '</span></label>').join('') + '</fieldset>').join('');
+        q('#wt-quiz-questions').innerHTML = questions.map((item, index) => '<fieldset class="wt-quiz-question"><legend>' + (index + 1) + '. ' + esc(item.question) + '</legend><p class="nt-help">' + esc(item.name) + ' · ' + esc(languageNames[item.language] || item.language) + ' · ' + (item.type === 'quiz' ? 'Quiz' : 'แบบสอบถาม') + '</p>' + item.answers.map((answer, i) => '<label class="nt-check"><input type="radio" name="question-' + item.id + '" value="' + i + '"><span>' + esc(answer) + '</span></label>').join('') + '</fieldset>').join('');
         if (fromDialog) { pause(q('#wt-banner-dialog-content')); dialog.close(); }
         if (!quizDialog.open) quizDialog.showModal(); return true;
     }

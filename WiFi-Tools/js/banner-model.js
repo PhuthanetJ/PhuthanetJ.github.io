@@ -53,10 +53,12 @@
             if (!item || typeof item.id !== 'string' || !/^[-a-zA-Z0-9_]{1,80}$/.test(item.id) || seen.has(item.id)) throw Error('รหัส Questionnaire ไม่ถูกต้องหรือซ้ำ');
             seen.add(item.id);
             if (typeof item.name !== 'string' || !item.name.trim() || item.name.length > 160 || typeof item.question !== 'string' || !item.question.trim() || item.question.length > 2000 || !['survey', 'quiz'].includes(item.type)) throw Error('กรอกชื่อ ประเภท และคำถามให้ครบ');
+            const language = item.language === undefined ? 'th' : item.language;
+            if (!['th', 'en', 'zh', 'ja'].includes(language)) throw Error('ภาษา Questionnaire ไม่ถูกต้อง');
             if (!Array.isArray(item.answers) || item.answers.length < 2 || item.answers.length > 20 || item.answers.some(a => typeof a !== 'string' || !a.trim() || a.length > 300) || new Set(item.answers.map(a => a.trim())).size !== item.answers.length) throw Error('กรอกตัวเลือก 2–20 รายการที่ไม่ซ้ำกัน');
             const answers = item.answers.map(a => a.trim());
             if (typeof item.correctAnswer !== 'string' || item.type === 'quiz' && !answers.includes(item.correctAnswer.trim())) throw Error('คำตอบ Quiz ต้องตรงกับตัวเลือก');
-            return { id: item.id, name: item.name.trim(), type: item.type, question: item.question.trim(), answers, correctAnswer: item.type === 'quiz' ? item.correctAnswer.trim() : '' };
+            return { id: item.id, name: item.name.trim(), type: item.type, language, question: item.question.trim(), answers, correctAnswer: item.type === 'quiz' ? item.correctAnswer.trim() : '' };
         });
     }
     function bindingIssues(banners, questions) {
@@ -88,7 +90,7 @@
         }
         // Preserve a legacy custom question and reuse a matching catalog entry when possible.
         const answers = typeof state.answers === 'string' ? state.answers.split(',').map(a => a.trim()).filter(Boolean) : [];
-        const old = { id: 'legacy-portal-question', name: 'คำถาม Portal เดิม', type: state.surveyType, question: state.question, answers, correctAnswer: state.correctAnswer };
+        const old = { id: 'legacy-portal-question', name: 'คำถาม Portal เดิม', type: state.surveyType, language: 'th', question: state.question, answers, correctAnswer: state.correctAnswer };
         let valid; try { valid = parseQuestions([old])[0]; } catch (_) { lists.portalQuestionnaireIds = []; return; }
         const match = lists.questionnaires.find(q => q.type === valid.type && q.question === valid.question && JSON.stringify(q.answers) === JSON.stringify(valid.answers) && q.correctAnswer === valid.correctAnswer);
         if (match) { lists.portalQuestionnaireIds = [match.id]; return; }

@@ -1,3 +1,5 @@
+Current release: V038
+
 Wi-Fi Tools — Desktop & Mobile
 
 1. แตก ZIP ทั้งหมดก่อนเปิด ห้ามเปิด index.html ภายในหน้าดูตัวอย่างของ ZIP
@@ -33,9 +35,9 @@ V014: RADIUS & Policy > Site / Package เพิ่ม แก้ไข ลบ �
 - Site: Name, VLAN ID, Location, Concurrent, Description, เลือก Allow Package
 - Package: แก้ไขพารามิเตอร์ตามหน้ารายละเอียดทั้ง 18 ฟิลด์
 - เฉพาะบัญชี demo System Admin จัดการได้ (จำกัด UI เท่านั้น ไม่ใช่ Production RBAC)
-- บันทึก Site/Package Draft ลง localStorage ของ Browser ที่เปิด ใช้คนละชุดข้อมูลกับ Portal Configuration
+- Site/Package Draft ใช้ข้อมูลร่วมกับ Portal Configuration ภายใน Browser เดียวกัน (ยังเป็น Offline Draft)
 - ลบ Package Draft จะนำรายการออกจาก Allow Package ของ Site Draft ด้วย หลังยืนยัน
-- ยังไม่เชื่อม RADIUS Manager, ไม่แก้ Config / Portal / Dashboard / Site ผู้ใช้ในส่วนอื่น และไม่แก้ข้อมูล Production
+- ยังไม่เชื่อม RADIUS Manager จริง และไม่แก้ข้อมูล Production; การ Sync ใน V031 มีเฉพาะ Site/Package Draft → Portal Configuration
 - Automated Tests ด้วย Node ครอบคลุม model/UI structure; Browser ถูกสภาพแวดล้อมทดสอบบล็อกการเปิดไฟล์และ localhost จึงยังไม่ได้ทดสอบบน Browser จริง
 
 V015: RADIUS & Policy > Package แสดง Status, Name, Prefix Accounts (= User Prefix), Created Date
@@ -61,3 +63,52 @@ V027 Documentation: README.md ถูกจัดโครงสร้างใ�
 V028: RADIUS & Policy > Package เพิ่มค้นหา Package จาก Name หรือ Prefix Accounts ด้วยปุ่มค้นหา.
 
 V029: Sidebar Navigation reordered and labels renamed. Functional routes are unchanged.
+
+
+V030: Portal Configuration starts at Portal Path Management. Add/Edit/Delete/Configure are available in the offline Draft; Configure opens the existing settings tabs for the selected Path.
+
+V031: Fixed Site/Package Draft integration. Sites added in RADIUS & Policy are now available in Portal Configuration in the same browser draft.
+
+V032: Portal Path list uses a single main heading "Portal Path Management". The heading changes to "Portal Configuration" only after Configure is opened.
+
+V033: Portal Configure tabs reordered to General & Path → Login/OTP → Design → Copy/Language → Quiz/Terms.
+Quick Function labels changed to Register, Free Trial, Account via SMS, Account via E-mail. Register/SMS/E-mail remain Offline Draft flags until backend/provider integration.
+
+
+
+V034 — CRUD Regression & Referential Integrity
+- แก้ลบ Site แล้ว Portal Configuration โหลดไม่ได้
+- Reconcile Portal Path / owner / binding เมื่อ Site ถูกลบ
+- ห้ามลบ Site สุดท้าย
+- Site ที่มี Account DISPATCH ต้อง Undispatch ก่อนลบ
+- Package ที่ยังมี Account อ้างอยู่จะไม่ให้ลบเพื่อป้องกัน orphan Account
+- Automated Tests 124/124 ผ่าน; Browser headless ใน environment นี้ถูก block localhost จึงยังต้องทดสอบบน Browser จริง
+
+
+V035 — Referential Integrity Hardening
+- ห้ามนำ Package ออกจาก Site ถ้ายังมี Account DISPATCH ของ Package นั้นมายัง Site
+- Account relation validation เข้มงวดขึ้น และ Legacy stale DISPATCH ถูก Recovery แบบ Inactive + Undispatch
+- Portal Path reconcile coverage ทันทีหลัง Edit/Delete/Binding change
+- Account CSV Export ป้องกัน Spreadsheet Formula Injection
+
+
+V036 — Site / Portal Path Separation
+- เพิ่ม Site ใน RADIUS & Policy จะไม่สร้าง Portal Path อัตโนมัติ
+- Site ใหม่จะเป็นตัวเลือกให้ผูกใน Portal Path Management เท่านั้น
+- Site สามารถยังไม่ผูก Portal Path ได้; ต้อง Add/Edit Portal Path เพื่อผูกเอง
+
+
+V037 — Portal Languages / thaiD / Video Ads
+- Login/OTP: Facebook Login เปลี่ยนเป็น thaiD Login
+- ข้อความ & ภาษา: เพิ่ม Chinese และ Japanese
+- Terms & Conditions: เลือกภาษาไทย/English/Chinese/Japanese จาก Dropdown
+- Questionnaire / Quiz: เพิ่มภาษาให้แต่ละคำถาม
+- Video Ads: เลือก Video Banner + กำหนดวินาทีที่ต้องดูก่อนแสดงปุ่มดำเนินการต่อ
+- Config schemaVersion 8; Regression Tests 138/138 ผ่าน
+
+
+V038 — Social Login + Register
+- Login/OTP รวม LINE / Google / Apple เป็น Social Login เลือก Provider ได้
+- Preview แสดง Social Login เป็นปุ่มวงกลมพร้อม Icon
+- thaiD Login แยกจาก Social Login
+- เปิดฟังก์ชั่น Register แล้วแสดงปุ่ม ลงทะเบียน Free Wi-Fi ใน Preview

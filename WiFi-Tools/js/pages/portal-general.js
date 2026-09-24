@@ -1,11 +1,11 @@
 (function () {
     'use strict'; if (!window.NT) return;
     const { q, qa, esc, can, siteName, currentSite, currentPortalId } = NT, B = WiFiPortalBindings, catalog = NT_DATA['radius-packages'].packages, sites = NT_DATA['radius-sites'].sites;
-    function selector() { const rows = NT.portalChoices(currentSite); q('#wt-portal-selector').innerHTML = rows.map(c => '<option value="' + esc(c.id) + '">' + esc(c.name) + ' · ' + esc(c.path) + '</option>').join(''); q('#wt-portal-selector').value = currentPortalId; q('#wt-portal-selector-field').hidden = rows.length < 2; }
+    function selector() { const rows = NT.portalChoices(currentSite); q('#wt-portal-selector').innerHTML = rows.map(c => '<option value="' + esc(c.id) + '">' + esc(c.name) + ' · ' + esc(c.path) + '</option>').join(''); q('#wt-portal-selector').value = currentPortalId; q('#wt-portal-selector-field').hidden = true; }
     function render() {
         selector();
         const binding = NT.bindings(), allowed = NT.allowedIds(), editable = can('editSite');
-        q('#wt-portal-sites').innerHTML = NT.allowedSites().map(s => '<label class="wt-portal-choice"><input type="checkbox" data-portal-site="' + esc(s.id) + '"' + (binding.siteIds.includes(s.id) ? ' checked' : '') + (!editable || s.id === currentPortalId || s.id === currentSite ? ' disabled' : '') + '><span><strong>' + esc(s.name) + '</strong>' + (s.id === currentPortalId ? '<small>Site เจ้าของ Config</small>' : s.id === currentSite ? '<small>Site ที่กำลังเปิด Config</small>' : '') + '</span></label>').join('');
+        q('#wt-portal-sites').innerHTML = NT.allowedSites().map(s => '<label class="wt-portal-choice"><input type="checkbox" data-portal-site="' + esc(s.id) + '"' + (binding.siteIds.includes(s.id) ? ' checked' : '') + (!editable || s.id === NT.currentPortalOwnerSiteId || s.id === currentSite ? ' disabled' : '') + '><span><strong>' + esc(s.name) + '</strong>' + (s.id === NT.currentPortalOwnerSiteId ? '<small>Site เจ้าของ Config</small>' : s.id === currentSite ? '<small>Site ที่กำลังเปิด Config</small>' : '') + '</span></label>').join('');
         const rows = B.coverage(binding, sites, catalog).filter(row => allowed.includes(row.siteId));
         q('#wt-portal-allow-packages').innerHTML = rows.map(row => {
             const names = row.packageIds.map(id => catalog.find(p => p.id === id).policyName);

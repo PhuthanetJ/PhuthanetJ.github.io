@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Portal Configuration | Wi-Fi Tools</title>
+  <title>Portal Path Management | Wi-Fi Tools</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../css/common.css">
   <link rel="stylesheet" href="../css/portal-config.css">
@@ -12,7 +12,9 @@
   <script defer src="../js/domain.js"></script>
   <script defer src="../js/banner-model.js"></script>
   <script defer src="../js/portal-bindings.js"></script>
+  <script defer src="../js/radius-catalog-model.js"></script>
   <script defer src="../js/app.js"></script>
+  <script defer src="../js/pages/portal-paths.js"></script>
   <script defer src="../js/pages/portal-banners.js"></script>
   <script defer src="../js/pages/portal-questionnaires.js"></script>
   <script defer src="../js/pages/portal-general.js"></script>
@@ -33,10 +35,31 @@
       <nav class="nt-side"><a class="nt-nav " href="dashboard.html" data-nav="dashboard">Dashboard</a><a class="nt-nav " href="radius-policy.html" data-nav="radius">RADIUS & Policy</a><a class="nt-nav active" href="portal-config.html" data-nav="builder">Portal Configuration</a><a class="nt-nav " href="free-wifi-coupons.html" data-nav="voucher">Free WiFi & Coupon</a><a class="nt-nav " href="ap-network.html" data-nav="access">Network Configuration</a><a class="nt-nav " href="ap-sites.html" data-nav="ap-sites">AP by Site</a><a class="nt-nav " href="reports.html" data-nav="reports">Reports</a><a class="nt-nav " href="monitor-logs.html" data-nav="monitor">Monitor & Logs</a><a class="nt-nav " href="alerts.html" data-nav="alerts">Notifications</a><a class="nt-nav " href="users.html" data-nav="users">Administrator</a><a class="nt-nav " href="settings.html" data-nav="settings">Admin / Management</a><a class="nt-nav " href="modules.html" data-nav="modules">Specification</a></nav>
       <main class="nt-main">
         <div class="nt-heading">
-          <h2>Portal Configuration</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
+          <h2 id="wt-portal-page-title">Portal Path Management</h2><span id="nt-draft-status" class="nt-badge neutral"></span>
         </div>
         <section id="page-content">
-          <section id="nt-view-builder" class="nt-view">
+          <section id="wt-portal-path-management" class="nt-view" hidden>
+            <div class="nt-panel wt-portal-path-panel">
+              <div class="wt-portal-path-head">
+                <div><p class="nt-help">เลือก Portal Path ก่อน แล้วจึงเข้าไปตั้งค่ารายละเอียดของแต่ละ Path</p></div>
+                <button type="button" class="nt-button primary" id="wt-portal-path-add">＋ Add Portal Path</button>
+              </div>
+              <div class="nt-table-wrap">
+                <table class="wt-portal-path-table">
+                  <thead><tr><th>Name</th><th>Path</th><th>Template</th><th class="wt-center">Sites</th><th>Action</th></tr></thead>
+                  <tbody id="wt-portal-path-rows"></tbody>
+                </table>
+              </div>
+              <p id="wt-portal-path-empty" class="nt-help" hidden>ไม่พบ Portal Path ตามสิทธิ์ของผู้ใช้งาน</p>
+              <p id="wt-portal-path-message" class="nt-help" role="status"></p>
+              <p class="nt-notice">Offline Prototype: Delete จะถามยืนยันแม้มี Site ผูกอยู่ · Production ควรบังคับ Unassign Site ก่อนลบ Portal Path</p>
+            </div>
+          </section>
+          <section id="nt-view-builder" class="nt-view" hidden>
+            <div id="wt-portal-config-context" class="nt-panel wt-portal-config-context">
+              <button type="button" class="nt-button" id="wt-portal-path-back">← Portal Path List</button>
+              <div><strong id="wt-current-portal-name"></strong><div id="wt-current-portal-path" class="nt-help"></div></div>
+            </div>
             <div class="nt-row page-style-0">
               <button class="nt-button" type="button" id="nt-mode-manual" aria-pressed="true"><svg
                   class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
@@ -83,12 +106,12 @@
             <div class="nt-tabs" role="tablist" aria-label="ส่วนตั้งค่า Portal">
               <button class="nt-tab active" type="button" role="tab" id="nt-tab-general" aria-selected="true"
                 aria-controls="nt-form-general" data-tab="general">ทั่วไป &amp; Path</button>
+              <button class="nt-tab" type="button" role="tab" id="nt-tab-auth" aria-selected="false"
+                aria-controls="nt-form-auth" data-tab="auth">Login / OTP</button>
               <button class="nt-tab" type="button" role="tab" id="nt-tab-design" aria-selected="false"
                 aria-controls="nt-form-design" data-tab="design">ดีไซน์</button>
               <button class="nt-tab" type="button" role="tab" id="nt-tab-copy" aria-selected="false"
                 aria-controls="nt-form-copy" data-tab="copy">ข้อความ &amp; ภาษา</button>
-              <button class="nt-tab" type="button" role="tab" id="nt-tab-auth" aria-selected="false"
-                aria-controls="nt-form-auth" data-tab="auth">Login / OTP</button>
               <button class="nt-tab" type="button" role="tab" id="nt-tab-engage" aria-selected="false"
                 aria-controls="nt-form-engage" data-tab="engage">Quiz &amp; เงื่อนไข</button>
             </div>
@@ -174,6 +197,8 @@
                   <label class="nt-field">ภาษาที่กำลังแก้<select id="nt-edit-language">
                       <option value="th">ไทย</option>
                       <option value="en">English</option>
+                      <option value="zh">Chinese</option>
+                      <option value="ja">Japanese</option>
                     </select></label>
                   <label class="nt-field">หัวข้อหลัก<input data-copy="title"></label>
                   <label class="nt-field">ข้อความต้อนรับ<textarea data-copy="subtitle"></textarea></label>
@@ -191,10 +216,16 @@
                   <label class="nt-check"><input type="checkbox" data-bind="member">Username / Password ผ่าน
                     RADIUS</label>
                   <label class="nt-check"><input type="checkbox" data-bind="otp">SMS / OTP</label>
-                  <label class="nt-check"><input type="checkbox" data-bind="line">LINE Login</label>
-                  <label class="nt-check"><input type="checkbox" data-bind="google">Google Login</label>
-                  <label class="nt-check"><input type="checkbox" data-bind="facebook">Facebook Login</label>
-                  <label class="nt-check"><input type="checkbox" data-bind="apple">Apple Login</label>
+                  <label class="nt-check"><input type="checkbox" data-bind="thaid">thaiD Login</label>
+                  <label class="nt-check"><input type="checkbox" data-bind="registerEnabled">แสดงปุ่ม ลงทะเบียน Free Wi-Fi</label>
+                  <hr class="nt-rule">
+                  <h3>Social Login</h3>
+                  <p class="nt-help">เลือก Provider ที่ต้องการให้แสดงบนหน้า Portal</p>
+                  <div class="wt-social-provider-picker" role="group" aria-label="Social Login Providers">
+                    <label class="wt-social-provider-choice" title="LINE Login"><input type="checkbox" data-bind="line"><span class="wt-social-provider-icon wt-social-line" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v10H9l-4 3v-3H4z"></path><circle cx="9" cy="10.5" r="1"></circle><circle cx="12" cy="10.5" r="1"></circle><circle cx="15" cy="10.5" r="1"></circle></svg></span><span>LINE</span></label>
+                    <label class="wt-social-provider-choice" title="Google Login"><input type="checkbox" data-bind="google"><span class="wt-social-provider-icon wt-social-google" aria-hidden="true">G</span><span>Google</span></label>
+                    <label class="wt-social-provider-choice" title="Apple Login"><input type="checkbox" data-bind="apple"><span class="wt-social-provider-icon wt-social-apple" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 7c-1.7-2-4.7-1.8-6.3.3-2.4 3.1-.8 9 1.7 12 1 1.2 2.2 1 3.2.4.9-.5 2-.5 2.9 0 1 .6 2.2.8 3.3-.6 1.1-1.4 2-3.2 2.3-4.9-2.7-1.1-3.2-4.7-.9-6.1-1.2-.8-3.1-1-4.3-.8z"></path><path d="M13.8 3c.1 1.2-.4 2.4-1.2 3.2-.8.8-1.9 1.3-3 1.2-.1-1.1.4-2.3 1.2-3.1.8-.8 2-1.3 3-1.3z"></path></svg></span><span>Apple</span></label>
+                  </div>
                   <hr class="nt-rule">
                   <h3>SMS / OTP Profile</h3>
                   <label class="nt-field">ผู้ให้บริการ SMS<input data-bind="smsProvider"
@@ -213,14 +244,14 @@
                   <label class="nt-check"><input type="checkbox" data-bind="termsEnabled"
                       checked>ต้องยอมรับเงื่อนไขก่อนรับสิทธิ์</label>
                   <label class="nt-field">รุ่นเงื่อนไข<input data-bind="termsVersion" value="draft-1"></label>
-                  <label class="nt-field">ข้อความลิงก์ยอมรับ ภาษาไทย<textarea data-bind="termsTh"
-                      maxlength="6000">ยอมรับเงื่อนไขการใช้งาน Free WiFi</textarea></label>
-                  <label class="nt-field">ข้อความลิงก์ยอมรับ ภาษาอังกฤษ<textarea data-bind="termsEn"
-                      maxlength="6000">I accept the Free WiFi terms of use</textarea></label>
-                  <label class="nt-field">เนื้อหาเงื่อนไข ภาษาไทย<textarea data-bind="termsBodyTh" rows="10"
-                      maxlength="6000"></textarea></label>
-                  <label class="nt-field">เนื้อหาเงื่อนไข ภาษาอังกฤษ<textarea data-bind="termsBodyEn" rows="10"
-                      maxlength="6000"></textarea></label>
+                  <label class="nt-field">ภาษา Terms &amp; Conditions<select id="wt-terms-language">
+                      <option value="th">ไทย</option>
+                      <option value="en">English</option>
+                      <option value="zh">Chinese</option>
+                      <option value="ja">Japanese</option>
+                    </select></label>
+                  <label class="nt-field">ข้อความลิงก์ยอมรับ<textarea id="wt-terms-link-text" maxlength="6000"></textarea></label>
+                  <label class="nt-field">เนื้อหาเงื่อนไข<textarea id="wt-terms-body-text" rows="10" maxlength="6000"></textarea></label>
                   <div class="nt-help">กดข้อความยอมรับใน Preview เพื่ออ่านเงื่อนไข แก้ไขข้อความได้ที่นี่และบันทึกรวมใน
                     Config ของ Site นี้</div>
                   <hr class="nt-rule">
@@ -236,6 +267,7 @@
                       <div class="nt-row"><button type="button" class="nt-button" id="wt-question-new">＋ สร้าง Questionnaire</button><button type="button" class="nt-button" id="wt-question-delete">ลบคำถาม</button></div>
                       <label class="nt-field">ชื่อ<input id="wt-question-name" maxlength="160"></label>
                       <label class="nt-field">ประเภท<select id="wt-question-type"><option value="survey">Questionnaire · แบบสอบถาม</option><option value="quiz">Quiz · มีคำตอบถูก</option></select></label>
+                      <label class="nt-field">ภาษา<select id="wt-question-language"><option value="th">ไทย</option><option value="en">English</option><option value="zh">Chinese</option><option value="ja">Japanese</option></select></label>
                       <label class="nt-field">คำถาม<textarea id="wt-question-text" maxlength="2000" rows="3"></textarea></label>
                       <label class="nt-field">ตัวเลือก · หนึ่งรายการต่อบรรทัด<textarea id="wt-question-answers" rows="5"></textarea></label>
                       <label class="nt-field" id="wt-question-correct-field">คำตอบที่ถูก<select id="wt-question-correct"></select></label>
@@ -245,11 +277,12 @@
                   <hr class="nt-rule">
                   <h3>Video Ads</h3>
                   <label class="nt-check"><input type="checkbox"
-                      data-bind="videoEnabled">แสดงวิดีโอก่อนรับสิทธิ์</label>
-                  <label class="nt-field">ระยะเวลาที่กำหนด (วินาที)<input type="number" min="1" max="120"
+                      data-bind="videoEnabled">แสดง Video Ads ก่อนรับสิทธิ์</label>
+                  <label class="nt-field">Video Banner<select id="wt-video-ad-banner"></select></label>
+                  <label class="nt-field">ดูอย่างน้อยก่อนแสดงปุ่มดำเนินการต่อ (วินาที)<input type="number" min="1" max="120"
                       data-bind="videoSeconds" value="15"></label>
-                  <div class="nt-help">การบังคับดูวิดีโอก่อนรับสิทธิ์ยังเป็นตัวอย่าง ส่วนวิดีโอ Banner
-                    ตั้งค่าได้ในแท็บดีไซน์</div>
+                  <div class="nt-row"><button type="button" class="nt-button" id="wt-video-ad-preview">ทดลอง Video Ads</button><span id="wt-video-ad-help" class="nt-help"></span></div>
+                  <div class="nt-help">เลือกจาก Video Banner ในแท็บดีไซน์ เมื่อผู้ใช้ดูครบเวลาที่กำหนดจึงจะแสดงปุ่ม “ดำเนินการต่อ”</div>
                 </section>
               </div>
               <aside class="nt-preview-wrap">
@@ -300,12 +333,11 @@
               <aside class="nt-quick-settings">
                 <div class="nt-mini-cards">
                   <div class="nt-mini-card">
-                    <h3>ฟังก์ชันการทำงาน</h3><label class="nt-check">SMS / OTP<input type="checkbox"
-                        data-bind="otp"></label><label class="nt-check">LINE Login<input type="checkbox"
-                        data-bind="line"></label><label class="nt-check">Questionnaire<input type="checkbox"
-                        data-bind="surveyEnabled"></label><label class="nt-check">Terms &amp; Conditions<input
-                        type="checkbox" data-bind="termsEnabled" checked></label><label class="nt-check">Free WiFi<input
-                        type="checkbox" data-bind="guest" checked></label>
+                    <h3>ฟังก์ชันการทำงาน</h3><label class="nt-check">ฟังก์ชั่น Register<input type="checkbox"
+                        data-bind="registerEnabled"></label><label class="nt-check">ฟังก์ชั่น Free Trial<input type="checkbox"
+                        data-bind="guest" checked></label><label class="nt-check">รับ Account ผ่าน SMS<input type="checkbox"
+                        data-bind="accountSmsEnabled"></label><label class="nt-check">รับ Account ผ่าน E-mail<input
+                        type="checkbox" data-bind="accountEmailEnabled"></label>
                   </div>
                   <div class="nt-mini-card">
                     <h3>Walled Garden / MAC</h3>
@@ -322,7 +354,7 @@
             </div>
           </section>
         </section>
-        <footer class="nt-footer"><span id="nt-save-help" class="nt-help"></span><button class="nt-button primary"
+        <footer class="nt-footer" id="wt-portal-builder-footer"><span id="nt-save-help" class="nt-help"></span><button class="nt-button primary"
             type="button" id="nt-save">บันทึก Draft</button><button class="nt-button primary" type="button"
             id="nt-review">ตรวจความพร้อม</button></footer>
         <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
@@ -331,6 +363,20 @@
         </div>
       </main>
     </div>
+    <dialog id="wt-portal-path-dialog" class="wt-portal-path-dialog" aria-labelledby="wt-portal-path-dialog-title">
+      <form method="dialog" id="wt-portal-path-form">
+        <header><h2 id="wt-portal-path-dialog-title">Add Portal Path</h2></header>
+        <div class="wt-portal-path-dialog-body">
+          <input type="hidden" id="wt-portal-path-id">
+          <label class="nt-field">Name<input id="wt-portal-path-name" maxlength="160" required></label>
+          <label class="nt-field">Path<input id="wt-portal-path-value" placeholder="/portal/en/template1" spellcheck="false" required></label>
+          <label class="nt-field">Template<select id="wt-portal-path-template"><option>Template01</option><option>Template02</option><option>Template03</option><option>Template04</option><option>Template05</option><option>Custom</option></select></label>
+          <fieldset class="wt-portal-binding-group"><legend>Sites ที่ผูกกับ Portal Path</legend><div id="wt-portal-path-sites" class="wt-portal-options"></div></fieldset>
+          <p id="wt-portal-path-dialog-message" class="nt-help" role="status"></p>
+        </div>
+        <footer><button type="button" class="nt-button" id="wt-portal-path-cancel">Cancel</button><button type="submit" class="nt-button primary" id="wt-portal-path-save">Save</button></footer>
+      </form>
+    </dialog>
     <dialog id="wt-banner-dialog" class="wt-banner-dialog" aria-labelledby="wt-banner-dialog-title">
       <header class="wt-banner-card-head"><h2 id="wt-banner-dialog-title">Banner</h2><button type="button" class="nt-button" id="wt-banner-dialog-close" autofocus>ดำเนินการต่อ</button></header>
       <section id="wt-banner-dialog-content" class="wt-banner-preview"></section><p id="wt-banner-dialog-message" role="status"></p>
@@ -339,6 +385,12 @@
       <header class="wt-banner-card-head"><h2 id="wt-quiz-title">Quiz / Questionnaires</h2><button type="button" class="nt-button" id="wt-quiz-close">ปิด</button></header>
       <p class="nt-help">ทดลองตอบใน Preview · ยังไม่ส่งคำตอบหรือสร้างสิทธิ์ใช้งานจริง</p>
       <form id="wt-quiz-form"><div id="wt-quiz-questions"></div><button type="submit" class="nt-button primary">ส่งคำตอบ</button><p id="wt-quiz-result" role="status"></p><button type="button" class="nt-button primary" id="wt-quiz-next" hidden>ดำเนินการต่อ</button></form>
+    </dialog>
+    <dialog id="wt-video-ad-dialog" class="wt-banner-dialog wt-video-ad-dialog" aria-labelledby="wt-video-ad-title">
+      <header class="wt-banner-card-head"><h2 id="wt-video-ad-title">Video Ads</h2></header>
+      <video id="wt-video-ad-media" controls playsinline preload="metadata"></video>
+      <p id="wt-video-ad-status" class="nt-help" role="status"></p>
+      <div class="wt-terms-actions"><button type="button" class="nt-button" id="wt-video-ad-cancel">ปิด</button><button type="button" class="nt-button primary" id="wt-video-ad-continue" hidden>ดำเนินการต่อ</button></div>
     </dialog>
     <dialog id="nt-terms-dialog" class="wt-terms-dialog" aria-labelledby="nt-terms-title">
       <header>

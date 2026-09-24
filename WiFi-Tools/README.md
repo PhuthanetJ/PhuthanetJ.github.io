@@ -1,8 +1,8 @@
 # Wi-Fi Tools — Offline Prototype
 
-**Current release:** V029  
-**Functional baseline:** V029  
-**Updated:** 23 September 2026 / 23 กันยายน 2569
+**Current release:** V038  
+**Functional baseline:** V038  
+**Updated:** 24 September 2026 / 24 กันยายน 2569
 
 Wi-Fi Tools เป็นต้นแบบระบบบริหาร Wi-Fi แบบ Offline สำหรับทดลอง UI/UX, Config, Portal, RADIUS & Policy, Report และงานบริหารที่เกี่ยวข้อง โดยออกแบบให้เปิดใช้งานจากไฟล์ HTML/CSS/JavaScript ใน Browser ได้โดยไม่ต้องเชื่อม Backend จริง
 
@@ -59,17 +59,65 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 
 ## 3. Portal Configuration
 
-ลำดับแท็บปัจจุบัน:
+### Portal Path Management
+
+หน้าแรกของเมนู `Portal Configuration` แสดงหัวข้อหลัก **Portal Path Management** เพียงหัวข้อเดียว และเป็นรายการ **Portal Path** ก่อน ยังไม่เปิด Tabs การตั้งค่าทันที โดยตารางแสดง:
+
+- Name
+- Path
+- Template
+- Sites — จำนวน Site ที่ผูกกับ Path
+- Action — Configure / Edit / Delete
+
+รองรับ **Add / Edit / Delete / Configure** Portal Path ใน Offline Draft
+
+- `Configure` → เปิดรายละเอียดของ Portal Path ที่เลือก แล้วจึงแสดง Tabs การตั้งค่า
+- `Edit` → แก้ Name / Path / Template / Site binding
+- `Delete` → มี Confirm; ถ้ามี Site ผูกอยู่จะแจ้งจำนวน Site ก่อนลบ
+- Path ห้ามซ้ำและต้องอยู่ใต้ `/portal/`
+- Portal Path ใหม่ต้องผูก Site อย่างน้อย 1 Site
+- Site เจ้าของ Portal Path ถูกเก็บภายใน Draft และไม่สามารถนำออกด้วย Edit ปกติ
+
+> Offline Prototype ยังยอมให้ Confirm แล้วลบ Path ที่มี Site ผูกอยู่ได้ เพื่อทดสอบ Flow เท่านั้น สำหรับ Production ควรบังคับ Unassign Site ก่อนลบ
+
+### Configure Portal Path
+
+เมื่อกด Configure หัวข้อหน้าจะเปลี่ยนเป็น **Portal Configuration** แล้วจึงเข้าสู่ Tabs:
 
 1. **ทั่วไป & Path** — เปิดเป็นค่าเริ่มต้น
-2. ดีไซน์
-3. ข้อความ & ภาษา
-4. Login / OTP
-5. Quiz & เงื่อนไข
+2. **Login / OTP**
+3. **ดีไซน์**
+4. **ข้อความ & ภาษา**
+5. **Quiz & เงื่อนไข**
 
-### ทั่วไป & Path
 
-- เลือก Config ตาม **Portal Path**
+### ฟังก์ชันการทำงาน (Quick Settings)
+
+แสดงตัวเลือก Draft ดังนี้:
+
+- ฟังก์ชั่น Register
+- ฟังก์ชั่น Free Trial
+- รับ Account ผ่าน SMS
+- รับ Account ผ่าน E-mail
+
+> ใน Offline Prototype ตัวเลือก Register / รับ Account ผ่าน SMS / รับ Account ผ่าน E-mail เป็น Draft flags สำหรับ UI/Config เท่านั้น ยังไม่เชื่อม Backend Register, SMS Gateway หรือ E-mail จริง ส่วน Free Trial ยังคงอ้างอิงการเปิด Guest/Free Trial เดิมของ Portal.
+
+#### Login / OTP
+
+- **Social Login** รวม Provider: LINE / Google / Apple และเลือกเปิดแต่ละ Provider ได้; Preview แสดงเป็นปุ่มวงกลมพร้อม Icon
+- **thaiD Login** แยกจากกลุ่ม Social Login และยังเปิด/ปิดได้อิสระ
+- `ฟังก์ชั่น Register` ควบคุมปุ่ม **ลงทะเบียน Free Wi-Fi** บน Preview
+- V037 เปลี่ยน `Facebook Login` เป็น `thaiD Login` และ Migration Draft/Config รุ่นเก่าที่เคยเปิด Facebook จะย้าย flag มาเป็น thaiD
+- Provider และ Register ยังเป็น Offline UI และยังไม่เชื่อม OAuth/thaiD/Register Backend จริง
+
+#### ข้อความ & ภาษา
+
+- ภาษาที่แก้ไขได้: ไทย / English / Chinese / Japanese
+- Copy ของแต่ละภาษาถูกบันทึกแยกกันใน Config
+
+#### ทั่วไป & Path
+
+- Config อ้างอิงจาก **Portal Path ที่เลือกจากหน้า Management**
 - Site เป็นข้อมูลที่ผูกกับ Portal Path
 - เลือก Site ได้หลายรายการตามสิทธิ์
 - Package ที่แสดงมาจาก Allow Package ของ Site
@@ -88,8 +136,10 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 
 - Questionnaire / Quiz แก้ไขได้
 - คำถามของ Portal และคำถามที่ผูกกับ Video ใช้คลังคำถามร่วมกัน
-- แก้ข้อความเงื่อนไขการใช้งานไทย/อังกฤษได้
-- Config ปัจจุบันใช้ schemaVersion 7 และรองรับ Migration จาก Config รุ่นเก่าในขอบเขตที่โค้ดกำหนด
+- Terms & Conditions ใช้ Dropdown เลือกภาษาได้: ไทย / English / Chinese / Japanese
+- Questionnaire / Quiz แต่ละรายการกำหนดภาษาได้: ไทย / English / Chinese / Japanese
+- Video Ads เลือก Video Banner จากคลัง Banner และกำหนดจำนวนวินาทีที่ต้องดูก่อนจะแสดงปุ่ม “ดำเนินการต่อ”
+- Config ปัจจุบันใช้ schemaVersion 8 และรองรับ Migration จาก Config รุ่นเก่าในขอบเขตที่โค้ดกำหนด
 
 ---
 
@@ -101,7 +151,11 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 
 NAS เป็นแท็บเริ่มต้น
 
-> Site / Package / Account / NAS ในเมนูนี้เป็น Draft แยกใน Browser และยังไม่เชื่อม RADIUS Manager จริง การแก้ Site / Package ในหน้านี้ยังไม่เปลี่ยน Portal Configuration, Dashboard หรือระบบ Production
+> Site / Package / Account / NAS ยังเป็น Offline Draft และยังไม่เชื่อม RADIUS Manager จริง ตั้งแต่ V031 เป็นต้นไป Site / Package Draft ใช้ร่วมกับ Portal Configuration ภายใน Browser เดียวกัน แต่ยังไม่เปลี่ยน Dashboard หรือระบบ Production
+
+**V036 Site / Portal Path separation:** การสร้าง Site ใน `RADIUS & Policy` จะสร้างเฉพาะ Site เท่านั้น และ **ไม่สร้าง Portal Path อัตโนมัติ**. Site ใหม่จะปรากฏเป็นตัวเลือกใน `Portal Path Management > Add/Edit` เพื่อให้ผู้ดูแลผูกกับ Path ด้วยตนเอง. Site สามารถอยู่ในสถานะ “ยังไม่ผูก Portal Path” ได้โดยไม่ถือว่าเป็นข้อมูลเสีย.
+
+**V034 Referential Integrity:** การลบ Site จะ reconcile Portal Path / Site-scoped Draft ที่อ้างอิง Site นั้น, ย้าย owner ของ Shared Portal Path ไปยัง Site ที่ยังเหลือ, ลบ Portal Path ที่ไม่เหลือ Site, และห้ามลบ Site สุดท้าย. ถ้ามี Account ที่ DISPATCH ไป Site นั้น ต้องยกเลิก DISPATCH ก่อน. การลบ Package จะถูกป้องกันถ้ายังมี Account อ้าง Package เพื่อไม่ให้เกิด orphan Account.
 
 ### 4.1 NAS
 
@@ -136,6 +190,8 @@ Validation หลัก:
 ### 4.2 Package
 
 รองรับ **เพิ่ม / แก้ไข / ลบ** และ **ค้นหา Package** จาก Name หรือ Prefix Accounts
+
+> V034: ถ้า Package ยังมี Account อ้างใช้งานอยู่ ระบบจะ **ไม่อนุญาตให้ลบ** เพื่อป้องกัน orphan Account. ต้องจัดการ Account ก่อนจึงจะลบ Package ได้.
 
 ตาราง Package แสดง:
 
@@ -273,6 +329,8 @@ DISPATCH จึงเป็นตัวจำกัดขอบเขต Site �
 ### 4.4 Site
 
 รองรับ **เพิ่ม / แก้ไข / ลบ Site**
+
+> V034: ต้องเหลือ Site อย่างน้อย 1 รายการ และถ้ายังมี Account ที่ `DISPATCH` ไป Site นั้น จะต้องยกเลิก DISPATCH ก่อนลบ. การลบ Site จะ reconcile Portal Path และ Site-scoped Draft เพื่อไม่ให้เกิด reference ค้าง.
 
 พารามิเตอร์หลัก:
 
@@ -437,15 +495,15 @@ WiFi-Tools/
 node --test tests/*.test.js
 ```
 
-ผลตรวจ Functional Baseline V028:
+ผลตรวจ Functional Baseline V030:
 
 ```text
-Tests: 109
-Pass: 109
+Tests: 114
+Pass: 114
 Fail: 0
 ```
 
-ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account, DISPATCH, Account Detail, Session และ Package Unlimited semantics
+ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account, DISPATCH, Account Detail, Session, Package Unlimited semantics และ Portal Path Management CRUD
 
 > Automated Tests ใช้ Node / DOM จำลองในหลายส่วน ไม่เท่ากับการทดสอบ End-to-End บน Browser, Mobile Device หรือ RADIUS Production จริง
 
@@ -592,7 +650,7 @@ Fail: 0
 
 ## 12. Current Limitations / Next Production Work
 
-สิ่งที่ **ยังไม่ทำจริง** ใน Functional Baseline V028:
+สิ่งที่ **ยังไม่ทำจริง** ใน Functional Baseline V037:
 
 - ไม่มี Backend API
 - ไม่มี Database CRUD จริง
@@ -605,6 +663,7 @@ Fail: 0
 - AI ยังไม่รันจริง
 - Backup / Retention เป็น Capacity Plan
 - Browser-side Role/Permission ไม่ใช่ Security boundary
+- Account ยังไม่มีคำสั่ง DELETE / เปลี่ยน Package โดยตรงตาม Requirement ปัจจุบัน; Package ที่มี Account จึงถูกป้องกันไม่ให้ลบใน V034
 
 ก่อน Production ต้องยืนยัน Schema, API, Attribute Mapping, Version และ Behavior ของ RADIUS Manager / FreeRADIUS ที่จะเชื่อมจริงก่อนนำ Logic Draft ไปใช้
 
@@ -633,3 +692,86 @@ The filenames/routes remain unchanged; only the sidebar order and display labels
 - Reordered the main Sidebar Navigation to: Dashboard → RADIUS & Policy → Portal Configuration → Free WiFi & Coupon → Network Configuration → AP by Site → Reports → Monitor & Logs → Notifications → Administrator → Admin / Management → Specification.
 - Renamed sidebar labels: การแจ้งเตือน → Notifications, User → Administrator, ตั้งค่าและไฟล์ Config → Admin / Management, โมดูลตามสเปก → Specification.
 - Existing page filenames/routes remain unchanged.
+
+
+### V030 — Portal Path Management Flow
+- เปลี่ยนหน้าแรก `Portal Configuration` ให้เริ่มจากตาราง Portal Path ก่อนเปิด Tabs
+- ตารางแสดง Name / Path / Template / Sites / Action
+- รองรับ Add / Edit / Delete / Configure Portal Path ใน Browser Draft
+- Configure เปิดหน้าเดิมพร้อม Tabs ของ Portal Path ที่เลือก และมีปุ่มกลับ Portal Path List
+- Delete มี Confirm และแจ้งจำนวน Site ที่ผูกใช้งานอยู่
+- เพิ่ม Validation Path ซ้ำ, Path format และ Site binding
+- เพิ่ม ownerSiteId ภายใน Draft เพื่อรองรับหลาย Portal Path ต่อ Site โดยไม่ผูก Portal ID กับ Site ID
+- Production recommendation: บังคับ Unassign Site ก่อน Delete จริง
+
+
+## V031 — Shared RADIUS Site/Package → Portal Configuration
+- Site / Package Draft ใช้ร่วมกับ Portal Configuration ภายใน Browser เดียวกัน
+
+
+## V032 — Portal Page Title Flow
+- หน้า Portal Path List แสดงหัวข้อหลัก `Portal Path Management` เพียงครั้งเดียว
+- ซ่อน badge/ข้อความซ้ำ `Portal Path Management` ในหน้า List
+- เมื่อกด Configure หัวข้อหลักเปลี่ยนเป็น `Portal Configuration` และจึงแสดง Tabs การตั้งค่า
+- Sidebar menu ยังคงชื่อ `Portal Configuration` เพื่อสื่อชื่อโมดูลหลัก
+
+## V033 — Portal Tab Order + Function Labels
+- เรียง Tabs ในหน้า Configure เป็น **ทั่วไป & Path → Login / OTP → ดีไซน์ → ข้อความ & ภาษา → Quiz & เงื่อนไข**
+- ปรับ Quick Settings `ฟังก์ชันการทำงาน` เป็น: **ฟังก์ชั่น Register / ฟังก์ชั่น Free Trial / รับ Account ผ่าน SMS / รับ Account ผ่าน E-mail**
+- เพิ่ม Draft flags สำหรับ Register / Account SMS / Account E-mail และรองรับ Migration จาก Draft/Config รุ่นก่อนโดยไม่ทำให้ไฟล์เดิมเสีย
+- ฟังก์ชัน Register / SMS / E-mail ยังเป็น Offline Draft flags และยังไม่เชื่อม Provider/Backend จริง
+
+
+
+## V034 — CRUD Regression & Site Delete Integrity
+- แก้ Root Cause กรณีลบ Site 1 รายการแล้ว Portal Configuration โหลดไม่ได้: Portal Config เดิมยังเก็บ `ownerSiteId` / `bindings.siteIds` ที่ชี้ Site ที่ถูกลบ ทำให้ `WiFiPortalBindings.normalize()` throw และหยุด `app.js` ระหว่าง Startup.
+- เพิ่มการ Reconcile Portal Config ทุกครั้งที่ Site/Package Catalog เปลี่ยนและระหว่าง Startup เพื่อกู้ Draft รุ่นก่อนที่มี Site reference ค้าง.
+- Shared Portal Path: ถ้า Owner Site ถูกลบ แต่ยังมี Site อื่นผูกอยู่ ระบบย้าย Owner ไป Site ที่เหลือและคง Portal Path ไว้.
+- Portal Path ที่ไม่เหลือ Site หลังลบ Site จะถูกลบเฉพาะ Draft นั้น โดยไม่กระทบ Portal Path อื่น.
+- ถ้า Current Site ถูกลบ จะย้าย Context ไป Site ที่ยังเหลือ.
+- ทำความสะอาด Site-scoped Draft ได้แก่ Notification channel, Coupon, Report Schedule และ User site scope ที่อ้าง Site ที่ถูกลบ.
+- ห้ามลบ Site สุดท้าย เพื่อป้องกันระบบเข้าสู่สถานะไม่มี Site.
+- ห้ามลบ Site ถ้ายังมี Account ที่ DISPATCH ไป Site นั้น; ต้องยกเลิก DISPATCH ก่อน.
+- ห้ามลบ Package ถ้ายังมี Account อ้าง Package เพื่อป้องกัน orphan Account.
+- เพิ่ม `tests/crud-regression.test.js` สำหรับ Site-delete reload regression, Shared Portal ownership transfer, Site-scoped cleanup และ CRUD smoke matrix ของ NAS / Package / Site / Account / Portal Path.
+- Automated test suite: 124/124 ผ่านใน V034.
+- การทดสอบ Browser จริงด้วย Headless Chromium ถูก Environment block localhost (`ERR_BLOCKED_BY_ADMINISTRATOR`) จึงยังต้องทดสอบ interaction บน Chrome/Edge จริงของผู้ใช้เพิ่มเติม.
+
+
+## V035 — Referential Integrity Hardening
+- Block การนำ Package ออกจาก Site ถ้ายังมี Account ของ Package นั้น `DISPATCH` มายัง Site; ต้องยกเลิก DISPATCH ก่อน
+- Account Draft validation เปลี่ยนเป็น strict สำหรับ Package/Site relation ใน `check()` และ `serialize()`
+- Legacy stale DISPATCH ที่ Site หายหรือ Site ไม่ได้ Allow Package แล้ว จะ Recovery แบบ fail-closed: เปลี่ยน Account เป็น `Inactive` และล้างเฉพาะ DISPATCH ที่เสีย
+- Portal Path `Edit / Delete / Binding change` จะ reconcile coverage ทันที ไม่ต้องรอ Reload เพื่อสร้าง fallback Path ให้ Site ที่หลุดจาก Path สุดท้าย
+- Account CSV Export ป้องกัน Spreadsheet Formula Injection (`=`, `+`, `-`, `@`) ด้วย safe prefix
+- เพิ่ม Regression Tests สำหรับ Site↔Package↔DISPATCH, stale Account recovery, immediate Portal reconciliation และ CSV hardening
+
+
+## V036 — Site / Portal Path Lifecycle Separation
+- การ Add Site ใน `RADIUS & Policy > Site` ไม่สร้าง Portal Path หรือ Portal Config Draft อัตโนมัติอีกต่อไป
+- Site ใหม่ยัง Sync ไป `Portal Configuration` เพื่อให้เลือกได้ใน `Portal Path Management > Add/Edit` แต่เริ่มต้นเป็น **Unassigned**
+- ยกเลิก fallback Portal Path อัตโนมัติเมื่อ Site ถูกนำออกจาก Path สุดท้าย; ผู้ดูแลต้อง Add/Edit Portal Path เพื่อผูก Site เอง
+- Portal Path ที่มีอยู่เดิมยังคงอยู่ และการลบ Site ยังคงทำ Referential Cleanup / Owner transfer สำหรับ Shared Path ตาม V034/V035
+- เพิ่ม runtime scratch config สำหรับหน้า List/หน้าทั่วไปเมื่อ Current Site ยังไม่มี Portal Path โดย scratch นี้ไม่ถูก Persist และไม่แสดงใน Portal Path Management
+- เพิ่ม Regression Tests ยืนยัน Create Site → Portal Path count ไม่เพิ่ม, Site unassigned เปิด Portal Management ได้, และ Add Portal Path แบบ Manual ผูก Site ได้
+
+
+## V037 — Portal Languages / thaiD / Video Ads Gate
+- `Login / OTP`: เปลี่ยน Facebook Login เป็น **thaiD Login** และรองรับ Migration จาก Draft/Config รุ่นก่อน
+- `ข้อความ & ภาษา`: เพิ่ม **Chinese** และ **Japanese** ทำให้ Portal Copy รองรับ 4 ภาษา (th/en/zh/ja)
+- `Quiz & เงื่อนไข`: Terms & Conditions เปลี่ยนเป็นตัวแก้ไขแบบเลือกภาษาจาก Dropdown สำหรับ 4 ภาษา
+- Questionnaire / Quiz เพิ่ม `language` ต่อรายการ และ Preview หน้า Portal เลือกคำถามตามภาษาที่กำลังแสดง
+- Video Ads ผูกกับ **Video Banner** ที่มีอยู่ในแท็บดีไซน์ พร้อมกำหนด Watch Seconds 1–120 วินาที
+- ปุ่ม **ดำเนินการต่อ** ใน Video Ads ถูกซ่อนไว้จนตรวจเวลาการเล่นครบตามเงื่อนไข; การ Seek ข้ามช่วงยาวไม่ถูกนับเป็นเวลาที่ดู
+- Config schema เพิ่มเป็น **schemaVersion 8**; Import รุ่นเก่ายังคง Migration ภาษา/Terms/thaiD/Video Ads defaults
+- Automated / Regression Tests: **138/138 ผ่าน**
+
+
+## V038 — Social Login Group + Free Wi-Fi Registration Button
+- `Login / OTP`: รวม **LINE / Google / Apple** ไว้ใต้กลุ่ม **Social Login** และเลือกเปิด/ปิดแต่ละ Provider ได้
+- Social Login ใน Portal Preview แสดงเป็น **ปุ่มวงกลมพร้อม Icon** ตาม Provider ที่เปิดใช้งาน
+- **thaiD Login** ยังคงเป็นวิธี Login แยกจาก Social Login
+- เพิ่มตัวเลือก **แสดงปุ่ม ลงทะเบียน Free Wi-Fi** ซึ่งใช้ Draft flag `registerEnabled` เดิม
+- เมื่อเปิด Register, Portal Preview แสดงปุ่ม `ลงทะเบียน Free Wi-Fi`; Offline Prototype แสดงเพียง feedback และยังไม่เชื่อม Register Backend
+- ไม่เปลี่ยน Config schema เพราะใช้ state flags เดิม (`line`, `google`, `apple`, `thaid`, `registerEnabled`)
+- Automated / Regression Tests: **140/140 ผ่าน**

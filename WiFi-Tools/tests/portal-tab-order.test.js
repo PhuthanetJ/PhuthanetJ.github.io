@@ -8,9 +8,9 @@ const html = fs.readFileSync(path.join(__dirname, '../html/portal-config.html'),
 test('Portal Configuration: General & Path is first and initially selected', () => {
     const tabs = html.match(/<div class="nt-tabs"[\s\S]*?<\/div>/)[0];
     const labels = [...tabs.matchAll(/data-tab="([^"]+)"/g)].map(match => match[1]);
-    assert.deepEqual(labels, ['general', 'design', 'copy', 'auth', 'engage']);
+    assert.deepEqual(labels, ['general', 'auth', 'design', 'copy', 'engage']);
     assert.match(tabs, /class="nt-tab active"[^>]*id="nt-tab-general" aria-selected="true"/);
-    assert.match(tabs, /class="nt-tab"[^>]*id="nt-tab-design" aria-selected="false"/);
+    assert.match(tabs, /class="nt-tab"[^>]*id="nt-tab-auth" aria-selected="false"/);
 });
 
 test('Portal Configuration: General panel shown, Design hidden, others unchanged', () => {
@@ -19,4 +19,13 @@ test('Portal Configuration: General panel shown, Design hidden, others unchanged
     assert.doesNotMatch(panels[0], /\bhidden\b/);
     assert.match(panels[1], /\bhidden\b/);
     for (const panel of panels.slice(2)) assert.match(panel, /\bhidden\b/);
+});
+
+
+test('Portal Configuration: quick function labels use requested wording', () => {
+    assert.match(html, /ฟังก์ชั่น Register/);
+    assert.match(html, /ฟังก์ชั่น Free Trial/);
+    assert.match(html, /รับ Account ผ่าน SMS/);
+    assert.match(html, /รับ Account ผ่าน E-mail/);
+    assert.doesNotMatch(html.match(/<h3>ฟังก์ชันการทำงาน<\/h3>[\s\S]*?<\/div>/)[0], /LINE Login|Questionnaire|Terms &amp; Conditions|Free WiFi/);
 });

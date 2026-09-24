@@ -1,4 +1,4 @@
-/* V024 Account Draft model: actions + Account detail/session telemetry + Active/Inactive status. Offline prototype only. */
+/* V035 Account Draft model: strict Package/Site relation validation + safe stale-DISPATCH recovery. Offline prototype only. */
 (function (root, factory) {
     const api = factory();
     if (typeof module === 'object' && module.exports) module.exports = api;
@@ -69,7 +69,7 @@
         const rows = [];
         for (const raw of source) {
             const id = clean(raw.id) || makeId();
-            rows.push({ id, ...normalizeRecord({ ...raw, dispatchSiteId: raw.dispatchSiteId || null, createdAt: raw.createdAt || '' }, rows, packages, sites, id, true) });
+            rows.push({ id, ...normalizeRecord({ ...raw, dispatchSiteId: raw.dispatchSiteId || null, createdAt: raw.createdAt || '' }, rows, packages, sites, id) });
         }
         return rows;
     }
@@ -79,16 +79,31 @@
         for (const raw of rows) {
             if (typeof raw.id !== 'string' || !/^[a-z0-9-]{3,100}$/i.test(raw.id) || ids.has(raw.id)) throw Error('Account ID ไม่ถูกต้องหรือซ้ำ');
             ids.add(raw.id);
-            out.push({ id: raw.id, ...normalizeRecord(raw, out, packages, sites, raw.id, true) });
+            out.push({ id: raw.id, ...normalizeRecord(raw, out, packages, sites, raw.id) });
         }
         return out;
+    }
+    function recoverStaleDispatch(rows, packages, sites) {
+        let recovered = 0;
+        const next = rows.map(raw => {
+            const packageId = clean(raw?.packageId);
+            if (!packages.some(row => row.id === packageId)) return raw; // Missing Package is unsafe to guess; strict validation will stop the draft.
+            const dispatchSiteId = clean(raw?.dispatchSiteId);
+            if (!dispatchSiteId) return raw;
+            const site = sites.find(row => row.id === dispatchSiteId);
+            if (site && siteAllows(site, packageId)) return raw;
+            recovered++;
+            // Fail closed for legacy stale DISPATCH: disable the Account and clear only the invalid Site relation.
+            return { ...raw, status: 'Inactive', dispatchSiteId: null };
+        });
+        return { rows: next, recovered };
     }
     function load(raw, data, packages, sites) {
         if (raw === null) return initial(data, packages, sites);
         let saved;
         try { saved = JSON.parse(raw); } catch (_) { throw Error('อ่าน Account Draft ไม่ได้: JSON ไม่ถูกต้อง'); }
         if (!saved || saved.schemaVersion !== 1 || !Array.isArray(saved.accounts)) throw Error('รูปแบบ Account Draft ไม่ถูกต้อง');
-        return check(saved.accounts, packages, sites);
+        return check(recoverStaleDispatch(saved.accounts, packages, sites).rows, packages, sites);
     }
     function serialize(rows, packages, sites) { return JSON.stringify({ schemaVersion: 1, accounts: check(rows, packages, sites) }); }
     function create(rows, value, packages, sites) {
@@ -149,5 +164,5 @@
         }
         return { rows: next, created };
     }
-    return { statusValues, maxAccounts, siteAllows, initial, check, load, serialize, create, generate, dispatch, importRows };
+    return { statusValues, maxAccounts, siteAllows, recoverStaleDispatch, initial, check, load, serialize, create, generate, dispatch, importRows };
 });

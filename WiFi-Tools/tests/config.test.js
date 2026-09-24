@@ -69,7 +69,7 @@ test('A shared Portal opens the same config from either assigned site and keeps 
     a.NT.setBindings({ siteIds: ['a', 'b'], packageIds: ['pkg-0', 'pkg-1', 'pkg-2'] }); a.NT.choosePortal('b', 'a');
     const b = app(a.name, 'settings'); assert.equal(b.NT.currentSite, 'b'); assert.equal(b.NT.currentPortalId, 'a'); assert.equal(b.NT.state.name, 'Shared lobby');
     assert.equal(JSON.stringify(b.NT.db.configs.b), originalB);
-    const doc = JSON.parse(JSON.stringify(b.NT.snapshot())); assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 7);
+    const doc = JSON.parse(JSON.stringify(b.NT.snapshot())); assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 8);
     assert.deepEqual(b.NT.parseConfig(doc).bindings, { siteIds: ['a', 'b'], packageSource: 'radius-manager-allow-package', packageIds: ['pkg-0', 'pkg-1', 'pkg-2'] });
     assert.deepEqual(Array.from(b.NT.portalChoices('b'), p => p.id), ['a', 'b']);
 });
@@ -128,4 +128,30 @@ test('Path-only selection finds all permitted Paths and opens the same shared Co
     assert.equal(app(back.name,'settings').NT.currentPortalId,'b');
     const limited=app();limited.WiFiAuth.login('siteadmin','Demo1234!');
     assert.deepEqual(Array.from(limited.NT.portalPathChoices(),row=>row.id),['a']);assert.throws(()=>limited.NT.choosePortalPath('b'),/ไม่มีสิทธิ์/);
+});
+
+test('V037 migrates legacy Facebook Login to thaiD and fills new multilingual copy/terms defaults', () => {
+    const c = app(), legacy = JSON.parse(JSON.stringify(c.NT.snapshot()));
+    legacy.schemaVersion = 7;
+    legacy.state.facebook = true;
+    delete legacy.state.thaid;
+    for (const key of ['termsZh','termsJa','termsBodyZh','termsBodyJa','videoBannerId']) delete legacy.state[key];
+    delete legacy.copy.zh; delete legacy.copy.ja;
+    const loaded = c.NT.parseConfig(legacy);
+    assert.equal(loaded.state.thaid, true);
+    assert.equal(loaded.state.termsZh, data.config.state.termsZh);
+    assert.equal(loaded.state.termsBodyJa, data.config.state.termsBodyJa);
+    assert.equal(loaded.copy.zh.title, data.config.copy.zh.title);
+    assert.equal(loaded.copy.ja.title, data.config.copy.ja.title);
+});
+
+test('V037 Video Ads validates the selected Video Banner relationship', () => {
+    const c = app(), doc = JSON.parse(JSON.stringify(c.NT.snapshot()));
+    doc.state.videoEnabled = true; doc.state.videoSeconds = 15; doc.state.videoBannerId = '';
+    assert.throws(() => c.NT.parseConfig(doc), /Video Ads ต้องเลือก Video Banner/);
+    doc.assets.banners = [{ id:'video-ad', type:'video', name:'Video Ad', fileName:'ad.mp4', src:'data:video/mp4;base64,AQID', link:'', enabled:true, area:'b01', clickable:false, action:'link', questionnaireIds:[] }];
+    doc.state.videoBannerId = 'video-ad';
+    assert.equal(c.NT.parseConfig(doc).state.videoBannerId, 'video-ad');
+    doc.state.videoBannerId = 'missing';
+    assert.throws(() => c.NT.parseConfig(doc), /Video Ads ต้องเลือก Video Banner/);
 });
