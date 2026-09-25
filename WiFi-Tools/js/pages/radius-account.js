@@ -6,11 +6,9 @@
     const admin = NT.can('system');
     const legacyStorageKey = NT.legacyStorageKeys?.radiusAccountsKey || ('wifi-tools:radius-accounts-demo:v1:' + new URL('../', location.href).href);
     const createDialog = q('#radius-account-create-dialog');
-    const editDialog = q('#radius-account-edit-dialog');
     const generateDialog = q('#radius-account-generate-dialog');
     const dispatchDialog = q('#radius-account-dispatch-dialog');
     const createForm = q('#radius-account-create-form');
-    const editForm = q('#radius-account-edit-form');
     const generateForm = q('#radius-account-generate-form');
     const dispatchForm = q('#radius-account-dispatch-form');
     let accounts = page.accounts.map(row => ({ ...row }));
@@ -22,7 +20,7 @@
     }
     function lock(message) {
         writable = false;
-        for (const id of ['#radius-account-create', '#radius-account-edit', '#radius-account-generate', '#radius-account-import', '#radius-account-dispatch', '#radius-account-delete']) q(id).disabled = true;
+        for (const id of ['#radius-account-create', '#radius-account-generate', '#radius-account-import', '#radius-account-dispatch', '#radius-account-delete']) q(id).disabled = true;
         status(message + ' · ปิดการแก้ไข Account เพื่อป้องกันข้อมูล Draft เดิม');
     }
     function packageOptions(selected = '') {
@@ -66,25 +64,6 @@
     function selectedRows() {
         const ids = new Set(page.getSelectedAccountIds());
         return accounts.filter(row => ids.has(row.id));
-    }
-    function refreshEditDispatchOptions(preserve = true) {
-        const packageId = q('#radius-account-edit-package').value;
-        const picker = q('#radius-account-edit-dispatch');
-        const current = preserve ? picker.value : '';
-        picker.innerHTML = dispatchOptions(packageId, current);
-        if (![...picker.options].some(option => option.value === current)) picker.value = '';
-    }
-    function openEdit(clicked) {
-        if (!writable) return;
-        const selected = selectedRows();
-        if (selected.length !== 1) { NT.toast('เลือก Account 1 รายการสำหรับ EDIT'); return; }
-        const record = selected[0]; opener = clicked; editForm.reset(); error('edit');
-        q('#radius-account-edit-id').value = record.id;
-        q('#radius-account-edit-username').value = record.username;
-        q('#radius-account-edit-package').innerHTML = packageOptions(record.packageId);
-        q('#radius-account-edit-status').value = record.status;
-        q('#radius-account-edit-dispatch').innerHTML = dispatchOptions(record.packageId, record.dispatchSiteId || '');
-        editDialog.showModal(); q('#radius-account-edit-username').focus();
     }
     function openGenerate(clicked) {
         if (!writable) return;
@@ -177,10 +156,9 @@
             NT.setRadiusAccounts(stored);
         } else stored = model.check(stored, page.catalog, page.sites);
         accounts = stored; page.replaceAccounts(accounts);
-        status('Account ใช้ Shared Browser Draft · CREATE / READ / EDIT / DELETE / DISPATCH ใช้ข้อมูลชุดเดียวกันกับ Package/Site');
+        status('Account ใช้ Shared Browser Draft · CREATE / READ / DELETE / DISPATCH ใช้ข้อมูลชุดเดียวกันกับ Package/Site · Status ปรับจาก Account Detail');
     } catch (e) { lock(e.message); }
     q('#radius-account-create').addEventListener('click', event => openCreate(event.currentTarget));
-    q('#radius-account-edit').addEventListener('click', event => openEdit(event.currentTarget));
     q('#radius-account-generate').addEventListener('click', event => openGenerate(event.currentTarget));
     q('#radius-account-dispatch').addEventListener('click', event => openDispatch(event.currentTarget));
     q('#radius-account-delete').addEventListener('click', deleteSelected);
@@ -209,21 +187,6 @@
             commit(saved.rows, 'CREATE Account "' + saved.record.username + '" สำเร็จ'); createDialog.close(); NT.toast('CREATE Account แล้ว');
         } catch (e) { error('create', e.message); }
     });
-    q('#radius-account-edit-package').addEventListener('change', () => refreshEditDispatchOptions(false));
-    editForm.addEventListener('submit', event => {
-        event.preventDefault(); if (!writable) return;
-        try {
-            const id = q('#radius-account-edit-id').value;
-            const saved = model.update(accounts, id, {
-                username: q('#radius-account-edit-username').value,
-                packageId: q('#radius-account-edit-package').value,
-                status: q('#radius-account-edit-status').value,
-                dispatchSiteId: q('#radius-account-edit-dispatch').value || null
-            }, page.catalog, page.sites);
-            commit(saved.rows, 'EDIT Account "' + saved.record.username + '" สำเร็จ');
-            page.clearAccountSelection(); editDialog.close(); NT.toast('EDIT Account แล้ว');
-        } catch (e) { error('edit', e.message); }
-    });
     generateForm.addEventListener('submit', event => {
         event.preventDefault(); if (!writable) return;
         try {
@@ -243,7 +206,7 @@
             page.clearAccountSelection(); dispatchDialog.close(); NT.toast(site ? 'DISPATCH Account แล้ว' : 'ยกเลิก DISPATCH แล้ว');
         } catch (e) { error('dispatch', e.message); }
     });
-    for (const [kind, dialog, form] of [['create', createDialog, createForm], ['edit', editDialog, editForm], ['generate', generateDialog, generateForm], ['dispatch', dispatchDialog, dispatchForm]]) {
+    for (const [kind, dialog, form] of [['create', createDialog, createForm], ['generate', generateDialog, generateForm], ['dispatch', dispatchDialog, dispatchForm]]) {
         q('#radius-account-' + kind + '-close').addEventListener('click', () => dialog.close());
         q('#radius-account-' + kind + '-cancel').addEventListener('click', () => dialog.close());
         dialog.addEventListener('close', () => { form.reset(); error(kind); opener?.focus(); opener = null; });

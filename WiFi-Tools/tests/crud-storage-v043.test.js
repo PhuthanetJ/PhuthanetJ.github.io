@@ -4,13 +4,15 @@ const D = require('../js/domain.js'), P = require('../js/portal-bindings.js'), B
 const R = require('../js/radius-catalog-model.js'), A = require('../js/account-model.js'), N = require('../js/nas-model.js');
 const baseData = {};
 for (const f of fs.readdirSync(path.join(__dirname, '../data'))) if (f.endsWith('.json')) baseData[f.slice(0, -5)] = JSON.parse(fs.readFileSync(path.join(__dirname, '../data', f), 'utf8'));
-function app(storage = new Map(), name = '', page = 'login') {
+function app(storage = new Map(), name = '', page = 'login', options = {}) {
   const data = JSON.parse(JSON.stringify(baseData));
   const nodes = new Map(), node = () => ({ addEventListener() {}, setAttribute() {}, prepend() {}, textContent: '', hidden: false, value: '' });
   const root = { dataset: { page }, querySelector: s => { if (page === 'login') return null; if (!nodes.has(s)) nodes.set(s, node()); return nodes.get(s); }, querySelectorAll: () => [], hidden: false };
-  const localStorage = { getItem: key => storage.has(key) ? storage.get(key) : null, setItem: (key, value) => storage.set(key, value) };
+  const localStorage = { getItem: key => storage.has(key) ? storage.get(key) : null, setItem: (key, value) => { if (options.failLocal) throw Error('QuotaExceededError'); storage.set(key, value); } };
+  const session = options.session || new Map();
+  const sessionStorage = { getItem: key => session.has(key) ? session.get(key) : null, setItem: (key, value) => session.set(key, value), removeItem: key => session.delete(key) };
   const c = { NT_DATA: data, WiFiDomain: D, WiFiPortalBindings: P, WiFiBanners: B, WiFiRadiusCatalog: R, WiFiAccountModel: A, WiFiNasModel: N, URL, Date, JSON, console,
-    location: { href: 'file:///demo/html/' + page + '.html', replace() {}, reload() {} }, document: { getElementById: () => root, createElement: node }, localStorage, setTimeout };
+    location: { href: 'file:///demo/html/' + page + '.html', replace() {}, reload() {} }, document: { getElementById: () => root, createElement: node }, localStorage, sessionStorage, setTimeout };
   c.window = c; c.name = name; c.addEventListener = () => {};
   vm.createContext(c); vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/app.js'), 'utf8'), c); return c;
 }
@@ -67,12 +69,12 @@ test('V043 Portal Preview has no built-in green/blue overlay so uploaded Backgro
   assert.match(css, /\.nt-public-hero\{[^}]*background:transparent/);
 });
 
-test('V043 Account UI exposes EDIT and DELETE and storage pages use shared APIs instead of independent writes', () => {
+test('Current Account UI omits general EDIT button, keeps DELETE, and storage pages use shared APIs instead of independent writes', () => {
   const html = fs.readFileSync(path.join(__dirname, '../html/radius-policy.html'), 'utf8');
   const account = fs.readFileSync(path.join(__dirname, '../js/pages/radius-account.js'), 'utf8');
   const nas = fs.readFileSync(path.join(__dirname, '../js/pages/radius-nas.js'), 'utf8');
   const catalog = fs.readFileSync(path.join(__dirname, '../js/pages/radius-catalog.js'), 'utf8');
-  assert.match(html, /id="radius-account-edit"/); assert.match(html, /id="radius-account-delete"/); assert.match(html, /id="radius-account-edit-dialog"/);
+  assert.doesNotMatch(html, /id="radius-account-edit"/); assert.match(html, /id="radius-account-delete"/); assert.doesNotMatch(html, /id="radius-account-edit-dialog"/);
   assert.match(account, /NT\.setRadiusAccounts/); assert.match(nas, /NT\.setRadiusNas/); assert.match(catalog, /NT\.setRadiusCatalog/);
   assert.doesNotMatch(account, /localStorage\.setItem/); assert.doesNotMatch(nas, /localStorage\.setItem/); assert.doesNotMatch(catalog, /localStorage\.setItem/);
 });
@@ -90,3 +92,20 @@ test('V043 rejected catalog mutation is transactional and leaves the current sha
   assert.deepEqual(c.NT.radiusCatalog(), before);
 });
 
+
+
+test('V054 NAS stays usable when localStorage quota fails by falling back to per-tab sessionStorage without leaking Secret to window.name', () => {
+  const session = new Map(), storage = new Map();
+  const login = app(storage, '', 'login', { failLocal: true, session });
+  login.WiFiAuth.login('admin', 'Demo1234!');
+  const c = app(storage, login.name, 'radius', { failLocal: true, session });
+  const nas = N.upsert([], { nameHost: '192.0.2.54', shortname: 'v054', type: 'other', ports: '1812', secret: 'SECRET-V054', server: '', community: '', description: '' }).rows;
+  assert.doesNotThrow(() => c.NT.setRadiusNas(nas));
+  assert.equal(c.NT.radiusNas()[0].shortname, 'v054');
+  assert.equal(c.NT.storageStatus().local, false);
+  assert.equal(c.NT.storageStatus().nasSession, true);
+  assert.doesNotMatch(c.name, /SECRET-V054/);
+  assert.match(session.get('wifi-tools:radius-nas-session:v1'), /SECRET-V054/);
+  const reloaded = app(new Map(), c.name, 'radius', { failLocal: true, session });
+  assert.equal(reloaded.NT.radiusNas()[0].shortname, 'v054');
+});

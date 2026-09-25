@@ -28,14 +28,18 @@
         q('#radius-nas-secret').required = !record;
         dialog.showModal(); q('#radius-nas-name-host').focus();
     }
+    function storageMessage() {
+        const state = NT.storageStatus?.() || {};
+        if (state.local) return 'NAS ใช้ Shared Browser Draft (localStorage ไม่เข้ารหัส) · Secret ไม่ถูกส่งผ่าน window.name · ยังไม่เชื่อม RADIUS';
+        if (state.nasSession) return 'localStorage เต็มหรือใช้งานไม่ได้ · NAS Draft ถูกเก็บชั่วคราวใน Session ของแท็บนี้ · ปิดแท็บแล้วข้อมูลอาจหาย · Secret ไม่ถูกส่งผ่าน window.name';
+        return 'Browser Storage ใช้งานไม่ได้ · NAS Draft ใช้งานได้ชั่วคราวเฉพาะหน้านี้จนกว่าจะ Reload/ออกจากหน้า · Secret ไม่ถูกส่งผ่าน window.name';
+    }
     function commit(next) {
-        if (!admin || !canSave) throw Error('ไม่มีสิทธิ์หรือ Browser ไม่สามารถบันทึก NAS Draft');
-        // Shared storage persists NAS in the main localStorage draft but excludes it from window.name handoff.
-        try {
-            if (!NT.setRadiusNas) throw Error('Shared Storage API ไม่พร้อมใช้งาน');
-            rows = NT.setRadiusNas(next);
-        } catch (_) { canSave = false; q('#radius-nas-add').disabled = true; throw Error('Browser บันทึก NAS Draft ไม่ได้: ไม่ได้เปลี่ยนข้อมูล กรุณาเปิดใช้งาน localStorage'); }
-        render(); status('NAS ใช้ Shared Browser Draft (localStorage ไม่เข้ารหัส) · Secret ไม่ถูกส่งผ่าน window.name · ยังไม่เชื่อม RADIUS');
+        if (!admin || !canSave) throw Error('ไม่มีสิทธิ์จัดการ NAS Draft');
+        // Shared storage prefers localStorage; V054 falls back to per-tab session/RAM without leaking Secret to window.name.
+        if (!NT.setRadiusNas) throw Error('Shared Storage API ไม่พร้อมใช้งาน');
+        rows = NT.setRadiusNas(next);
+        render(); status(storageMessage());
     }
     if (!admin) {
         q('#radius-nas-add').hidden = true;
@@ -53,8 +57,8 @@
             NT.setRadiusNas(stored);
         } else stored = model.load(JSON.stringify({ schemaVersion: 1, nas: stored }));
         rows = stored;
-    } catch (e) { canSave = false; q('#radius-nas-add').disabled = true; status(e.message + ' · ปิดการแก้ไขเพื่อป้องกันการเขียนทับข้อมูลเดิม'); }
-    if (canSave) status('NAS ใช้ Shared Browser Draft · localStorage ไม่เข้ารหัส โปรดใช้ Secret จำลองเท่านั้น');
+    } catch (e) { canSave = false; q('#radius-nas-add').disabled = true; status(e.message + ' · ปิดการแก้ไขเพราะข้อมูล NAS Draft ไม่ถูกต้องหรือ API ไม่พร้อม'); }
+    if (canSave) status(storageMessage());
     render();
     q('#radius-nas-search').addEventListener('input', render);
     q('#radius-nas-add').addEventListener('click', event => open(null, event.currentTarget));

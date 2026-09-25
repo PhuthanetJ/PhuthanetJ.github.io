@@ -381,3 +381,48 @@
     #nt-portal .wt-package-search-bar .wt-radius-search,
     #nt-portal .wt-package-search-bar .nt-button { width: 100%; max-width: none; }
 }
+
+/* V052: destructive Account DELETE follows the outlined-danger convention used elsewhere. */
+#nt-portal #radius-account-delete.nt-button.danger {
+    color: #a20e18;
+    border-color: #e7b3b8;
+    background: #fff;
+}
+#nt-portal #radius-account-delete.nt-button.danger:hover:not(:disabled) {
+    color: #861018;
+    border-color: #d87981;
+    background: #fff7f7;
+}
+
+
+/* V053: Account toolbar action order and semantic button colors. */
+#nt-portal #radius-account-import.nt-button.account-import {
+    color: #18864b;
+    border-color: #18864b;
+    background: #fff;
+}
+#nt-portal #radius-account-import.nt-button.account-import:hover:not(:disabled) {
+    color: #126b3b;
+    border-color: #126b3b;
+    background: #f3fbf6;
+}
+#nt-portal #radius-account-export.nt-button.account-export {
+    color: #b77900;
+    border-color: #d9a514;
+    background: #fff;
+}
+#nt-portal #radius-account-export.nt-button.account-export:hover:not(:disabled) {
+    color: #8f5f00;
+    border-color: #bd8d0b;
+    background: #fffaf0;
+}
+#nt-portal #radius-account-dispatch.nt-button.account-dispatch {
+    color: #fff;
+    border-color: #e67e22;
+    background: #e67e22;
+}
+#nt-portal #radius-account-dispatch.nt-button.account-dispatch:hover:not(:disabled) {
+    color: #fff;
+    border-color: #cf6f18;
+    background: #cf6f18;
+}

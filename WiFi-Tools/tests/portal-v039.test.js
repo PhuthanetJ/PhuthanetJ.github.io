@@ -7,14 +7,18 @@ const qjs = fs.readFileSync(path.join(base, 'js/pages/portal-questionnaires.js')
 const config = JSON.parse(fs.readFileSync(path.join(base, 'data/config.json'), 'utf8'));
 const provinces = JSON.parse(fs.readFileSync(path.join(base, 'data/thailand-provinces.json'), 'utf8'));
 
-test('V039 Register exposes configurable Free Wi-Fi registration fields', () => {
-  assert.match(html, /data-bind="registerEnabled">ลงทะเบียน Free Wi-Fi/);
-  for (const key of ['registerNameEnabled','registerGenderEnabled','registerThaiCitizenIdEnabled','registerPassportEnabled','registerBirthdayEnabled','registerMobileEnabled','registerEmailEnabled','registerProvinceEnabled']) {
-    assert.match(html, new RegExp('data-bind="' + key + '"'));
-    assert.equal(config.state[key], true);
+test('V049 Free Trial and Register identity use independent field sets', () => {
+  assert.match(html, /id="wt-free-trial-fields"/);
+  assert.match(html, /id="wt-identity-fields"/);
+  for (const prefix of ['freeTrial','identity']) {
+    for (const suffix of ['Name','Gender','ThaiCitizenId','Passport','Birthday','Mobile','Email','Province']) {
+      const key = prefix + suffix + 'Enabled';
+      assert.match(html, new RegExp('data-bind="' + key + '"'));
+      assert.equal(config.state[key], true);
+    }
   }
-  assert.match(html, /id="wt-register-dialog"/);
-  assert.match(js, /function registrationMarkup\(\)/);
+  assert.match(js, /fieldEnabled\(context, 'Name'\)/);
+  assert.match(js, /previewRegistrationMarkup\(registerContext\)/);
 });
 
 test('Province dropdown data contains 77 unique provinces across seven geographic groups', () => {
@@ -32,6 +36,6 @@ test('V039 Questionnaire editor uses a Terms-style language dropdown', () => {
   assert.doesNotMatch(html, /id="wt-question-language"/);
 });
 
-test('V039 bumps config schema for registration field configuration', () => {
-  assert.equal(config.schemaVersion, 9);
+test('V049 uses schema 11 for split Free Trial and Register field sets', () => {
+  assert.equal(config.schemaVersion, 11);
 });

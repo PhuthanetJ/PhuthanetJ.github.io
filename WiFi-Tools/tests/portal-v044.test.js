@@ -33,8 +33,8 @@ test('V044 Portal copy editor follows Login Register Terms Success Error selecti
 test('V044 page-specific copy fields are stored for all four languages', () => {
   const required = ['registerTitle','registerSubtitle','registerButton','registerBack','termsTitle','termsAccept','termsBack','successTitle','successSubtitle','successButton','successLogout','errorTitle','errorBack'];
   for (const lang of ['th','en','zh','ja']) for (const key of required) assert.equal(typeof config.copy[lang][key], 'string', `${lang}.${key}`);
-  assert.equal(config.schemaVersion, 9);
-  assert.match(app, /schemaVersion: 9/);
+  assert.equal(config.schemaVersion, 11);
+  assert.match(app, /schemaVersion: 11/);
   assert.match(app, /doc\.copy\[lang\]\?\.\[k\] === undefined \? fallback/);
 });
 

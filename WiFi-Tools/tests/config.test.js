@@ -24,7 +24,7 @@ test('Terms, newlines and Portal Path survive the JSON export/import round trip'
     c.NT.state.termsBodyTh = 'ข้อกำหนดไทย\nบรรทัดที่สอง\n<script>ข้อความธรรมดา</script>';
     c.NT.state.termsBodyEn = 'Terms in English\nSecond line';
     const doc = JSON.parse(JSON.stringify(c.NT.snapshot())), loaded = c.NT.parseConfig(doc);
-    assert.equal(doc.siteId, 'a'); assert.equal(loaded.state.path, c.NT.state.path);
+    assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 11); assert.equal(loaded.state.path, c.NT.state.path);
     assert.equal(loaded.state.termsBodyTh, c.NT.state.termsBodyTh);
     assert.equal(loaded.state.termsBodyEn, c.NT.state.termsBodyEn);
     assert.throws(() => c.NT.parseConfig({ ...doc, siteId: 'b' }), /เลือก Portal Path/);
@@ -69,7 +69,7 @@ test('A shared Portal opens the same config from either assigned site and keeps 
     a.NT.setBindings({ siteIds: ['a', 'b'], packageIds: ['pkg-0', 'pkg-1', 'pkg-2'] }); a.NT.choosePortal('b', 'a');
     const b = app(a.name, 'settings'); assert.equal(b.NT.currentSite, 'b'); assert.equal(b.NT.currentPortalId, 'a'); assert.equal(b.NT.state.name, 'Shared lobby');
     assert.equal(JSON.stringify(b.NT.db.configs.b), originalB);
-    const doc = JSON.parse(JSON.stringify(b.NT.snapshot())); assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 9);
+    const doc = JSON.parse(JSON.stringify(b.NT.snapshot())); assert.equal(doc.siteId, 'a'); assert.equal(doc.schemaVersion, 11);
     assert.deepEqual(b.NT.parseConfig(doc).bindings, { siteIds: ['a', 'b'], packageSource: 'radius-manager-allow-package', packageIds: ['pkg-0', 'pkg-1', 'pkg-2'] });
     assert.deepEqual(Array.from(b.NT.portalChoices('b'), p => p.id), ['a', 'b']);
 });
@@ -154,4 +154,13 @@ test('V037 Video Ads validates the selected Video Banner relationship', () => {
     assert.equal(c.NT.parseConfig(doc).state.videoBannerId, 'video-ad');
     doc.state.videoBannerId = 'missing';
     assert.throws(() => c.NT.parseConfig(doc), /Video Ads ต้องเลือก Video Banner/);
+});
+
+
+test('V048 migrates old Register meaning into Free Trial without enabling first-login verification', () => {
+    const c = app(), legacy = D.clone(data.config);
+    legacy.schemaVersion = 9; legacy.state.guest = false; legacy.state.registerEnabled = true;
+    const loaded = c.NT.parseConfig(legacy);
+    assert.equal(loaded.state.guest, true);
+    assert.equal(loaded.state.registerEnabled, false);
 });

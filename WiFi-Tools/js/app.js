@@ -12,6 +12,9 @@
     const radiusCatalogKey = 'wifi-tools:radius-catalog-demo:v1:' + base;
     const radiusAccountsKey = 'wifi-tools:radius-accounts-demo:v1:' + base;
     const radiusNasKey = 'wifi-tools:nas-demo:v1:' + base;
+    // V054: NAS may fall back to per-tab sessionStorage when the main localStorage draft is full/unavailable.
+    // Secret is never copied into window.name.
+    const radiusNasSessionKey = 'wifi-tools:radius-nas-session:v1';
     NT_DATA.sites = sites; // Compatibility alias; shared RADIUS Site Draft is the source when available.
     const portalPage = ['builder', 'settings'].includes(page);
     // UI-only division selector. Real site-to-division mappings have not yet been provided.
@@ -32,7 +35,7 @@
         return draft;
     }
     const configs = {}; for (const site of NT_DATA.sites) configs[site.id] = defaultPortalConfig(site);
-    let db = { schema: 3, key, updatedAt: 0, session: null, currentSite: 'a', currentDivision: 'all', portalSelections: {}, configs, radiusCatalog: null, radiusAccounts: null, radiusNas: null, users: D.clone(NT_DATA.users), channels: {}, covers: {}, coupons: [], schedules: [], reportDrafts: {} };
+    let db = { schema: 3, key, updatedAt: 0, session: null, currentSite: 'a', currentDivision: 'all', portalSelections: {}, configs, radiusCatalog: null, radiusAccounts: null, radiusNas: null, users: D.clone(NT_DATA.users), channels: {}, covers: {}, coupons: [], schedules: [], reportDrafts: {}, identityVerified: {} };
     const candidates = [];
     for (const storageKey of [key, legacyKey]) {
         try { const x = localStorage.getItem(storageKey); if (x) candidates.push(JSON.parse(x)); } catch (_) { }
@@ -46,6 +49,14 @@
     if (previous) db = Object.assign(db, previous, { schema: 3, key });
     if (!Object.prototype.hasOwnProperty.call(db, 'radiusAccounts')) db.radiusAccounts = null;
     if (!Object.prototype.hasOwnProperty.call(db, 'radiusNas')) db.radiusNas = null;
+    if (!Array.isArray(db.radiusNas)) {
+        try {
+            const rawNasSession = window.sessionStorage?.getItem(radiusNasSessionKey);
+            const parsedNasSession = rawNasSession ? JSON.parse(rawNasSession) : null;
+            if (Array.isArray(parsedNasSession)) db.radiusNas = parsedNasSession;
+        } catch (_) { }
+    }
+    if (!db.identityVerified || typeof db.identityVerified !== 'object' || Array.isArray(db.identityVerified)) db.identityVerified = {};
 
     // V031: Site/Package Draft is shared with Portal Configuration through the main browser draft.
     function validCatalog(value) {
@@ -100,8 +111,26 @@
     reconcilePortalConfigs();
     if (!divisions.some(([id]) => id === db.currentDivision)) db.currentDivision = 'all';
     // Existing drafts and JSON exports may predate newer Portal state fields.
-    const migratedStateKeys = ['backButtonColor', 'backButtonTextColor', 'registerButtonColor', 'registerButtonTextColor', 'thaidButtonColor', 'thaidButtonTextColor', 'termsBodyTh', 'termsBodyEn', 'termsZh', 'termsJa', 'termsBodyZh', 'termsBodyJa', 'registerEnabled', 'registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled', 'accountSmsEnabled', 'accountEmailEnabled', 'videoBannerId'];
+    const migratedStateKeys = ['backButtonColor', 'backButtonTextColor', 'registerButtonColor', 'registerButtonTextColor', 'thaidButtonColor', 'thaidButtonTextColor', 'termsBodyTh', 'termsBodyEn', 'termsZh', 'termsJa', 'termsBodyZh', 'termsBodyJa', 'registerEnabled', 'freeTrialNameEnabled', 'freeTrialGenderEnabled', 'freeTrialThaiCitizenIdEnabled', 'freeTrialPassportEnabled', 'freeTrialBirthdayEnabled', 'freeTrialMobileEnabled', 'freeTrialEmailEnabled', 'freeTrialProvinceEnabled', 'identityNameEnabled', 'identityGenderEnabled', 'identityThaiCitizenIdEnabled', 'identityPassportEnabled', 'identityBirthdayEnabled', 'identityMobileEnabled', 'identityEmailEnabled', 'identityProvinceEnabled', 'accountSmsEnabled', 'accountEmailEnabled', 'videoBannerId'];
     for (const saved of Object.values(db.configs)) {
+        // V048 semantic migration: legacy Register meant the Free Wi-Fi registration button.
+        // From schema 10 onward Free Trial owns that flow, while Register means first-login identity verification.
+        if ((saved.schemaVersion || 0) < 10) {
+            saved.state.guest = !!(saved.state.guest || saved.state.registerEnabled);
+            saved.state.registerEnabled = false;
+            saved.schemaVersion = 10;
+        }
+        // V049: Free Trial registration fields and first-login identity fields are independent sets.
+        if ((saved.schemaVersion || 0) < 11) {
+            const legacyFields = { Name: 'registerNameEnabled', Gender: 'registerGenderEnabled', ThaiCitizenId: 'registerThaiCitizenIdEnabled', Passport: 'registerPassportEnabled', Birthday: 'registerBirthdayEnabled', Mobile: 'registerMobileEnabled', Email: 'registerEmailEnabled', Province: 'registerProvinceEnabled' };
+            for (const [suffix, legacyKey] of Object.entries(legacyFields)) {
+                const legacyValue = saved.state[legacyKey] === undefined ? true : !!saved.state[legacyKey];
+                if (saved.state['freeTrial' + suffix + 'Enabled'] === undefined) saved.state['freeTrial' + suffix + 'Enabled'] = legacyValue;
+                if (saved.state['identity' + suffix + 'Enabled'] === undefined) saved.state['identity' + suffix + 'Enabled'] = legacyValue;
+                delete saved.state[legacyKey];
+            }
+            saved.schemaVersion = 11;
+        }
         delete saved.state.policyName;
         if (saved.state.thaid === undefined) saved.state.thaid = typeof saved.state.facebook === 'boolean' ? saved.state.facebook : D.clone(NT_DATA.config.state.thaid);
         delete saved.state.facebook;
@@ -146,13 +175,22 @@
     function setRadiusNas(value) {
         if (!Array.isArray(value)) throw Error('NAS Draft ไม่ถูกต้อง');
         const validated = window.WiFiNasModel ? WiFiNasModel.load(JSON.stringify({ schemaVersion: 1, nas: value })) : D.clone(value);
-        const previousNas = db.radiusNas;
         db.radiusNas = validated;
         const saved = persist();
-        if (!saved.local) {
-            db.radiusNas = previousNas;
-            throw Error('NAS มี Secret จึงต้องบันทึกผ่าน localStorage เท่านั้น แต่ Browser บันทึกไม่ได้');
+        let nasSession = false;
+        if (saved.local) {
+            try { window.sessionStorage?.removeItem(radiusNasSessionKey); } catch (_) { }
+        } else {
+            try {
+                if (window.sessionStorage) {
+                    window.sessionStorage.setItem(radiusNasSessionKey, JSON.stringify(validated));
+                    nasSession = true;
+                }
+            } catch (_) { }
         }
+        // If both localStorage and sessionStorage are unavailable, keep the NAS only in RAM for this page.
+        // Never move NAS Secret into window.name merely to make persistence succeed.
+        storageResult.nasSession = nasSession;
         return D.clone(validated);
     }
     function setRadiusCatalog(value) {
@@ -235,7 +273,8 @@
         if (value.termsEnabled && termFields.some(k => typeof value[k] !== 'string' || !value[k].trim() || value[k].length > 6000)) issues.push('กรอกข้อความลิงก์และเนื้อหาเงื่อนไข Terms & Conditions ให้ครบทุกภาษา ไม่เกิน 6,000 ตัวอักษร');
         if (!/^\/portal\/[a-z0-9]+(?:[-/][a-z0-9]+)*$/.test(value.path)) issues.push('Path ต้องอยู่ใต้ /portal/');
         if (!['guest', 'member', 'otp', 'line', 'google', 'thaid', 'apple'].some(k => value[k])) issues.push('เปิดวิธีรับสิทธิ์อย่างน้อย 1 วิธี');
-        if (value.registerEnabled && !['registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled'].some(k => value[k])) issues.push('เลือก Registration Field อย่างน้อย 1 รายการ');
+        if (value.guest && !['freeTrialNameEnabled', 'freeTrialGenderEnabled', 'freeTrialThaiCitizenIdEnabled', 'freeTrialPassportEnabled', 'freeTrialBirthdayEnabled', 'freeTrialMobileEnabled', 'freeTrialEmailEnabled', 'freeTrialProvinceEnabled'].some(k => value[k])) issues.push('เลือก Free Trial Field อย่างน้อย 1 รายการ');
+        if (value.registerEnabled && !['identityNameEnabled', 'identityGenderEnabled', 'identityThaiCitizenIdEnabled', 'identityPassportEnabled', 'identityBirthdayEnabled', 'identityMobileEnabled', 'identityEmailEnabled', 'identityProvinceEnabled'].some(k => value[k])) issues.push('เลือก Register Identity Field อย่างน้อย 1 รายการ');
         if (!Number.isFinite(value.hours) || value.hours < 1 || value.hours > 24) issues.push('เวลา 1–24 ชั่วโมง');
         try {
             const parsedBanners = WiFiBanners.parse(banners), parsedQuestions = WiFiBanners.parseQuestions(questions);
@@ -250,14 +289,27 @@
         } catch (e) { issues.push(e.message); }
         return issues;
     }
-    function snapshot() { return { format: 'wifi-tools-config', schemaVersion: 9, siteId: ownerSiteId, portalId: currentPortalId, version, bindings: P.normalize(config.bindings, { owner: ownerSiteId, sites, packages }), state, copy, assets, lists }; }
+    function snapshot() { return { format: 'wifi-tools-config', schemaVersion: 11, siteId: ownerSiteId, portalId: currentPortalId, version, bindings: P.normalize(config.bindings, { owner: ownerSiteId, sites, packages }), state, copy, assets, lists }; }
     function parseConfig(doc) {
-        if (!doc || !['wifi-tools-config', 'nt-wifi-offline-config'].includes(doc.format) || ![1, 2, 3, 4, 5, 6, 7, 8, 9].includes(doc.schemaVersion) || !doc.state || !doc.copy || !doc.assets || !doc.lists) throw Error('Config ไม่ถูกต้อง');
+        if (!doc || !['wifi-tools-config', 'nt-wifi-offline-config'].includes(doc.format) || ![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(doc.schemaVersion) || !doc.state || !doc.copy || !doc.assets || !doc.lists) throw Error('Config ไม่ถูกต้อง');
         if (doc.siteId && doc.siteId !== ownerSiteId || doc.portalId && doc.portalId !== currentPortalId) throw Error('เลือก Portal Path / Config ให้ตรงกับไฟล์ก่อนนำเข้า');
         const next = { state: {}, copy: { th: {}, en: {}, zh: {}, ja: {} }, assets: {}, lists: { wg: [], mac: [] } };
         next.bindings = P.normalize(doc.bindings === undefined && doc.schemaVersion < 4 ? P.defaults(ownerSiteId, sites, packages) : doc.bindings, { owner: ownerSiteId, sites: NT_DATA.sites, packages, allowed: getUser() ? allowedIds() : undefined });
         if (!next.bindings.siteIds.includes(currentSite)) throw Error('Config ต้องมี Site ที่กำลังเปิดอยู่ในรายการ');
-        for (const [k, v] of Object.entries(NT_DATA.config.state)) { let x = doc.state[k]; if (k === 'thaid' && x === undefined && typeof doc.state.facebook === 'boolean') x = doc.state.facebook; if (x === undefined && (migratedStateKeys.includes(k) || k === 'thaid')) x = D.clone(v); if (typeof x !== typeof v || typeof x === 'number' && !Number.isFinite(x) || typeof x === 'string' && x.length > 6000) throw Error('ชนิดข้อมูลไม่ถูกต้อง: ' + k); next.state[k] = x; }
+        const legacyRegistrationMap = {
+            freeTrialNameEnabled: 'registerNameEnabled', freeTrialGenderEnabled: 'registerGenderEnabled', freeTrialThaiCitizenIdEnabled: 'registerThaiCitizenIdEnabled', freeTrialPassportEnabled: 'registerPassportEnabled', freeTrialBirthdayEnabled: 'registerBirthdayEnabled', freeTrialMobileEnabled: 'registerMobileEnabled', freeTrialEmailEnabled: 'registerEmailEnabled', freeTrialProvinceEnabled: 'registerProvinceEnabled',
+            identityNameEnabled: 'registerNameEnabled', identityGenderEnabled: 'registerGenderEnabled', identityThaiCitizenIdEnabled: 'registerThaiCitizenIdEnabled', identityPassportEnabled: 'registerPassportEnabled', identityBirthdayEnabled: 'registerBirthdayEnabled', identityMobileEnabled: 'registerMobileEnabled', identityEmailEnabled: 'registerEmailEnabled', identityProvinceEnabled: 'registerProvinceEnabled'
+        };
+        for (const [k, v] of Object.entries(NT_DATA.config.state)) {
+            let x = doc.state[k];
+            if (doc.schemaVersion < 10 && k === 'guest') x = !!(doc.state.guest || doc.state.registerEnabled);
+            if (doc.schemaVersion < 10 && k === 'registerEnabled') x = false;
+            if (doc.schemaVersion < 11 && legacyRegistrationMap[k]) x = doc.state[legacyRegistrationMap[k]] === undefined ? D.clone(v) : !!doc.state[legacyRegistrationMap[k]];
+            if (k === 'thaid' && x === undefined && typeof doc.state.facebook === 'boolean') x = doc.state.facebook;
+            if (x === undefined && (migratedStateKeys.includes(k) || k === 'thaid')) x = D.clone(v);
+            if (typeof x !== typeof v || typeof x === 'number' && !Number.isFinite(x) || typeof x === 'string' && x.length > 6000) throw Error('ชนิดข้อมูลไม่ถูกต้อง: ' + k);
+            next.state[k] = x;
+        }
         for (const k of ['buttonColor', 'buttonTextColor', 'backButtonColor', 'backButtonTextColor', 'registerButtonColor', 'registerButtonTextColor', 'thaidButtonColor', 'thaidButtonTextColor']) if (!/^#[0-9a-f]{6}$/i.test(next.state[k])) throw Error('สีไม่ถูกต้อง');
         for (const lang of portalLanguages) for (const k of Object.keys(NT_DATA.config.copy[lang])) { const fallback = D.clone(NT_DATA.config.copy[lang][k]); const v = doc.copy[lang]?.[k] === undefined ? fallback : doc.copy[lang]?.[k]; if (typeof v !== 'string' || v.length > 6000) throw Error('คำแปลไม่ถูกต้อง'); next.copy[lang][k] = v; }
         for (const k of ['logo', 'banner', 'background']) { const v = doc.assets[k]; if (typeof v !== 'string' || v.length > 4300000 || v && !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v)) throw Error('รูปภาพต้องฝังในไฟล์'); next.assets[k] = v; }
@@ -316,7 +368,7 @@
     }
     function deletePortalPath(id) {
         const draft = db.configs[id]; if (!draft) throw Error('ไม่พบ Portal Path'); if (!portalManagerAllowed() || !P.canManage(draft.bindings, allowedIds())) throw Error('ไม่มีสิทธิ์ลบ Portal Path นี้');
-        delete db.configs[id]; for (const [siteId, selected] of Object.entries(db.portalSelections)) if (selected === id) delete db.portalSelections[siteId]; reconcilePortalConfigs(); persist();
+        delete db.configs[id]; delete db.identityVerified[id]; for (const [siteId, selected] of Object.entries(db.portalSelections)) if (selected === id) delete db.portalSelections[siteId]; reconcilePortalConfigs(); persist();
     }
     function choosePortalPath(portalId) {
         const selected = portalPathChoices().find(c => c.id === portalId); if (!selected) throw Error('ไม่มีสิทธิ์เลือก Portal Path นี้');
@@ -325,7 +377,7 @@
     function choosePortal(siteId, portalId) { if (!portalChoices(siteId).some(c => c.id === portalId)) throw Error('ไม่มีสิทธิ์เลือก Site / Portal นี้'); db.currentSite = siteId; db.portalSelections[siteId] = portalId; persist(); location.reload(); }
     function setBindings(value) { if (!can('editSite')) throw Error('ไม่มีสิทธิ์แก้ไข Portal ร่วมในทุก Site'); const next = P.normalize(value, { owner: ownerSiteId, sites: NT_DATA.sites, packages, allowed: allowedIds() }); if (!next.siteIds.includes(currentSite)) throw Error('เปลี่ยนไป Site เจ้าของ Config ก่อนนำ Site ที่กำลังเปิดออก'); config.bindings = next; reconcilePortalConfigs(); changed(); }
     function selectSite(id) { if (!allowedIds().includes(id)) return toast('ไม่มีสิทธิ์ใน Site'); db.currentSite = id; persist(); location.reload(); }
-    window.NT = { q, qa, on, esc, db, user, getUser, state, copy, assets, lists, currentSite, currentPortalId, currentPortalOwnerSiteId: ownerSiteId, portalConfigMode, bindings: () => config.bindings, setBindings, portalChoices, portalPathChoices, createPortalPath, updatePortalPath, deletePortalPath, portalManagerAllowed, choosePortalPath, choosePortal, can, allowedIds, allowedSites: () => NT_DATA.sites.filter(s => allowedIds().includes(s.id)), siteName, fillSites, selectSite, radiusCatalog, setRadiusCatalog, radiusAccounts, setRadiusAccounts, radiusNas, setRadiusNas, siteDeleteImpact, legacyStorageKeys: { radiusCatalogKey, radiusAccountsKey, radiusNasKey }, divisions, fillDivisions, selectDivision, currentDivision: () => db.currentDivision, changed, syncFields, toast, validate, download, snapshot, parseConfig, persist, storageStatus: () => ({ ...storageResult }), onChange: f => changeListeners.push(f), onLoad: f => loadListeners.push(f) };
+    window.NT = { q, qa, on, esc, db, user, getUser, state, copy, assets, lists, currentSite, currentPortalId, currentPortalOwnerSiteId: ownerSiteId, portalConfigMode, bindings: () => config.bindings, setBindings, portalChoices, portalPathChoices, createPortalPath, updatePortalPath, deletePortalPath, portalManagerAllowed, choosePortalPath, choosePortal, can, allowedIds, allowedSites: () => NT_DATA.sites.filter(s => allowedIds().includes(s.id)), siteName, fillSites, selectSite, radiusCatalog, setRadiusCatalog, radiusAccounts, setRadiusAccounts, radiusNas, setRadiusNas, siteDeleteImpact, legacyStorageKeys: { radiusCatalogKey, radiusAccountsKey, radiusNasKey, radiusNasSessionKey }, divisions, fillDivisions, selectDivision, currentDivision: () => db.currentDivision, changed, syncFields, toast, validate, download, snapshot, parseConfig, persist, storageStatus: () => ({ ...storageResult }), onChange: f => changeListeners.push(f), onLoad: f => loadListeners.push(f) };
     if (page === 'login' || page === 'print') return;
     if (portalConfigMode === 'configure' && !P.canManage(config.bindings, allowedIds())) {
         const main = q('#page-content'); if (main) { const notice = document.createElement('p'); notice.className = 'nt-notice'; notice.textContent = 'Config นี้ใช้ร่วมกับ Site นอกสิทธิ์ของคุณ การแก้ไขต้องใช้ผู้ดูแลที่มีสิทธิ์ครบทุก Site'; main.prepend(notice); }

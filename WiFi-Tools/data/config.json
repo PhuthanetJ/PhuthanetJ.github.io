@@ -1,6 +1,6 @@
 {
   "format": "wifi-tools-config",
-  "schemaVersion": 9,
+  "schemaVersion": 11,
   "version": 1,
   "state": {
     "name": "Free Wi-Fi",
@@ -19,14 +19,6 @@
     "guest": true,
     "member": false,
     "registerEnabled": false,
-    "registerNameEnabled": true,
-    "registerGenderEnabled": true,
-    "registerThaiCitizenIdEnabled": true,
-    "registerPassportEnabled": true,
-    "registerBirthdayEnabled": true,
-    "registerMobileEnabled": true,
-    "registerEmailEnabled": true,
-    "registerProvinceEnabled": true,
     "otp": false,
     "accountSmsEnabled": false,
     "accountEmailEnabled": false,
@@ -72,7 +64,23 @@
     "termsJa": "Free WiFi 利用規約に同意します",
     "termsBodyZh": "Free WiFi 使用条款\n\n1. 使用权限以 Portal 页面显示的服务时长和区域为准。\n2. 请合理使用网络，不影响其他用户。\n3. 不得利用网络访问未经授权的系统或数据。\n4. 如遇问题，请联系服务区域管理员。\n\n示例文本 — 管理员可根据各 Site 的服务条件进行修改。",
     "termsBodyJa": "Free WiFi 利用規約\n\n1. 利用条件は Portal に表示される利用時間とサービスエリアに従います。\n2. 他の利用者の妨げにならないよう適切にネットワークを利用してください。\n3. 許可されていないシステムやデータへのアクセスに利用しないでください。\n4. 問題がある場合はサービスエリアの管理者へ連絡してください。\n\nサンプル文 — 管理者は Site ごとの条件に合わせて編集できます。",
-    "videoBannerId": ""
+    "videoBannerId": "",
+    "freeTrialNameEnabled": true,
+    "identityNameEnabled": true,
+    "freeTrialGenderEnabled": true,
+    "identityGenderEnabled": true,
+    "freeTrialThaiCitizenIdEnabled": true,
+    "identityThaiCitizenIdEnabled": true,
+    "freeTrialPassportEnabled": true,
+    "identityPassportEnabled": true,
+    "freeTrialBirthdayEnabled": true,
+    "identityBirthdayEnabled": true,
+    "freeTrialMobileEnabled": true,
+    "identityMobileEnabled": true,
+    "freeTrialEmailEnabled": true,
+    "identityEmailEnabled": true,
+    "freeTrialProvinceEnabled": true,
+    "identityProvinceEnabled": true
   },
   "copy": {
     "th": {
@@ -93,7 +101,15 @@
       "successButton": "ใช้อินเทอร์เน็ต",
       "successLogout": "ออกจากระบบ",
       "errorTitle": "ขออภัยระบบไม่สามารถดำเนินการต่อได้",
-      "errorBack": "กลับสู่หน้าหลัก"
+      "errorBack": "กลับสู่หน้าหลัก",
+      "memberButton": "เข้าสู่ระบบ",
+      "thaidButton": "เข้าสู่ระบบด้วย thaiD",
+      "registerOpenButton": "ลงทะเบียน Free Wi-Fi",
+      "socialLabel": "Social Login",
+      "identityTitle": "ยืนยันตัวตนครั้งแรก",
+      "identitySubtitle": "กรอกข้อมูลเพื่อยืนยันตัวตนสำหรับ Username นี้ ทำเพียงครั้งแรกครั้งเดียว",
+      "identityButton": "ยืนยันตัวตน",
+      "identityBack": "กลับสู่หน้าหลัก"
     },
     "en": {
       "title": "Free WiFi",
@@ -113,7 +129,15 @@
       "successButton": "Use Internet",
       "successLogout": "Sign out",
       "errorTitle": "Sorry, the system cannot continue",
-      "errorBack": "Back to home"
+      "errorBack": "Back to home",
+      "memberButton": "Sign in",
+      "thaidButton": "Continue with thaiD",
+      "registerOpenButton": "Register Free Wi-Fi",
+      "socialLabel": "Social Login",
+      "identityTitle": "First-time identity verification",
+      "identitySubtitle": "Complete your identity information for this username. This is required only once.",
+      "identityButton": "Verify identity",
+      "identityBack": "Back to home"
     },
     "zh": {
       "title": "免费 WiFi",
@@ -133,7 +157,15 @@
       "successButton": "使用互联网",
       "successLogout": "退出登录",
       "errorTitle": "抱歉，系统无法继续",
-      "errorBack": "返回首页"
+      "errorBack": "返回首页",
+      "memberButton": "登录",
+      "thaidButton": "使用 thaiD 登录",
+      "registerOpenButton": "注册 Free Wi-Fi",
+      "socialLabel": "Social Login",
+      "identityTitle": "首次身份验证",
+      "identitySubtitle": "请为此 Username 填写身份信息，仅首次需要。",
+      "identityButton": "验证身份",
+      "identityBack": "返回首页"
     },
     "ja": {
       "title": "無料 WiFi",
@@ -153,7 +185,15 @@
       "successButton": "インターネットを利用",
       "successLogout": "ログアウト",
       "errorTitle": "申し訳ありません。処理を続行できません",
-      "errorBack": "ホームへ戻る"
+      "errorBack": "ホームへ戻る",
+      "memberButton": "ログイン",
+      "thaidButton": "thaiD でログイン",
+      "registerOpenButton": "Free Wi-Fi に登録",
+      "socialLabel": "Social Login",
+      "identityTitle": "初回本人確認",
+      "identitySubtitle": "この Username の本人確認情報を入力してください。初回のみ必要です。",
+      "identityButton": "本人確認",
+      "identityBack": "ホームへ戻る"
     }
   },
   "assets": {

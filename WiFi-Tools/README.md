@@ -1,7 +1,7 @@
 # Wi-Fi Tools — Offline Prototype
 
-**Current release:** V045  
-**Functional baseline:** V045  
+**Current release:** V055  
+**Functional baseline:** V054  
 **Updated:** 25 September 2026 / 25 กันยายน 2569
 
 Wi-Fi Tools เป็นต้นแบบระบบบริหาร Wi-Fi แบบ Offline สำหรับทดลอง UI/UX, Config, Portal, RADIUS & Policy, Report และงานบริหารที่เกี่ยวข้อง โดยออกแบบให้เปิดใช้งานจากไฟล์ HTML/CSS/JavaScript ใน Browser ได้โดยไม่ต้องเชื่อม Backend จริง
@@ -96,21 +96,22 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 
 แสดงตัวเลือก Draft ดังนี้:
 
-- ฟังก์ชั่น Register
-- ฟังก์ชั่น Free Trial
+- **ฟังก์ชั่น Register** — หลัง Username / Password ผ่าน RADIUS ครั้งแรก จะแสดง Field สำหรับยืนยันตัวตน และทำเพียงครั้งแรกของ Username นั้น
+- **ฟังก์ชั่น Free Trial** — หมายถึง **ลงทะเบียน Free Wi-Fi** โดยเปิดแบบฟอร์มข้อมูลผู้ใช้งานก่อนเข้าสู่ Flow Terms / Success
 - รับ Account ผ่าน SMS
 - รับ Account ผ่าน E-mail
 
-> ใน Offline Prototype ตัวเลือก Register / รับ Account ผ่าน SMS / รับ Account ผ่าน E-mail เป็น Draft flags สำหรับ UI/Config เท่านั้น ยังไม่เชื่อม Backend Register, SMS Gateway หรือ E-mail จริง ส่วน Free Trial ยังคงอ้างอิงการเปิด Guest/Free Trial เดิมของ Portal.
+> Offline Prototype จำสถานะ “ยืนยันตัวตนแล้ว” ต่อ Portal/Username ใน Browser Draft เพื่อทดสอบ Flow เท่านั้น สำหรับ Production ต้องให้ Backend/RADIUS/Database เป็นผู้ยืนยันว่า Username เคยทำ Register แล้วหรือยัง ส่วน SMS/E-mail ยังไม่เชื่อม Provider จริง.
 
 #### Login / OTP
 
 - **Social Login** รวม Provider: LINE / Google / Apple และเลือกเปิดแต่ละ Provider ได้; Preview แสดงเป็นปุ่มวงกลมพร้อม Icon
 - **thaiD Login** แยกจากกลุ่ม Social Login และยังเปิด/ปิดได้อิสระ
-- **ลงทะเบียน Free Wi-Fi** เปิด/ปิด Registration Form และเลือก Field ที่จะแสดงได้: Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email, Province
+- **Free Trial / ลงทะเบียน Free Wi-Fi** เปิด Registration Form และเลือก Field ที่จะแสดงได้: Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email, Province
+- **Register** ใช้ Field ชุดเดียวกันสำหรับยืนยันตัวตนหลัง Username/Password Login ครั้งแรก; Login ครั้งถัดไปของ Username เดิมจะข้ามขั้นตอนนี้ใน Preview
 - Province เป็น Dropdown ครบ 77 จังหวัด โดยใช้กลุ่มภูมิศาสตร์แยกจาก “ส่วนงาน”: กรุงเทพและปริมณฑล / ภาคกลาง / ภาคตะวันออก / ภาคตะวันตก / ภาคเหนือ / ภาคตะวันออกเฉียงเหนือ / ภาคใต้
 - V037 เปลี่ยน `Facebook Login` เป็น `thaiD Login` และ Migration Draft/Config รุ่นเก่าที่เคยเปิด Facebook จะย้าย flag มาเป็น thaiD
-- Provider และ Register ยังเป็น Offline UI และยังไม่เชื่อม OAuth/thaiD/Register Backend จริง
+- Provider และการตรวจ First-login Register ยังเป็น Offline UI/Preview และยังไม่เชื่อม OAuth/thaiD/Register Backend จริง
 
 #### ข้อความ & ภาษา
 
@@ -141,7 +142,9 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 - Terms & Conditions ใช้ Dropdown เลือกภาษาได้: ไทย / English / Chinese / Japanese
 - Questionnaire / Quiz ใช้ Dropdown เลือกภาษาที่กำลังแก้แบบเดียวกับ Terms & Conditions: ไทย / English / Chinese / Japanese และรายการคำถามจะแสดงตามภาษาที่เลือก
 - Video Ads เลือก Video Banner จากคลัง Banner และกำหนดจำนวนวินาทีที่ต้องดูก่อนจะแสดงปุ่ม “ดำเนินการต่อ”
-- Config ปัจจุบันใช้ schemaVersion 9 และรองรับ Migration จาก Config รุ่นเก่าในขอบเขตที่โค้ดกำหนด
+- Config ปัจจุบันใช้ **schemaVersion 11** และรองรับ Migration จาก Config รุ่นเก่า โดย V048 จะแปลงความหมาย Register เดิมไปเป็น Free Trial เพื่อไม่เปิด First-login verification โดยไม่ตั้งใจ
+
+- `Login / OTP` แยกชุดข้อมูลผู้ใช้เป็น **Free Trial Fields** และ **Register Identity Fields** คนละชุด; Free Trial ใช้ตอนลงทะเบียน Free Wi-Fi ส่วน Register Identity ใช้เฉพาะ First-login verification หลัง Username / Password
 
 ---
 
@@ -251,7 +254,6 @@ Validation หลัก:
 รองรับ:
 
 - **CREATE** — สร้าง Account ทีละรายการ
-- **EDIT** — แก้ Username, Package, Status และ DISPATCH
 - **GENERATE** — สร้างหลาย Account จาก `User Prefix + เลข 8 หลัก` สูงสุด 1,000 Account/ครั้ง
 - **IMPORT** — Import CSV
 - **DISPATCH** — กำหนด Account ให้ใช้ได้เฉพาะ Site
@@ -515,7 +517,7 @@ Pass: 161
 Fail: 0
 ```
 
-ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account Full CRUD, DISPATCH, Account Detail, Session, Package Unlimited semantics, Portal Path Management CRUD, Referential Integrity และ Shared Storage consistency
+ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account model CRUD, Account UI actions, DISPATCH, Account Detail, Session, Package Unlimited semantics, Portal Path Management CRUD, Referential Integrity และ Shared Storage consistency
 
 > Automated Tests ใช้ Node / DOM จำลองในหลายส่วน ไม่เท่ากับการทดสอบ End-to-End บน Browser, Mobile Device หรือ RADIUS Production จริง
 
@@ -853,3 +855,81 @@ V045 — Portal Button Style Groups + thaiD Icon
 - ปุ่ม Portal Preview ใช้สีตามกลุ่มของตัวเอง ไม่บังคับใช้สีชุดเดียวกันทุกปุ่ม
 - ปุ่ม thaiD เพิ่ม Inline SVG Icon แบบบัตรประจำตัว (Generic ID icon; ไม่ใช่ Official thaiD logo)
 - คง Config schemaVersion 9 และ Migration เติมค่าสีใหม่ให้ Draft/Config รุ่นก่อนอัตโนมัติ
+
+
+## V046 — Sticky Portal Preview + Login Method Copy
+- `Portal Configuration > ดีไซน์`: Portal Preview ใช้ `position: sticky` บน Desktop เพื่อเลื่อนตามเมื่อรายการ Banner ยาว โดยมีกรอบเลื่อนภายในเมื่อ Preview สูงเกิน viewport
+- `ข้อความ & ภาษา > Login`: เพิ่ม Dropdown **วิธีเข้าสู่ระบบ / ปุ่มที่กำลังแก้** และแสดงเฉพาะวิธีที่เปิดใช้งาน (ถ้าไม่มีวิธีเปิดจะแสดงทุกตัวเลือกเพื่อเตรียมข้อความล่วงหน้า)
+- ข้อความปุ่ม Login แยกตาม Free Trial, Username/Password, SMS/OTP, thaiD, Register และ Social Login; Preview ใช้ข้อความชุดเดียวกับ Editor
+- คง Config schemaVersion 9; copy keys ใหม่เติมจาก default ระหว่าง Migration/Import อัตโนมัติ
+
+
+
+## V047 — Left-side Operational Cards
+- `Portal Configuration`: ย้าย `ฟังก์ชันการทำงาน`, `Walled Garden / MAC` และ `Reports` เข้าไปอยู่ในคอลัมน์แก้ไขฝั่งซ้าย
+- คอลัมน์ขวาเหลือเฉพาะ Portal Preview แบบ Sticky เพื่อไม่ให้ Preview บังชุดควบคุมด้านล่างเมื่อหน้า Design/Banner ยาว
+- กล่อง Operational shortcuts ในฝั่งซ้ายเรียงแนวตั้งเพื่อรักษาความกว้างของฟอร์มและลดการชนกับ Preview
+- Automated / Regression Tests: **176/176 ผ่าน**
+
+### V048 — Clarify Free Trial / Register flow
+- Free Trial = `ลงทะเบียน Free Wi-Fi` and opens the configured user-information form.
+- Register = after Username/Password login, require identity fields on the first login for that username only.
+- Preview remembers first-time verification per Portal/Username in the shared Browser Draft; production must enforce this in Backend/RADIUS data.
+- Legacy schema <= 9 migrates the old Register button meaning into Free Trial and keeps first-login verification disabled until explicitly enabled.
+
+
+## V049 — Separate Free Trial / Register Identity Fields
+- แยก User / Identity Fields จากชุดเดียวเป็น 2 ชุดอิสระ: **Free Trial Fields** และ **Register Identity Fields**
+- Free Trial Fields ใช้เฉพาะ Flow `ลงทะเบียน Free Wi-Fi`
+- Register Identity Fields ใช้เฉพาะการยืนยันตัวตนหลัง Username / Password ครั้งแรก
+- เปิด/ปิด Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email และ Province แยกกันได้ในแต่ละ Flow
+- Config schema เพิ่มเป็น **schemaVersion 11**; Config/Draft schema 10 จะคัดลอกค่าชุดเดิมไปเป็นค่าเริ่มต้นของทั้งสองชุดเพียงครั้งเดียว แล้วหลังจากนั้นแก้แยกกัน
+
+
+## V050 — Remove Account EDIT Toolbar
+- `RADIUS & Policy > Account` เอาปุ่ม **EDIT** ออกจาก Toolbar ตาม Requirement
+- Username ยังคงกดดู Account Detail ได้ และ Status ยังปรับ `Active / Inactive` จาก Account Detail
+- การกำหนด/ยกเลิก Site ยังคงใช้ปุ่ม **DISPATCH** แยกต่างหาก
+- CREATE / GENERATE / IMPORT / DELETE / EXPORT CSV ยังคงเดิม
+- Account model ยังรักษา `update()` ภายในสำหรับ Status/compatibility แต่ UI ไม่มี General EDIT dialog แล้ว
+- Automated / Regression Tests: **184/184 ผ่าน**
+
+
+## V051 — Separate Free Trial / Register Preview
+- `Portal Configuration > ตัวอย่างหน้า Portal` แยก **Free Trial** และ **Register** เป็นคนละ Step ชัดเจน
+- Flow Preview: `Login → Free Trial → Register → Terms → Success / Error` โดย Free Trial และ Register เป็นเส้นทางคนละบริบท ไม่ใช่หน้าฟอร์มเดียวกัน
+- ปุ่ม `ลงทะเบียน Free Wi-Fi` จากหน้า Login ไปหน้า **Free Trial** และใช้เฉพาะ Free Trial Fields
+- Username / Password ครั้งแรกที่เปิด Register จะไปหน้า **Register** และใช้เฉพาะ Register Identity Fields
+- `ข้อความ & ภาษา` เพิ่มหน้า Free Trial แยกจาก Register; Free Trial ใช้ registerTitle/registerSubtitle/registerButton/registerBack เดิม ส่วน Register ใช้ identityTitle/identitySubtitle/identityButton/identityBack
+- คง Config schemaVersion 11; copy key `identityBack` เป็น optional/default-migrated field
+
+
+## V052 — Account DELETE visual consistency
+- `RADIUS & Policy > Account` ปรับปุ่ม **DELETE** ให้ใช้รูปแบบ destructive แบบเดียวกับปุ่มลบอื่น: พื้นขาว, ตัวอักษรสีแดง, ขอบสีแดง และ hover แบบแดงอ่อน
+- ไม่เปลี่ยน Logic / Confirm / Referential Guard ของการลบ Account
+
+
+## V053 — Account Toolbar Order & Colors
+- `RADIUS & Policy > Account` เรียงปุ่มใหม่เป็น **CREATE → GENERATE → IMPORT → EXPORT → DISPATCH → DELETE**
+- `GENERATE` ใช้สีเดียวกับ `CREATE` (Primary)
+- `IMPORT` ใช้ตัวอักษรสีเขียว + ขอบสีเขียว + พื้นขาว
+- `EXPORT` ใช้ตัวอักษรสีเหลือง/Amber + ขอบสีเหลือง + พื้นขาว และยัง Export เป็น CSV ตาม Logic เดิม
+- `DISPATCH` ใช้พื้นสีส้ม + ตัวอักษรสีขาว
+- `DELETE` คงรูปแบบ outlined-danger จาก V052
+- ไม่เปลี่ยน Logic ของ CREATE / GENERATE / IMPORT / EXPORT / DISPATCH / DELETE
+
+
+## V054 — NAS Storage Fallback / Add Button Fix
+- แก้ `RADIUS & Policy > NAS` ปุ่ม **เพิ่ม NAS** ถูก Disable เมื่อ main `localStorage` เต็มหรือ Browser เขียน localStorage ไม่ได้
+- สาเหตุเดิม: NAS มี Secret และ V043 ป้องกันไม่ให้ Secret ถูกส่งผ่าน `window.name`; เมื่อ localStorage ล้มเหลวจึงปิดการแก้ไข NAS ทั้งหมด
+- V054 ยังคง **ไม่ส่ง Secret ผ่าน window.name** แต่เพิ่ม fallback เป็น `sessionStorage` ของแท็บเมื่อ localStorage ใช้ไม่ได้
+- ถ้า sessionStorage ใช้ไม่ได้ด้วย ยังอนุญาต CRUD ชั่วคราวใน RAM ของหน้าปัจจุบัน พร้อมข้อความเตือนว่าข้อมูลจะหายเมื่อ Reload/ออกจากหน้า
+- เมื่อ localStorage กลับมาใช้ได้ จะใช้ Shared Browser Draft ตามเดิมและล้าง session fallback
+- Automated / Regression Tests: **195/195 ผ่าน**
+
+
+## V055 — Login/OTP Method Order
+- `Portal Configuration > Login/OTP > วิธีเข้าสู่ระบบ` เรียงลำดับใหม่เป็น **Username / Password ผ่าน RADIUS → SMS / OTP → thaiD Login → Social Login → Register → Free Trial**
+- `Register` ยังคงหมายถึงการยืนยันตัวตนหลัง Username / Password ครั้งแรก และ `Free Trial` ยังคงหมายถึงลงทะเบียน Free Wi-Fi
+- เปลี่ยนเฉพาะลำดับ UI ไม่เปลี่ยน Logic, Config key หรือ Flow ของแต่ละวิธีเข้าสู่ระบบ
+- Automated / Regression Tests: **196/196 ผ่าน**

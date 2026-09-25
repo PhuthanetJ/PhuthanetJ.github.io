@@ -459,3 +459,25 @@
 #nt-portal .nt-public-button.wt-btn-thaid{display:flex!important;align-items:center;justify-content:center;gap:9px;background:var(--portal-thaid-button,#555)!important;color:var(--portal-thaid-text,#fff)!important;border-color:var(--portal-thaid-button,#555)!important}
 #nt-portal .wt-thaid-icon{width:21px;height:21px;flex:0 0 21px;color:currentColor}
 @media(max-width:700px){#nt-portal .wt-button-style-groups{grid-template-columns:1fr}#nt-portal .wt-button-style-group .nt-help{min-height:0}}
+/* V046: keep Portal Preview visible while editing long Banner lists on desktop. */
+@media (min-width: 1001px) {
+  #nt-portal .nt-editor-grid > .nt-preview-wrap {
+    position: sticky;
+    top: 12px;
+    align-self: start;
+    max-height: calc(100vh - 24px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    z-index: 5;
+  }
+}
+
+/* V047: keep operational shortcut cards in the left editor column.
+   The right column is reserved for the sticky Portal Preview only. */
+#nt-portal .nt-quick-settings-left {
+  margin-top: 14px;
+  grid-column: auto;
+}
+#nt-portal .nt-quick-settings-left .nt-mini-cards {
+  grid-template-columns: 1fr;
+}

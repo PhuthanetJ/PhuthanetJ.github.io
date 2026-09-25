@@ -31,5 +31,5 @@ test('V037 Video Ads is bound to a Video Banner and gated by watch seconds', () 
   assert.match(html, /data-bind="videoSeconds"/);
   assert.match(html, /id="wt-video-ad-continue" hidden>ดำเนินการต่อ/);
   assert.equal(config.state.videoBannerId, '');
-  assert.equal(config.schemaVersion, 9);
+  assert.equal(config.schemaVersion, 11);
 });

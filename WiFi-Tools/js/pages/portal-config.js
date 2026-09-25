@@ -13,16 +13,27 @@
         th: ['termsTh', 'termsBodyTh'], en: ['termsEn', 'termsBodyEn'],
         zh: ['termsZh', 'termsBodyZh'], ja: ['termsJa', 'termsBodyJa']
     };
-    let language = 'th', previewMode = 'normal', portalStep = 'login', proposal = null, acceptedTerms = '', videoContinue = null, watchedSeconds = 0, lastVideoTime = 0;
+    let language = 'th', previewMode = 'normal', portalStep = 'login', loginCopyMethod = 'guest', registerContext = 'freeTrial', pendingIdentityUsername = '', proposal = null, acceptedTerms = '', videoContinue = null, watchedSeconds = 0, lastVideoTime = 0;
     const termsDialog = q('#nt-terms-dialog'), videoDialog = q('#wt-video-ad-dialog'), videoMedia = q('#wt-video-ad-media'), registerDialog = q('#wt-register-dialog');
     const provinceRegions = NT_DATA['thailand-provinces']?.regions || [];
-    const registerFieldKeys = ['registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled'];
+    const freeTrialFieldKeys = ['freeTrialNameEnabled', 'freeTrialGenderEnabled', 'freeTrialThaiCitizenIdEnabled', 'freeTrialPassportEnabled', 'freeTrialBirthdayEnabled', 'freeTrialMobileEnabled', 'freeTrialEmailEnabled', 'freeTrialProvinceEnabled'];
+    const identityFieldKeys = ['identityNameEnabled', 'identityGenderEnabled', 'identityThaiCitizenIdEnabled', 'identityPassportEnabled', 'identityBirthdayEnabled', 'identityMobileEnabled', 'identityEmailEnabled', 'identityProvinceEnabled'];
+    const loginCopyMethods = {
+        guest: { label: 'Free Trial / ลงทะเบียน Free Wi-Fi', key: 'registerOpenButton', fieldLabel: 'ข้อความปุ่มลงทะเบียน Free Wi-Fi', enabled: () => state.guest },
+        member: { label: 'Username / Password', key: 'memberButton', fieldLabel: 'ข้อความปุ่ม Username / Password', enabled: () => state.member },
+        otp: { label: 'SMS / OTP', key: 'otp', fieldLabel: 'ข้อความปุ่ม SMS / OTP', enabled: () => state.otp },
+        thaid: { label: 'thaiD Login', key: 'thaidButton', fieldLabel: 'ข้อความปุ่ม thaiD', enabled: () => state.thaid },
+        social: { label: 'Social Login', key: 'socialLabel', fieldLabel: 'ข้อความหัวข้อ Social Login', enabled: () => state.line || state.google || state.apple }
+    };
     const copyStepFields = {
         login: [
-            ['title', 'หัวข้อหลัก'], ['subtitle', 'ข้อความต้อนรับ'], ['button', 'ข้อความปุ่มรับสิทธิ์'], ['otp', 'ข้อความขอ OTP']
+            ['title', 'หัวข้อหลัก'], ['subtitle', 'ข้อความต้อนรับ']
         ],
-        register: [
-            ['registerTitle', 'หัวข้อ Register'], ['registerSubtitle', 'ข้อความอธิบาย'], ['registerButton', 'ข้อความปุ่มลงทะเบียน'], ['registerBack', 'ข้อความปุ่มกลับ']
+        freeTrial: [
+            ['registerTitle', 'หัวข้อ Free Trial / ลงทะเบียน Free Wi-Fi'], ['registerSubtitle', 'ข้อความอธิบาย Free Trial'], ['registerButton', 'ข้อความปุ่มลงทะเบียน Free Wi-Fi'], ['registerBack', 'ข้อความปุ่มกลับ']
+        ],
+        identity: [
+            ['identityTitle', 'หัวข้อ Register / ยืนยันตัวตนครั้งแรก'], ['identitySubtitle', 'ข้อความอธิบาย Register'], ['identityButton', 'ข้อความปุ่มยืนยันตัวตน'], ['identityBack', 'ข้อความปุ่มกลับ']
         ],
         terms: [
             ['termsTitle', 'หัวข้อ Terms'], ['termsAccept', 'ข้อความปุ่มยอมรับ'], ['termsBack', 'ข้อความปุ่มกลับ']
@@ -34,21 +45,26 @@
             ['errorTitle', 'หัวข้อ Error'], ['error', 'ข้อความ Error'], ['errorBack', 'ข้อความปุ่มกลับ']
         ]
     };
-    function syncRegisterFields() { const panel = q('#wt-register-fields'); if (panel) panel.hidden = !state.registerEnabled; }
+    function syncRegisterFields() {
+        const freeTrialPanel = q('#wt-free-trial-fields'), identityPanel = q('#wt-identity-fields');
+        if (freeTrialPanel) freeTrialPanel.hidden = !state.guest;
+        if (identityPanel) identityPanel.hidden = !state.registerEnabled;
+    }
     function provinceOptions() { return provinceRegions.map(region => '<optgroup label="' + esc(region.name) + '">' + region.provinces.map(name => '<option value="' + esc(name) + '">' + esc(name) + '</option>').join('') + '</optgroup>').join(''); }
-    function registrationMarkup() {
+    function fieldEnabled(context, suffix) { return !!state[(context === 'identity' ? 'identity' : 'freeTrial') + suffix + 'Enabled']; }
+    function registrationMarkup(context = 'freeTrial') {
         const fields = [];
-        if (state.registerNameEnabled) fields.push('<label class="nt-field">Name<input name="name" autocomplete="name"></label>');
-        if (state.registerGenderEnabled) fields.push('<label class="nt-field">Gender<select name="gender"><option value="">เลือก Gender</option><option>ชาย</option><option>หญิง</option><option>ไม่ระบุ</option></select></label>');
-        if (state.registerThaiCitizenIdEnabled) fields.push('<label class="nt-field">Thai Citizen ID<input name="thaiCitizenId" inputmode="numeric" maxlength="13"></label>');
-        if (state.registerPassportEnabled) fields.push('<label class="nt-field">Passport<input name="passport" autocomplete="off"></label>');
-        if (state.registerBirthdayEnabled) fields.push('<label class="nt-field">Birthday<input name="birthday" type="date"></label>');
-        if (state.registerMobileEnabled) fields.push('<label class="nt-field">Mobile Phone<input name="mobile" type="tel" inputmode="tel" autocomplete="tel"></label>');
-        if (state.registerEmailEnabled) fields.push('<label class="nt-field">Email<input name="email" type="email" autocomplete="email"></label>');
-        if (state.registerProvinceEnabled) fields.push('<label class="nt-field">Province<select name="province"><option value="">เลือกจังหวัด</option>' + provinceOptions() + '</select></label>');
+        if (fieldEnabled(context, 'Name')) fields.push('<label class="nt-field">Name<input name="name" autocomplete="name"></label>');
+        if (fieldEnabled(context, 'Gender')) fields.push('<label class="nt-field">Gender<select name="gender"><option value="">เลือก Gender</option><option>ชาย</option><option>หญิง</option><option>ไม่ระบุ</option></select></label>');
+        if (fieldEnabled(context, 'ThaiCitizenId')) fields.push('<label class="nt-field">Thai Citizen ID<input name="thaiCitizenId" inputmode="numeric" maxlength="13"></label>');
+        if (fieldEnabled(context, 'Passport')) fields.push('<label class="nt-field">Passport<input name="passport" autocomplete="off"></label>');
+        if (fieldEnabled(context, 'Birthday')) fields.push('<label class="nt-field">Birthday<input name="birthday" type="date"></label>');
+        if (fieldEnabled(context, 'Mobile')) fields.push('<label class="nt-field">Mobile Phone<input name="mobile" type="tel" inputmode="tel" autocomplete="tel"></label>');
+        if (fieldEnabled(context, 'Email')) fields.push('<label class="nt-field">Email<input name="email" type="email" autocomplete="email"></label>');
+        if (fieldEnabled(context, 'Province')) fields.push('<label class="nt-field">Province<select name="province"><option value="">เลือกจังหวัด</option>' + provinceOptions() + '</select></label>');
         return fields.join('');
     }
-    function openRegister() { q('#wt-register-form-fields').innerHTML = registrationMarkup(); registerDialog.showModal(); }
+    function openRegister(context = 'freeTrial') { q('#wt-register-form-fields').innerHTML = registrationMarkup(context); registerDialog.showModal(); }
     q('#wt-register-cancel').addEventListener('click', () => registerDialog.close());
     q('#wt-register-form').addEventListener('submit', event => { event.preventDefault(); registerDialog.close(); feedback((ui[language] || ui.en).registerDemo, true); });
     const termsSignature = () => JSON.stringify([state.termsVersion, ...languages.flatMap(lang => termFields[lang].map(key => state[key]))]);
@@ -118,32 +134,53 @@
         });
     }
     function setPortalStep(step) {
-        const allowed = ['login', 'register', 'terms', 'success', 'error'];
+        const allowed = ['login', 'freeTrial', 'register', 'terms', 'success', 'error'];
         portalStep = allowed.includes(step) ? step : 'login';
         previewMode = portalStep === 'error' ? 'error' : 'normal';
         preview();
     }
-    function previewRegistrationMarkup() {
+    function identityBucket() {
+        const portalId = NT.currentPortalId || '__preview__';
+        NT.db.identityVerified = NT.db.identityVerified && typeof NT.db.identityVerified === 'object' ? NT.db.identityVerified : {};
+        return NT.db.identityVerified[portalId] || (NT.db.identityVerified[portalId] = {});
+    }
+    function identityVerified(username) { return !!identityBucket()[String(username || '').trim().toLowerCase()]; }
+    function markIdentityVerified(username) { const key = String(username || '').trim().toLowerCase(); if (!key) return; identityBucket()[key] = true; changed(); }
+    function handleMemberLogin(text) {
+        const username = q('#wt-preview-username')?.value.trim() || '';
+        const password = q('#wt-preview-password')?.value || '';
+        if (!username || !password) return feedback(language === 'th' ? 'กรอก Username และ Password' : 'Enter username and password.', false);
+        if (state.registerEnabled && !identityVerified(username)) { registerContext = 'identity'; pendingIdentityUsername = username; return setPortalStep('register'); }
+        proceedAfterAction(text);
+    }
+    function previewRegistrationMarkup(context = registerContext) {
         const fields = [];
-        if (state.registerNameEnabled) fields.push('<input class="nt-public-input" name="name" placeholder="ชื่อ - นามสกุล" autocomplete="name">');
-        if (state.registerGenderEnabled) fields.push('<select class="nt-public-input" name="gender"><option value="">Gender</option><option>ชาย</option><option>หญิง</option><option>ไม่ระบุ</option></select>');
-        if (state.registerThaiCitizenIdEnabled) fields.push('<input class="nt-public-input" name="thaiCitizenId" placeholder="เลขประจำตัวประชาชน 13 หลัก" inputmode="numeric" maxlength="13">');
-        if (state.registerPassportEnabled) fields.push('<input class="nt-public-input" name="passport" placeholder="Passport" autocomplete="off">');
-        if (state.registerBirthdayEnabled) fields.push('<input class="nt-public-input" name="birthday" type="date" aria-label="Birthday">');
-        if (state.registerMobileEnabled) fields.push('<input class="nt-public-input" name="mobile" type="tel" placeholder="เบอร์มือถือ" autocomplete="tel">');
-        if (state.registerEmailEnabled) fields.push('<input class="nt-public-input" name="email" type="email" placeholder="อีเมล" autocomplete="email">');
-        if (state.registerProvinceEnabled) fields.push('<select class="nt-public-input" name="province"><option value="">Province / จังหวัด</option>' + provinceOptions() + '</select>');
-        return fields.length ? fields.join('') : '<p class="nt-help">ยังไม่ได้เลือก Registration Field</p>';
+        if (fieldEnabled(context, 'Name')) fields.push('<input class="nt-public-input" name="name" placeholder="ชื่อ - นามสกุล" autocomplete="name">');
+        if (fieldEnabled(context, 'Gender')) fields.push('<select class="nt-public-input" name="gender"><option value="">Gender</option><option>ชาย</option><option>หญิง</option><option>ไม่ระบุ</option></select>');
+        if (fieldEnabled(context, 'ThaiCitizenId')) fields.push('<input class="nt-public-input" name="thaiCitizenId" placeholder="เลขประจำตัวประชาชน 13 หลัก" inputmode="numeric" maxlength="13">');
+        if (fieldEnabled(context, 'Passport')) fields.push('<input class="nt-public-input" name="passport" placeholder="Passport" autocomplete="off">');
+        if (fieldEnabled(context, 'Birthday')) fields.push('<input class="nt-public-input" name="birthday" type="date" aria-label="Birthday">');
+        if (fieldEnabled(context, 'Mobile')) fields.push('<input class="nt-public-input" name="mobile" type="tel" placeholder="เบอร์มือถือ" autocomplete="tel">');
+        if (fieldEnabled(context, 'Email')) fields.push('<input class="nt-public-input" name="email" type="email" placeholder="อีเมล" autocomplete="email">');
+        if (fieldEnabled(context, 'Province')) fields.push('<select class="nt-public-input" name="province"><option value="">Province / จังหวัด</option>' + provinceOptions() + '</select>');
+        return fields.length ? fields.join('') : '<p class="nt-help">ยังไม่ได้เลือก Field สำหรับ Flow นี้</p>';
     }
     function portalLanguagePicker() {
         const labels = { th: '🇹🇭 ไทย', en: '🇬🇧 EN', zh: '🇨🇳 中文', ja: '🇯🇵 日本語' };
         return '<div class="wt-portal-inline-languages">' + languages.map(lang => '<button type="button" class="nt-public-lang ' + (language === lang ? 'active' : '') + '" data-lang="' + lang + '">' + labels[lang] + '</button>').join('') + '</div>';
     }
     function portalStepMarkup(c, text) {
-        if (portalStep === 'register') {
-            return '<div class="wt-portal-step-card"><h3>' + esc(c.registerTitle || 'ลงทะเบียน') + '</h3><p>' + esc(c.registerSubtitle || '') + '</p><form id="wt-preview-register-form" class="wt-portal-register-inline">' +
-                previewRegistrationMarkup() +
-                '<button type="submit" class="nt-public-button wt-btn-submit">' + esc(c.registerButton || 'ลงทะเบียน') + '</button><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(c.registerBack || 'กลับสู่หน้าหลัก') + '</button></form></div>';
+        if (portalStep === 'freeTrial' || portalStep === 'register') {
+            const identity = portalStep === 'register';
+            const context = identity ? 'identity' : 'freeTrial';
+            registerContext = context;
+            const title = identity ? (c.identityTitle || 'ยืนยันตัวตนครั้งแรก') : (c.registerTitle || 'ลงทะเบียน Free Wi-Fi');
+            const subtitle = identity ? (c.identitySubtitle || 'กรอกข้อมูลยืนยันตัวตนสำหรับ Username นี้ ทำครั้งแรกครั้งเดียว') : (c.registerSubtitle || '');
+            const button = identity ? (c.identityButton || 'ยืนยันตัวตน') : (c.registerButton || 'ลงทะเบียน');
+            const back = identity ? (c.identityBack || 'กลับสู่หน้าหลัก') : (c.registerBack || 'กลับสู่หน้าหลัก');
+            return '<div class="wt-portal-step-card"><h3>' + esc(title) + '</h3><p>' + esc(subtitle) + '</p><form id="wt-preview-register-form" class="wt-portal-register-inline">' +
+                previewRegistrationMarkup(registerContext) +
+                '<button type="submit" class="nt-public-button wt-btn-submit">' + esc(button) + '</button><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(back) + '</button></form></div>';
         }
         if (portalStep === 'terms') {
             return '<div class="wt-portal-step-card"><h3>' + esc(c.termsTitle || text.termsTitle) + '</h3><div class="wt-portal-terms-scroll">' + esc(termBody(language)).replace(/\n/g, '<br>') + '</div>' +
@@ -158,20 +195,19 @@
                 '<pre>{"status":"error","message":"DEMO-001"}</pre><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(c.errorBack || 'กลับสู่หน้าหลัก') + '</button></div>';
         }
         let html = '<div class="wt-portal-step-card wt-login-card"><h3>' + esc(c.title) + '</h3><p>' + esc(c.subtitle) + '</p>';
-        if (state.member) html += '<input aria-label="Username ตัวอย่าง" class="nt-public-input" placeholder="ชื่อผู้ใช้" autocomplete="off"><input aria-label="Password ตัวอย่าง" class="nt-public-input" type="password" placeholder="รหัสผ่าน" autocomplete="off"><button type="button" class="nt-public-button wt-btn-submit" data-public-auth="RADIUS">' + text.signIn + '</button>';
-        if (state.thaid) html += '<button type="button" class="nt-public-button wt-btn-thaid" data-public-auth="thaid"><svg class="wt-thaid-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="2.2" fill="currentColor"/><path d="M5.8 15c.7-1.8 1.8-2.8 2.7-2.8s2 1 2.7 2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 9h3.2M14 12h3.2M14 15h2.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>' + text.continueWith + 'thaiD</span></button>';
+        if (state.member) html += '<input id="wt-preview-username" aria-label="Username ตัวอย่าง" class="nt-public-input" placeholder="ชื่อผู้ใช้" autocomplete="off"><input id="wt-preview-password" aria-label="Password ตัวอย่าง" class="nt-public-input" type="password" placeholder="รหัสผ่าน" autocomplete="off"><button type="button" class="nt-public-button wt-btn-submit" data-public-auth="RADIUS">' + esc(c.memberButton || text.signIn) + '</button>';
+        if (state.thaid) html += '<button type="button" class="nt-public-button wt-btn-thaid" data-public-auth="thaid"><svg class="wt-thaid-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="2.2" fill="currentColor"/><path d="M5.8 15c.7-1.8 1.8-2.8 2.7-2.8s2 1 2.7 2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 9h3.2M14 12h3.2M14 15h2.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>' + esc(c.thaidButton || (text.continueWith + 'thaiD')) + '</span></button>';
         if (state.otp) html += '<input aria-label="เบอร์โทรศัพท์ตัวอย่าง" class="nt-public-input" inputmode="tel" placeholder="' + text.phone + '"><button type="button" class="nt-public-button wt-btn-submit" data-public-auth="OTP">' + esc(c.otp) + '</button>';
-        if (state.registerEnabled) html += '<button type="button" class="nt-public-register-button wt-btn-register" id="nt-public-register">' + esc(text.register) + '</button>';
         const socialProviders = [
             { key: 'line', label: 'LINE', cls: 'line', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-4 3v-3H4z"></path><circle cx="9" cy="10.5" r="1"></circle><circle cx="12" cy="10.5" r="1"></circle><circle cx="15" cy="10.5" r="1"></circle></svg>' },
             { key: 'google', label: 'Google', cls: 'google', icon: '<span aria-hidden="true">G</span>' },
             { key: 'apple', label: 'Apple', cls: 'apple', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-1.7-2-4.7-1.8-6.3.3-2.4 3.1-.8 9 1.7 12 1 1.2 2.2 1 3.2.4.9-.5 2-.5 2.9 0 1 .6 2.2.8 3.3-.6 1.1-1.4 2-3.2 2.3-4.9-2.7-1.1-3.2-4.7-.9-6.1-1.2-.8-3.1-1-4.3-.8z"></path><path d="M13.8 3c.1 1.2-.4 2.4-1.2 3.2-.8.8-1.9 1.3-3 1.2-.1-1.1.4-2.3 1.2-3.1.8-.8 2-1.3 3-1.3z"></path></svg>' }
         ];
         const enabledSocial = socialProviders.filter(provider => state[provider.key]);
-        if (enabledSocial.length) html += '<div class="nt-public-social-wrap"><div class="nt-public-social-label">' + esc(text.socialLogin) + '</div><div class="nt-public-social">' + enabledSocial.map(provider => '<button type="button" class="nt-public-social-button nt-social-' + provider.cls + '" data-public-auth="' + provider.key + '" aria-label="' + esc(provider.label) + ' Login" title="' + esc(provider.label) + ' Login">' + provider.icon + '</button>').join('') + '</div></div>';
+        if (enabledSocial.length) html += '<div class="nt-public-social-wrap"><div class="nt-public-social-label">' + esc(c.socialLabel || text.socialLogin) + '</div><div class="nt-public-social">' + enabledSocial.map(provider => '<button type="button" class="nt-public-social-button nt-social-' + provider.cls + '" data-public-auth="' + provider.key + '" aria-label="' + esc(provider.label) + ' Login" title="' + esc(provider.label) + ' Login">' + provider.icon + '</button>').join('') + '</div></div>';
         if (state.guest) {
             if (state.voucherMode === 'coupon') html += '<input id="nt-public-coupon" class="nt-public-input" aria-label="คูปองตัวอย่าง" placeholder="DEMO-01">';
-            html += '<button type="button" class="nt-public-button wt-btn-submit" id="nt-public-connect">' + esc(c.button) + '</button>';
+            html += '<button type="button" class="nt-public-register-button wt-btn-register" id="nt-public-connect">' + esc(c.registerOpenButton || text.register) + '</button>';
         }
         html += '</div>';
         return html;
@@ -205,15 +241,18 @@
         qa('[data-lang]').forEach(el => el.addEventListener('click', () => { language = el.dataset.lang; q('#nt-edit-language').value = language; fillCopy(); preview(); }));
         qa('[data-preview-back]').forEach(el => el.addEventListener('click', () => setPortalStep(el.dataset.previewBack)));
         qa('.nt-public-button, .nt-public-register-button').forEach(el => el.style.borderRadius = state.shape === 'pill' ? '24px' : state.shape === 'square' ? '0' : '14px');
-        qa('[data-public-auth]').forEach(el => el.addEventListener('click', () => proceedAfterAction(text)));
-        q('#nt-public-register')?.addEventListener('click', () => setPortalStep('register'));
-        q('#wt-preview-register-form')?.addEventListener('submit', event => { event.preventDefault(); if (state.termsEnabled && termBody(language).trim()) setPortalStep('terms'); else setPortalStep('success'); });
+        qa('[data-public-auth]').forEach(el => el.addEventListener('click', () => el.dataset.publicAuth === 'RADIUS' ? handleMemberLogin(text) : proceedAfterAction(text)));
+        q('#wt-preview-register-form')?.addEventListener('submit', event => {
+            event.preventDefault();
+            if (portalStep === 'register') { markIdentityVerified(pendingIdentityUsername); pendingIdentityUsername = ''; }
+            proceedAfterAction(text);
+        });
         q('#wt-preview-terms-accept')?.addEventListener('click', () => { acceptedTerms = termsSignature(); setPortalStep('success'); });
         q('#wt-preview-use-internet')?.addEventListener('click', () => toast('Preview: อนุญาตใช้อินเทอร์เน็ตสำเร็จ (จำลอง)'));
         q('#nt-public-connect')?.addEventListener('click', () => {
             if (state.surveyEnabled) { const result = WiFiQuestionnaireUI.gradePortal(language); if (result.missing.length || !lists.portalQuestionnaireIds.some(id => lists.questionnaires.find(item => item.id === id)?.language === language)) return feedback(text.questionsRequired, false); if (!result.ok) return feedback(text.quizInvalid, false); }
             if (state.guest && state.voucherMode === 'coupon' && !NT.db.coupons.some(coupon => coupon.siteId === NT.currentSite && coupon.code === q('#nt-public-coupon').value.trim())) return feedback(text.coupon, false);
-            proceedAfterAction(text);
+            registerContext = 'freeTrial'; pendingIdentityUsername = ''; setPortalStep('freeTrial');
         });
         if (previewMode === 'error' && portalStep !== 'error') portalStep = 'error';
         syncPortalStepButtons();
@@ -221,10 +260,26 @@
         fillVideoAdOptions();
     }
     function feedback(text, ok) { const el = q('#nt-public-feedback'); if (!el) return; el.className = 'nt-public-message' + (ok ? ' success' : ''); el.textContent = text; }
+    function syncLoginCopyMethodOptions() {
+        const field = q('#wt-copy-login-method-field'), select = q('#wt-copy-login-method');
+        if (!field || !select) return;
+        field.hidden = portalStep !== 'login';
+        if (portalStep !== 'login') return;
+        const enabled = Object.entries(loginCopyMethods).filter(([, def]) => def.enabled());
+        const choices = enabled.length ? enabled : Object.entries(loginCopyMethods);
+        if (!choices.some(([key]) => key === loginCopyMethod)) loginCopyMethod = choices[0][0];
+        select.innerHTML = choices.map(([key, def]) => '<option value="' + key + '">' + esc(def.label) + '</option>').join('');
+        select.value = loginCopyMethod;
+    }
     function syncCopyEditor() {
         const stepSelect = q('#wt-copy-step'); if (!stepSelect) return;
         stepSelect.value = portalStep;
-        const defs = copyStepFields[portalStep] || copyStepFields.login;
+        syncLoginCopyMethodOptions();
+        let defs = portalStep === 'register' ? copyStepFields.identity : (copyStepFields[portalStep] || copyStepFields.login);
+        if (portalStep === 'login') {
+            const method = loginCopyMethods[loginCopyMethod] || loginCopyMethods.guest;
+            defs = [...copyStepFields.login, [method.key, method.fieldLabel]];
+        }
         const lang = q('#nt-edit-language')?.value || language;
         const values = copy[lang] || copy.en;
         for (let i = 1; i <= 4; i++) {
@@ -234,10 +289,11 @@
             if (!def) { input.dataset.copy = ''; input.value = ''; continue; }
             input.dataset.copy = def[0]; label.textContent = def[1]; input.value = values[def[0]] || '';
         }
-        const help = q('#wt-copy-step-help'); if (help) help.textContent = 'กำลังแก้ข้อความหน้า ' + portalStep.charAt(0).toUpperCase() + portalStep.slice(1) + ' · Preview และ Editor ใช้หน้าที่เลือกเดียวกัน';
+        const help = q('#wt-copy-step-help'); if (help) { const stepLabels = { login: 'Login', freeTrial: 'Free Trial', register: 'Register', terms: 'Terms', success: 'Success', error: 'Error' }; help.textContent = 'กำลังแก้ข้อความหน้า ' + (stepLabels[portalStep] || portalStep) + ' · Preview และ Editor ใช้หน้าที่เลือกเดียวกัน'; }
     }
     function fillCopy() { syncCopyEditor(); }
     q('#wt-copy-step')?.addEventListener('change', event => setPortalStep(event.target.value));
+    q('#wt-copy-login-method')?.addEventListener('change', event => { loginCopyMethod = event.target.value; syncCopyEditor(); });
     q('#nt-edit-language').addEventListener('change', () => { language = q('#nt-edit-language').value; fillCopy(); preview(); });
     qa('[data-copy]').forEach(el => el.addEventListener('input', () => { const key = el.dataset.copy; if (!key) return; copy[q('#nt-edit-language').value][key] = el.value; changed(); }));
     qa('[data-asset]').forEach(el => el.addEventListener('change', () => {
@@ -246,7 +302,7 @@
         const reader = new FileReader(); reader.onload = () => { assets[el.dataset.asset] = reader.result; changed(); toast('อัปเดตภาพใน Preview แล้ว'); }; reader.onerror = () => toast('อ่านไฟล์ภาพไม่สำเร็จ'); reader.readAsDataURL(f);
     }));
     qa('[data-clear]').forEach(el => el.addEventListener('click', () => { assets[el.dataset.clear] = ''; q('[data-asset="' + el.dataset.clear + '"]').value = ''; changed(); }));
-    q('#nt-preview-error').addEventListener('click', () => setPortalStep('error')); q('#nt-preview-normal').addEventListener('click', () => setPortalStep('login')); qa('[data-portal-step]').forEach(button => button.addEventListener('click', () => setPortalStep(button.dataset.portalStep)));
+    q('#nt-preview-error').addEventListener('click', () => setPortalStep('error')); q('#nt-preview-normal').addEventListener('click', () => setPortalStep('login')); qa('[data-portal-step]').forEach(button => button.addEventListener('click', () => { if (button.dataset.portalStep === 'freeTrial') { registerContext = 'freeTrial'; pendingIdentityUsername = ''; } if (button.dataset.portalStep === 'register') { registerContext = 'identity'; pendingIdentityUsername = ''; } setPortalStep(button.dataset.portalStep); }));
     q('#nt-mode-ai').addEventListener('click', () => { q('#nt-ai-panel').hidden = false; q('#nt-mode-ai').setAttribute('aria-pressed', 'true'); q('#nt-mode-manual').setAttribute('aria-pressed', 'false'); });
     q('#nt-mode-manual').addEventListener('click', () => { q('#nt-ai-panel').hidden = true; q('#nt-mode-ai').setAttribute('aria-pressed', 'false'); q('#nt-mode-manual').setAttribute('aria-pressed', 'true'); });
     q('#nt-ai-generate').addEventListener('click', () => {
@@ -262,6 +318,6 @@
     q('#nt-device-desktop').addEventListener('click', () => setDevice('desktop')); q('#nt-device-mobile').addEventListener('click', () => setDevice('mobile'));
     q('#nt-preview-expand').addEventListener('click', () => { const expanded = q('.nt-editor-grid').classList.toggle('nt-preview-expanded'); q('#nt-preview-expand').textContent = expanded ? 'ย่อ Preview' : 'ขยาย Preview'; q('#nt-preview-expand').setAttribute('aria-pressed', String(expanded)); });
     NT.onChange(() => { previewMode = portalStep === 'error' ? 'error' : 'normal'; syncRegisterFields(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
-    NT.onLoad(() => { proposal = null; acceptedTerms = ''; portalStep = 'login'; syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
+    NT.onLoad(() => { proposal = null; acceptedTerms = ''; registerContext = 'freeTrial'; pendingIdentityUsername = ''; portalStep = 'login'; syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
     syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); setDevice('desktop');
 })();

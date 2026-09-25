@@ -1,4 +1,4 @@
-Current release: V044
+Current release: V055
 
 Wi-Fi Tools — Desktop & Mobile
 
@@ -163,3 +163,38 @@ V045 — Portal Button Style Groups + thaiD Icon
 - Portal Preview ใช้สีตามประเภทปุ่ม
 - thaiD เพิ่ม Generic ID icon แบบ Inline SVG
 - Config schemaVersion 9 เดิม; สีใหม่มี Migration default
+
+V046 — Sticky Portal Preview + Login Method Copy
+- Preview เลื่อนตามหน้าเมื่อแก้ Banner ยาวบน Desktop
+- ข้อความหน้า Login เลือกแก้ตามวิธี Login และ Preview เปลี่ยนข้อความปุ่มตาม Method
+
+
+
+V047 — Left-side Operational Cards
+- ย้าย ฟังก์ชันการทำงาน / Walled Garden / MAC / Reports ไปคอลัมน์ซ้ายของ Portal Configuration
+- ฝั่งขวาเหลือ Sticky Portal Preview เพียงชุดเดียว จึงไม่บัง Operational controls เมื่อเลื่อนหน้า
+- Regression Tests 176/176 ผ่าน
+
+V048: Free Trial = Register Free Wi-Fi; Register = first-login identity verification after Username/Password.
+
+
+V049 — Separate Free Trial / Register Identity Fields
+- Free Trial Fields และ Register Identity Fields เป็นคนละชุด Config
+- Free Trial ใช้ Field ตอนลงทะเบียน Free Wi-Fi; Register ใช้ Field ตอนยืนยันตัวตนหลัง Username/Password ครั้งแรก
+- schemaVersion 11; schema 10 migrate ค่าเดิมไปเริ่มต้นทั้งสองชุด
+
+V050 — RADIUS & Policy > Account
+- เอาปุ่ม EDIT และ General Edit dialog ออกจาก Account UI
+- Status แก้จาก Account Detail; DISPATCH ใช้ปุ่ม DISPATCH; CREATE/GENERATE/IMPORT/DELETE/EXPORT CSV คงเดิม
+- Regression tests: 184/184 ผ่าน
+
+V051: Portal Preview แยก Free Trial และ Register เป็นคนละ Step; Free Trial ใช้ Free Trial Fields และ Register ใช้ Register Identity Fields.
+
+V052: RADIUS & Policy > Account ปรับปุ่ม DELETE เป็น outlined-danger (ข้อความแดง + ขอบแดง + พื้นขาว) ให้สอดคล้องกับปุ่มลบส่วนอื่น โดยไม่เปลี่ยน logic การลบ
+
+
+V053: RADIUS & Policy > Account เรียงปุ่ม CREATE → GENERATE → IMPORT → EXPORT → DISPATCH → DELETE; GENERATE ใช้ Primary, IMPORT outlined-green, EXPORT outlined-yellow/amber, DISPATCH orange/white และ DELETE คง outlined-danger.
+
+V054: แก้ NAS ปุ่มเพิ่มถูก Disable เมื่อ localStorage เต็ม/ใช้ไม่ได้ โดย fallback ไป sessionStorage ของแท็บ (หรือ RAM ชั่วคราวถ้า Browser Storage ใช้ไม่ได้ทั้งหมด) และยังไม่ส่ง NAS Secret ผ่าน window.name; Regression Tests 195/195 ผ่าน.
+
+V055: Portal Configuration > Login/OTP เรียงวิธีเข้าสู่ระบบใหม่: Username/Password, SMS/OTP, thaiD, Social Login, Register, Free Trial. เปลี่ยนเฉพาะลำดับ UI ไม่เปลี่ยน Logic; Regression Tests 196/196 ผ่าน.

@@ -34,5 +34,5 @@ test('V045 thaiD Portal button has an inline generic ID icon', () => {
 test('V045 older drafts receive new button colors through migration and validation', () => {
   for (const key of ['backButtonColor','backButtonTextColor','registerButtonColor','registerButtonTextColor','thaidButtonColor','thaidButtonTextColor']) assert.match(app, new RegExp(key));
   assert.match(app, /\['buttonColor', 'buttonTextColor', 'backButtonColor'/);
-  assert.equal(config.schemaVersion, 9);
+  assert.equal(config.schemaVersion, 11);
 });

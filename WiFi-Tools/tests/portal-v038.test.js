@@ -14,9 +14,8 @@ test('V038 groups LINE Google Apple under Social Login and keeps thaiD separate'
   assert.match(css, /\.nt-public-social-button/);
 });
 
-test('V038 Free Wi-Fi registration button follows registerEnabled', () => {
-  assert.match(html, /data-bind="registerEnabled">ลงทะเบียน Free Wi-Fi/);
-  assert.match(js, /if \(state\.registerEnabled\) html \+= '[^']*nt-public-register/);
-  assert.match(js, /register: 'ลงทะเบียน Free Wi-Fi'/);
-  assert.match(js, /#nt-public-register/);
+test('V048 Free Trial owns the Free Wi-Fi registration button', () => {
+  assert.match(html, /data-bind="guest" checked>Free Trial · ลงทะเบียน Free Wi-Fi/);
+  assert.match(js, /if \(state\.guest\)[\s\S]*id="nt-public-connect"/);
+  assert.doesNotMatch(js, /if \(state\.registerEnabled\) html \+= '[^']*nt-public-register/);
 });
