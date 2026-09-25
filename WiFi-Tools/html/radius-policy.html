@@ -57,9 +57,11 @@
                                 <div class="wt-account-toolbar">
                                     <span id="radius-account-count" class="nt-help"></span>
                                     <button type="button" class="nt-button primary" id="radius-account-create">CREATE</button>
+                                    <button type="button" class="nt-button" id="radius-account-edit">EDIT</button>
                                     <button type="button" class="nt-button" id="radius-account-generate">GENERATE</button>
                                     <button type="button" class="nt-button" id="radius-account-import">IMPORT</button>
                                     <button type="button" class="nt-button" id="radius-account-dispatch">DISPATCH</button>
+                                    <button type="button" class="nt-button danger" id="radius-account-delete">DELETE</button>
                                     <button type="button" class="nt-button" id="radius-account-export">EXPORT CSV</button>
                                     <input type="file" id="radius-account-import-file" accept=".csv,text/csv" hidden>
                                 </div>
@@ -95,6 +97,22 @@
                                 </div>
                                 <p id="radius-account-create-error" class="wt-nas-error" role="alert" hidden></p>
                                 <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-account-create-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">CREATE</button></div>
+                            </form>
+                        </dialog>
+                        <dialog class="wt-radius-dialog wt-account-dialog" id="radius-account-edit-dialog" aria-labelledby="radius-account-edit-title">
+                            <div class="wt-radius-heading"><h3 id="radius-account-edit-title">EDIT Account</h3><button type="button" class="nt-button" id="radius-account-edit-close">ปิด</button></div>
+                            <p class="nt-help">แก้ Username, Package, Status และ DISPATCH ของ Account ที่เลือก · ข้อมูล Session/วันที่ใช้งานจะคงเดิม</p>
+                            <form id="radius-account-edit-form" novalidate autocomplete="off">
+                                <input type="hidden" id="radius-account-edit-id">
+                                <div class="nt-form-grid">
+                                    <label class="nt-field">Username *<input id="radius-account-edit-username" name="username" maxlength="128" required autocomplete="off"></label>
+                                    <label class="nt-field">Package *<select id="radius-account-edit-package" name="packageId" required></select></label>
+                                    <label class="nt-field">Status<select id="radius-account-edit-status" name="status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select></label>
+                                    <label class="nt-field">DISPATCH<select id="radius-account-edit-dispatch" name="dispatchSiteId"></select></label>
+                                </div>
+                                <p class="nt-help">ถ้าเปลี่ยน Package ระบบจะแสดงเฉพาะ Site ที่ Allow Package ใหม่สำหรับ DISPATCH</p>
+                                <p id="radius-account-edit-error" class="wt-nas-error" role="alert" hidden></p>
+                                <div class="wt-nas-form-actions"><button type="button" class="nt-button" id="radius-account-edit-cancel">ยกเลิก</button><button type="submit" class="nt-button primary">บันทึก Account</button></div>
                             </form>
                         </dialog>
                         <dialog class="wt-radius-dialog wt-account-dialog" id="radius-account-generate-dialog" aria-labelledby="radius-account-generate-title">

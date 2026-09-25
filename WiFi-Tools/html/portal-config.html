@@ -182,9 +182,36 @@
                         accept="image/png,image/jpeg,image/webp" data-asset="background"></label><button
                       class="nt-button nt-compact" type="button" data-clear="background">ล้าง Background</button>
                   </div>
-                  <div class="nt-form-grid"><label class="nt-field">สีปุ่ม<input type="color" data-bind="buttonColor"
-                        value="#086cf0"></label><label class="nt-field">สีข้อความปุ่ม<input type="color"
-                        data-bind="buttonTextColor" value="#ffffff"></label></div>
+                  <div class="wt-button-style-groups" aria-label="ตั้งค่าสีปุ่ม Portal">
+                    <div class="wt-button-style-group">
+                      <h4>Submit</h4>
+                      <p class="nt-help">ปุ่มดำเนินการหลัก เช่น เข้าสู่ระบบ / ยอมรับเงื่อนไข / ใช้อินเทอร์เน็ต</p>
+                      <div class="nt-form-grid"><label class="nt-field">สีปุ่ม<input type="color" data-bind="buttonColor"
+                            value="#086cf0"></label><label class="nt-field">สีข้อความปุ่ม<input type="color"
+                            data-bind="buttonTextColor" value="#ffffff"></label></div>
+                    </div>
+                    <div class="wt-button-style-group">
+                      <h4>Back</h4>
+                      <p class="nt-help">ปุ่มกลับ / ออกจากระบบ</p>
+                      <div class="nt-form-grid"><label class="nt-field">สีปุ่ม<input type="color" data-bind="backButtonColor"
+                            value="#555555"></label><label class="nt-field">สีข้อความปุ่ม<input type="color"
+                            data-bind="backButtonTextColor" value="#ffffff"></label></div>
+                    </div>
+                    <div class="wt-button-style-group">
+                      <h4>ลงทะเบียน Free Wi-Fi</h4>
+                      <p class="nt-help">ปุ่มเปิดหน้าลงทะเบียนจากหน้า Login</p>
+                      <div class="nt-form-grid"><label class="nt-field">สีปุ่ม<input type="color" data-bind="registerButtonColor"
+                            value="#ffffff"></label><label class="nt-field">สีข้อความปุ่ม<input type="color"
+                            data-bind="registerButtonTextColor" value="#086cf0"></label></div>
+                    </div>
+                    <div class="wt-button-style-group">
+                      <h4>เข้าสู่ระบบด้วย thaiD</h4>
+                      <p class="nt-help">ปุ่ม thaiD พร้อม Icon บัตรประจำตัวใน Portal Preview</p>
+                      <div class="nt-form-grid"><label class="nt-field">สีปุ่ม<input type="color" data-bind="thaidButtonColor"
+                            value="#555555"></label><label class="nt-field">สีข้อความปุ่ม<input type="color"
+                            data-bind="thaidButtonTextColor" value="#ffffff"></label></div>
+                    </div>
+                  </div>
                   <label class="nt-field">รูปแบบปุ่ม<select data-bind="shape">
                       <option value="rounded">มุมโค้ง</option>
                       <option value="pill">ทรงแคปซูล</option>
@@ -194,19 +221,27 @@
                 <section class="nt-panel nt-form" id="nt-form-copy" role="tabpanel" aria-labelledby="nt-tab-copy"
                   hidden>
                   <h3>แก้ไขข้อความบน Portal</h3>
-                  <label class="nt-field">ภาษาที่กำลังแก้<select id="nt-edit-language">
-                      <option value="th">ไทย</option>
-                      <option value="en">English</option>
-                      <option value="zh">Chinese</option>
-                      <option value="ja">Japanese</option>
-                    </select></label>
-                  <label class="nt-field">หัวข้อหลัก<input data-copy="title"></label>
-                  <label class="nt-field">ข้อความต้อนรับ<textarea data-copy="subtitle"></textarea></label>
-                  <label class="nt-field">ข้อความปุ่มรับสิทธิ์<input data-copy="button"></label>
-                  <label class="nt-field">ข้อความขอ OTP<input data-copy="otp"></label>
-                  <label class="nt-field">ข้อความเมื่อเกิดข้อผิดพลาด<textarea data-copy="error"></textarea></label>
-                  <div class="nt-help">Production ใช้รหัส Error แยกจากข้อความที่แสดงต่อผู้ใช้
-                    และตั้งคำแปลได้ครบทุกข้อความ</div>
+                  <div class="nt-form-grid">
+                    <label class="nt-field">หน้าที่กำลังแก้<select id="wt-copy-step">
+                        <option value="login">Login</option>
+                        <option value="register">Register</option>
+                        <option value="terms">Terms</option>
+                        <option value="success">Success</option>
+                        <option value="error">Error</option>
+                      </select></label>
+                    <label class="nt-field">ภาษาที่กำลังแก้<select id="nt-edit-language">
+                        <option value="th">ไทย</option>
+                        <option value="en">English</option>
+                        <option value="zh">Chinese</option>
+                        <option value="ja">Japanese</option>
+                      </select></label>
+                  </div>
+                  <p class="nt-help" id="wt-copy-step-help">ข้อความด้านล่างจะเปลี่ยนตามหน้า Portal Preview ที่เลือก</p>
+                  <label class="nt-field" id="wt-copy-field-1"><span id="wt-copy-label-1">หัวข้อหลัก</span><input id="wt-copy-input-1" data-copy="title"></label>
+                  <label class="nt-field" id="wt-copy-field-2"><span id="wt-copy-label-2">ข้อความต้อนรับ</span><textarea id="wt-copy-input-2" data-copy="subtitle"></textarea></label>
+                  <label class="nt-field" id="wt-copy-field-3"><span id="wt-copy-label-3">ข้อความปุ่มหลัก</span><input id="wt-copy-input-3" data-copy="button"></label>
+                  <label class="nt-field" id="wt-copy-field-4"><span id="wt-copy-label-4">ข้อความปุ่มรอง</span><input id="wt-copy-input-4" data-copy="otp"></label>
+                  <div class="nt-help">เมื่อเลือก Login / Register / Terms / Success / Error ใน Preview ชุดข้อความที่แก้จะเปลี่ยนตามหน้านั้นโดยอัตโนมัติ · เนื้อหา Terms ฉบับเต็มยังแก้ที่แท็บ Quiz &amp; เงื่อนไข</div>
                 </section>
                 <section class="nt-panel nt-form" id="nt-form-auth" role="tabpanel" aria-labelledby="nt-tab-auth"
                   hidden>
@@ -310,6 +345,13 @@
                   <h3 class=" page-style-3">ตัวอย่างหน้า Portal</h3><span class="nt-badge neutral"
                     id="nt-preview-device-label">Desktop</span>
                 </div>
+                <div class="wt-portal-flow-nav" aria-label="ขั้นตอน Portal Preview">
+                  <button type="button" class="nt-button nt-compact active" data-portal-step="login">Login</button>
+                  <button type="button" class="nt-button nt-compact" data-portal-step="register">Register</button>
+                  <button type="button" class="nt-button nt-compact" data-portal-step="terms">Terms</button>
+                  <button type="button" class="nt-button nt-compact" data-portal-step="success">Success</button>
+                  <button type="button" class="nt-button nt-compact" data-portal-step="error">Error</button>
+                </div>
                 <div class="nt-device-selector" aria-label="อุปกรณ์แสดงตัวอย่าง"><button type="button"
                     class="nt-button nt-compact" id="nt-device-desktop" aria-pressed="true"><svg class="nt-offline-icon"
                       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none"
@@ -335,11 +377,15 @@
                 </div>
                 <div class="nt-phone nt-desktop-screen" id="nt-phone">
                   <div class="nt-public-hero" id="nt-hero">
+                    <div class="wt-portal-language-pill" id="wt-portal-language-pill">🇹🇭 ไทย ▾</div>
                     <div class="nt-public-logo" id="nt-wordmark">Wi-Fi</div><img class="nt-public-logo-img"
                       id="nt-logo-image" alt="Logo ตัวอย่าง Portal" hidden><small id="nt-hero-label">Free WiFi</small>
                     <section id="wt-banner-b01" class="wt-banner-preview" aria-label="Banner b01" hidden></section>
                   </div>
                   <div class="wt-public-form"><section id="wt-banner-login" class="wt-banner-preview" aria-label="Banner login" hidden></section><div class="nt-public-content" id="nt-public-content"></div><section id="wt-banner-b02" class="wt-banner-preview" aria-label="Banner b02" hidden></section></div>
+                  <nav class="wt-portal-footer-nav" aria-label="Portal footer">
+                    <span>▤<small>วิธีการใช้งาน</small></span><span>🛠<small>การแก้ไขปัญหา</small></span><span>⌖<small>พื้นที่ให้บริการ</small></span>
+                  </nav>
                 </div>
                 <div class="nt-status-line"><svg class="nt-offline-icon" xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -375,7 +421,7 @@
           </section>
         </section>
         <footer class="nt-footer" id="wt-portal-builder-footer"><span id="nt-save-help" class="nt-help"></span><button class="nt-button primary"
-            type="button" id="nt-save">บันทึก Draft</button><button class="nt-button primary" type="button"
+            type="button" id="nt-save">ตรวจสอบ / สร้าง Version</button><button class="nt-button primary" type="button"
             id="nt-review">ตรวจความพร้อม</button></footer>
         <div id="nt-toast" class="nt-toast" aria-live="polite"></div>
         <div id="nt-review-panel" class="nt-panel" hidden>

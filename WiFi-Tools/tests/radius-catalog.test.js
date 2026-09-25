@@ -11,7 +11,7 @@ test('Site and Package CRUD controls exist in the V014 HTML, including responsiv
     for (const id of ['radius-site-add', 'radius-site-dialog', 'radius-site-form', 'radius-site-package-choices', 'radius-site-error', 'radius-package-add', 'radius-package-edit', 'radius-package-delete', 'radius-package-dialog', 'radius-package-form', 'radius-package-error']) assert.match(html, new RegExp('id="' + id + '"'));
     for (const key of model.packageFields) assert.match(html, new RegExp('name="' + key + '"'));
     for (const attr of ['Name', 'VLAN ID', 'Location', 'Concurrent', 'Description', 'Allow Package']) assert.match(html, new RegExp(attr));
-    assert.match(js, /NT\.can\('system'\)/); assert.match(js, /localStorage\.setItem/);
+    assert.match(js, /NT\.can\('system'\)/); assert.match(js, /NT\.setRadiusCatalog/); assert.doesNotMatch(js, /localStorage\.setItem\(legacyKey/);
 });
 test('Site CRUD add, rename, change Allow Package, remove and preserve initial data', () => {
     const base = original(), copy = model.upsertSite(base, { ...newSite, allowPackages: [{ packageId: 'pkg-1', prefix: 'STF', limit: null }] });

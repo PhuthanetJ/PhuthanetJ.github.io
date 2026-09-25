@@ -17,8 +17,8 @@ test('V039 Register exposes configurable Free Wi-Fi registration fields', () => 
   assert.match(js, /function registrationMarkup\(\)/);
 });
 
-test('V039 Province dropdown data contains 77 unique provinces across six project regions', () => {
-  assert.equal(provinces.regions.length, 6);
+test('Province dropdown data contains 77 unique provinces across seven geographic groups', () => {
+  assert.equal(provinces.regions.length, 7);
   const names = provinces.regions.flatMap(region => region.provinces);
   assert.equal(names.length, 77);
   assert.equal(new Set(names).size, 77);

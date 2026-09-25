@@ -13,10 +13,27 @@
         th: ['termsTh', 'termsBodyTh'], en: ['termsEn', 'termsBodyEn'],
         zh: ['termsZh', 'termsBodyZh'], ja: ['termsJa', 'termsBodyJa']
     };
-    let language = 'th', previewMode = 'normal', proposal = null, acceptedTerms = '', videoContinue = null, watchedSeconds = 0, lastVideoTime = 0;
+    let language = 'th', previewMode = 'normal', portalStep = 'login', proposal = null, acceptedTerms = '', videoContinue = null, watchedSeconds = 0, lastVideoTime = 0;
     const termsDialog = q('#nt-terms-dialog'), videoDialog = q('#wt-video-ad-dialog'), videoMedia = q('#wt-video-ad-media'), registerDialog = q('#wt-register-dialog');
     const provinceRegions = NT_DATA['thailand-provinces']?.regions || [];
     const registerFieldKeys = ['registerNameEnabled', 'registerGenderEnabled', 'registerThaiCitizenIdEnabled', 'registerPassportEnabled', 'registerBirthdayEnabled', 'registerMobileEnabled', 'registerEmailEnabled', 'registerProvinceEnabled'];
+    const copyStepFields = {
+        login: [
+            ['title', 'หัวข้อหลัก'], ['subtitle', 'ข้อความต้อนรับ'], ['button', 'ข้อความปุ่มรับสิทธิ์'], ['otp', 'ข้อความขอ OTP']
+        ],
+        register: [
+            ['registerTitle', 'หัวข้อ Register'], ['registerSubtitle', 'ข้อความอธิบาย'], ['registerButton', 'ข้อความปุ่มลงทะเบียน'], ['registerBack', 'ข้อความปุ่มกลับ']
+        ],
+        terms: [
+            ['termsTitle', 'หัวข้อ Terms'], ['termsAccept', 'ข้อความปุ่มยอมรับ'], ['termsBack', 'ข้อความปุ่มกลับ']
+        ],
+        success: [
+            ['successTitle', 'หัวข้อ Success'], ['successSubtitle', 'ข้อความ Success'], ['successButton', 'ข้อความปุ่มใช้อินเทอร์เน็ต'], ['successLogout', 'ข้อความปุ่มออกจากระบบ']
+        ],
+        error: [
+            ['errorTitle', 'หัวข้อ Error'], ['error', 'ข้อความ Error'], ['errorBack', 'ข้อความปุ่มกลับ']
+        ]
+    };
     function syncRegisterFields() { const panel = q('#wt-register-fields'); if (panel) panel.hidden = !state.registerEnabled; }
     function provinceOptions() { return provinceRegions.map(region => '<optgroup label="' + esc(region.name) + '">' + region.provinces.map(name => '<option value="' + esc(name) + '">' + esc(name) + '</option>').join('') + '</optgroup>').join(''); }
     function registrationMarkup() {
@@ -93,21 +110,58 @@
     q('#wt-video-ad-continue').addEventListener('click', () => { if (q('#wt-video-ad-continue').hidden) return; const done = videoContinue; closeVideoAd(); done?.(); });
     q('#wt-video-ad-preview').addEventListener('click', () => openVideoAd(() => toast('ทดลอง Video Ads เสร็จแล้ว')));
 
-    function approve(text) { feedback(text.approved + state.hours + text.approvedTail, true); }
-    function preview() {
-        const c = copy[language] || copy.en, text = ui[language] || ui.en;
-        q('#nt-phone').style.setProperty('--portal-button', state.buttonColor); q('#nt-phone').style.setProperty('--portal-text', state.buttonTextColor);
-        WiFiBannerUI.preview(language); q('#nt-phone').style.backgroundImage = assets.background ? 'url("' + assets.background + '")' : ''; q('#nt-phone').style.backgroundSize = 'cover';
-        q('#nt-hero-label').textContent = state.name; q('#nt-logo-image').hidden = !assets.logo; q('#nt-wordmark').hidden = !!assets.logo;
-        if (assets.logo) q('#nt-logo-image').src = assets.logo; else q('#nt-logo-image').removeAttribute('src');
-        q('#nt-path-preview').textContent = 'https://portal.example' + state.path; q('#nt-browser-url').textContent = 'portal.example' + state.path;
-        let html = '<h3>' + esc(c.title) + '</h3><p>' + esc(c.subtitle) + '</p>';
-        if (state.videoEnabled) { const video = selectedVideoBanner(); html += '<div class="nt-public-message success">Video Ads · ' + esc(video?.name || 'ยังไม่ได้เลือก Video Banner') + ' · ' + esc(state.videoSeconds) + 's</div>'; }
-        if (state.surveyEnabled) html += WiFiQuestionnaireUI.portalMarkup(language);
-        if (state.member) html += '<input aria-label="Username ตัวอย่าง" class="nt-public-input" placeholder="Username" autocomplete="off"><input aria-label="Password ตัวอย่าง" class="nt-public-input" type="password" placeholder="Password" autocomplete="off"><button type="button" class="nt-public-button" data-public-auth="RADIUS">' + text.signIn + '</button>';
-        if (state.thaid) html += '<button type="button" class="nt-public-button" data-public-auth="thaid">' + text.continueWith + 'thaiD</button>';
-        if (state.otp) html += '<input aria-label="เบอร์โทรศัพท์ตัวอย่าง" class="nt-public-input" inputmode="tel" placeholder="' + text.phone + '"><button type="button" class="nt-public-button" data-public-auth="OTP">' + esc(c.otp) + '</button>';
-        if (state.registerEnabled) html += '<button type="button" class="nt-public-register-button" id="nt-public-register">' + esc(text.register) + '</button>';
+    function syncPortalStepButtons() {
+        qa('[data-portal-step]').forEach(button => {
+            const active = button.dataset.portalStep === portalStep;
+            button.classList.toggle('active', active);
+            button.setAttribute('aria-pressed', String(active));
+        });
+    }
+    function setPortalStep(step) {
+        const allowed = ['login', 'register', 'terms', 'success', 'error'];
+        portalStep = allowed.includes(step) ? step : 'login';
+        previewMode = portalStep === 'error' ? 'error' : 'normal';
+        preview();
+    }
+    function previewRegistrationMarkup() {
+        const fields = [];
+        if (state.registerNameEnabled) fields.push('<input class="nt-public-input" name="name" placeholder="ชื่อ - นามสกุล" autocomplete="name">');
+        if (state.registerGenderEnabled) fields.push('<select class="nt-public-input" name="gender"><option value="">Gender</option><option>ชาย</option><option>หญิง</option><option>ไม่ระบุ</option></select>');
+        if (state.registerThaiCitizenIdEnabled) fields.push('<input class="nt-public-input" name="thaiCitizenId" placeholder="เลขประจำตัวประชาชน 13 หลัก" inputmode="numeric" maxlength="13">');
+        if (state.registerPassportEnabled) fields.push('<input class="nt-public-input" name="passport" placeholder="Passport" autocomplete="off">');
+        if (state.registerBirthdayEnabled) fields.push('<input class="nt-public-input" name="birthday" type="date" aria-label="Birthday">');
+        if (state.registerMobileEnabled) fields.push('<input class="nt-public-input" name="mobile" type="tel" placeholder="เบอร์มือถือ" autocomplete="tel">');
+        if (state.registerEmailEnabled) fields.push('<input class="nt-public-input" name="email" type="email" placeholder="อีเมล" autocomplete="email">');
+        if (state.registerProvinceEnabled) fields.push('<select class="nt-public-input" name="province"><option value="">Province / จังหวัด</option>' + provinceOptions() + '</select>');
+        return fields.length ? fields.join('') : '<p class="nt-help">ยังไม่ได้เลือก Registration Field</p>';
+    }
+    function portalLanguagePicker() {
+        const labels = { th: '🇹🇭 ไทย', en: '🇬🇧 EN', zh: '🇨🇳 中文', ja: '🇯🇵 日本語' };
+        return '<div class="wt-portal-inline-languages">' + languages.map(lang => '<button type="button" class="nt-public-lang ' + (language === lang ? 'active' : '') + '" data-lang="' + lang + '">' + labels[lang] + '</button>').join('') + '</div>';
+    }
+    function portalStepMarkup(c, text) {
+        if (portalStep === 'register') {
+            return '<div class="wt-portal-step-card"><h3>' + esc(c.registerTitle || 'ลงทะเบียน') + '</h3><p>' + esc(c.registerSubtitle || '') + '</p><form id="wt-preview-register-form" class="wt-portal-register-inline">' +
+                previewRegistrationMarkup() +
+                '<button type="submit" class="nt-public-button wt-btn-submit">' + esc(c.registerButton || 'ลงทะเบียน') + '</button><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(c.registerBack || 'กลับสู่หน้าหลัก') + '</button></form></div>';
+        }
+        if (portalStep === 'terms') {
+            return '<div class="wt-portal-step-card"><h3>' + esc(c.termsTitle || text.termsTitle) + '</h3><div class="wt-portal-terms-scroll">' + esc(termBody(language)).replace(/\n/g, '<br>') + '</div>' +
+                '<button type="button" class="nt-public-button wt-btn-submit" id="wt-preview-terms-accept">' + esc(c.termsAccept || text.accept) + '</button><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(c.termsBack || 'กลับสู่หน้าหลัก') + '</button></div>';
+        }
+        if (portalStep === 'success') {
+            return '<div class="wt-portal-step-card wt-portal-result success"><div class="wt-result-icon">✓</div><h3>' + esc(c.successTitle || 'เข้าสู่ระบบสำเร็จ') + '</h3><p>' + esc(c.successSubtitle || ('ขอต้อนรับสู่ ' + (state.name || 'Free WiFi'))) + '</p>' +
+                '<button type="button" class="nt-public-button wt-btn-submit" id="wt-preview-use-internet">' + esc(c.successButton || 'ใช้อินเทอร์เน็ต') + '</button><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(c.successLogout || 'ออกจากระบบ') + '</button></div>';
+        }
+        if (portalStep === 'error') {
+            return '<div class="wt-portal-step-card wt-portal-result error"><div class="wt-result-icon">!</div><h3>' + esc(c.errorTitle || 'ขออภัยระบบไม่สามารถดำเนินการต่อได้') + '</h3><p>' + esc(c.error || 'Unable to continue') + '</p>' +
+                '<pre>{"status":"error","message":"DEMO-001"}</pre><button type="button" class="nt-public-button wt-secondary wt-btn-back" data-preview-back="login">' + esc(c.errorBack || 'กลับสู่หน้าหลัก') + '</button></div>';
+        }
+        let html = '<div class="wt-portal-step-card wt-login-card"><h3>' + esc(c.title) + '</h3><p>' + esc(c.subtitle) + '</p>';
+        if (state.member) html += '<input aria-label="Username ตัวอย่าง" class="nt-public-input" placeholder="ชื่อผู้ใช้" autocomplete="off"><input aria-label="Password ตัวอย่าง" class="nt-public-input" type="password" placeholder="รหัสผ่าน" autocomplete="off"><button type="button" class="nt-public-button wt-btn-submit" data-public-auth="RADIUS">' + text.signIn + '</button>';
+        if (state.thaid) html += '<button type="button" class="nt-public-button wt-btn-thaid" data-public-auth="thaid"><svg class="wt-thaid-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="10" r="2.2" fill="currentColor"/><path d="M5.8 15c.7-1.8 1.8-2.8 2.7-2.8s2 1 2.7 2.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 9h3.2M14 12h3.2M14 15h2.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>' + text.continueWith + 'thaiD</span></button>';
+        if (state.otp) html += '<input aria-label="เบอร์โทรศัพท์ตัวอย่าง" class="nt-public-input" inputmode="tel" placeholder="' + text.phone + '"><button type="button" class="nt-public-button wt-btn-submit" data-public-auth="OTP">' + esc(c.otp) + '</button>';
+        if (state.registerEnabled) html += '<button type="button" class="nt-public-register-button wt-btn-register" id="nt-public-register">' + esc(text.register) + '</button>';
         const socialProviders = [
             { key: 'line', label: 'LINE', cls: 'line', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v10H9l-4 3v-3H4z"></path><circle cx="9" cy="10.5" r="1"></circle><circle cx="12" cy="10.5" r="1"></circle><circle cx="15" cy="10.5" r="1"></circle></svg>' },
             { key: 'google', label: 'Google', cls: 'google', icon: '<span aria-hidden="true">G</span>' },
@@ -115,37 +169,84 @@
         ];
         const enabledSocial = socialProviders.filter(provider => state[provider.key]);
         if (enabledSocial.length) html += '<div class="nt-public-social-wrap"><div class="nt-public-social-label">' + esc(text.socialLogin) + '</div><div class="nt-public-social">' + enabledSocial.map(provider => '<button type="button" class="nt-public-social-button nt-social-' + provider.cls + '" data-public-auth="' + provider.key + '" aria-label="' + esc(provider.label) + ' Login" title="' + esc(provider.label) + ' Login">' + provider.icon + '</button>').join('') + '</div></div>';
-        if (state.termsEnabled) html += '<div class="nt-public-terms"><input type="checkbox" id="nt-public-accept" aria-labelledby="nt-public-terms-link"' + (acceptedTerms === termsSignature() ? ' checked' : '') + '><button type="button" id="nt-public-terms-link" class="wt-terms-link" aria-haspopup="dialog" aria-controls="nt-terms-dialog">' + esc(termLink(language)) + '</button></div>';
-        if (state.guest) { if (state.voucherMode === 'coupon') html += '<input id="nt-public-coupon" class="nt-public-input" aria-label="คูปองตัวอย่าง" placeholder="DEMO-01">'; html += '<button type="button" class="nt-public-button" id="nt-public-connect">' + esc(c.button) + '</button><p>' + esc(state.hours) + ' ' + text.hours + '</p>'; }
-        html += '<div id="nt-public-feedback" role="status"></div><div>' + languages.map(lang => '<button type="button" class="nt-public-lang ' + (language === lang ? 'active' : '') + '" data-lang="' + lang + '">' + languageLabels[lang] + '</button>').join('') + '</div>';
+        if (state.guest) {
+            if (state.voucherMode === 'coupon') html += '<input id="nt-public-coupon" class="nt-public-input" aria-label="คูปองตัวอย่าง" placeholder="DEMO-01">';
+            html += '<button type="button" class="nt-public-button wt-btn-submit" id="nt-public-connect">' + esc(c.button) + '</button>';
+        }
+        html += '</div>';
+        return html;
+    }
+    function proceedAfterAction(text) {
+        if (state.videoEnabled) return openVideoAd(() => proceedAfterActionNoVideo(text));
+        proceedAfterActionNoVideo(text);
+    }
+    function proceedAfterActionNoVideo(text) {
+        if (state.termsEnabled && termBody(language).trim()) return setPortalStep('terms');
+        setPortalStep('success');
+    }
+    function approve(text) { setPortalStep('success'); }
+    function preview() {
+        const c = copy[language] || copy.en, text = ui[language] || ui.en;
+        q('#nt-phone').style.setProperty('--portal-button', state.buttonColor); q('#nt-phone').style.setProperty('--portal-text', state.buttonTextColor); q('#nt-phone').style.setProperty('--portal-submit-button', state.buttonColor); q('#nt-phone').style.setProperty('--portal-submit-text', state.buttonTextColor); q('#nt-phone').style.setProperty('--portal-back-button', state.backButtonColor); q('#nt-phone').style.setProperty('--portal-back-text', state.backButtonTextColor); q('#nt-phone').style.setProperty('--portal-register-button', state.registerButtonColor); q('#nt-phone').style.setProperty('--portal-register-text', state.registerButtonTextColor); q('#nt-phone').style.setProperty('--portal-thaid-button', state.thaidButtonColor); q('#nt-phone').style.setProperty('--portal-thaid-text', state.thaidButtonTextColor);
+        WiFiBannerUI.preview(language);
+        q('#nt-phone').style.backgroundImage = assets.background ? 'url("' + assets.background + '")' : 'none';
+        q('#nt-phone').style.backgroundSize = 'cover';
+        q('#nt-phone').style.backgroundPosition = 'center center';
+        q('#nt-phone').style.backgroundRepeat = 'no-repeat';
+        q('#nt-hero-label').textContent = state.name; q('#nt-logo-image').hidden = !assets.logo; q('#nt-wordmark').hidden = !!assets.logo;
+        if (assets.logo) q('#nt-logo-image').src = assets.logo; else q('#nt-logo-image').removeAttribute('src');
+        q('#nt-path-preview').textContent = 'https://portal.example' + state.path; q('#nt-browser-url').textContent = 'portal.example' + state.path;
+        q('#wt-portal-language-pill').textContent = ({ th: '🇹🇭 ไทย ▾', en: '🇬🇧 EN ▾', zh: '🇨🇳 中文 ▾', ja: '🇯🇵 日本語 ▾' })[language];
+        let html = '';
+        if (state.videoEnabled && portalStep === 'login') { const video = selectedVideoBanner(); html += '<div class="nt-public-message success">Video Ads · ' + esc(video?.name || 'ยังไม่ได้เลือก Video Banner') + ' · ' + esc(state.videoSeconds) + 's</div>'; }
+        if (state.surveyEnabled && portalStep === 'login') html += WiFiQuestionnaireUI.portalMarkup(language);
+        html += portalStepMarkup(c, text) + portalLanguagePicker() + '<div id="nt-public-feedback" role="status"></div>';
         q('#nt-public-content').innerHTML = html;
-        q('#nt-public-terms-link')?.addEventListener('click', openTerms);
-        q('#nt-public-accept')?.addEventListener('click', event => { if (event.currentTarget.checked) { event.preventDefault(); openTerms(); } else acceptedTerms = ''; });
-        qa('.nt-public-button, .nt-public-register-button').forEach(el => el.style.borderRadius = state.shape === 'pill' ? '24px' : state.shape === 'square' ? '0' : '7px');
         qa('[data-lang]').forEach(el => el.addEventListener('click', () => { language = el.dataset.lang; q('#nt-edit-language').value = language; fillCopy(); preview(); }));
-        qa('[data-public-auth]').forEach(el => el.addEventListener('click', () => feedback(text.providerDemo + el.dataset.publicAuth, false)));
-        q('#nt-public-register')?.addEventListener('click', openRegister);
+        qa('[data-preview-back]').forEach(el => el.addEventListener('click', () => setPortalStep(el.dataset.previewBack)));
+        qa('.nt-public-button, .nt-public-register-button').forEach(el => el.style.borderRadius = state.shape === 'pill' ? '24px' : state.shape === 'square' ? '0' : '14px');
+        qa('[data-public-auth]').forEach(el => el.addEventListener('click', () => proceedAfterAction(text)));
+        q('#nt-public-register')?.addEventListener('click', () => setPortalStep('register'));
+        q('#wt-preview-register-form')?.addEventListener('submit', event => { event.preventDefault(); if (state.termsEnabled && termBody(language).trim()) setPortalStep('terms'); else setPortalStep('success'); });
+        q('#wt-preview-terms-accept')?.addEventListener('click', () => { acceptedTerms = termsSignature(); setPortalStep('success'); });
+        q('#wt-preview-use-internet')?.addEventListener('click', () => toast('Preview: อนุญาตใช้อินเทอร์เน็ตสำเร็จ (จำลอง)'));
         q('#nt-public-connect')?.addEventListener('click', () => {
-            if (state.termsEnabled && (acceptedTerms !== termsSignature() || !q('#nt-public-accept').checked)) return feedback(text.termsRequired, false);
             if (state.surveyEnabled) { const result = WiFiQuestionnaireUI.gradePortal(language); if (result.missing.length || !lists.portalQuestionnaireIds.some(id => lists.questionnaires.find(item => item.id === id)?.language === language)) return feedback(text.questionsRequired, false); if (!result.ok) return feedback(text.quizInvalid, false); }
             if (state.guest && state.voucherMode === 'coupon' && !NT.db.coupons.some(coupon => coupon.siteId === NT.currentSite && coupon.code === q('#nt-public-coupon').value.trim())) return feedback(text.coupon, false);
-            if (state.videoEnabled) return openVideoAd(() => approve(text));
-            approve(text);
+            proceedAfterAction(text);
         });
-        if (previewMode === 'error') feedback(c.error + ' · DEMO-001', false);
+        if (previewMode === 'error' && portalStep !== 'error') portalStep = 'error';
+        syncPortalStepButtons();
+        syncCopyEditor();
         fillVideoAdOptions();
     }
     function feedback(text, ok) { const el = q('#nt-public-feedback'); if (!el) return; el.className = 'nt-public-message' + (ok ? ' success' : ''); el.textContent = text; }
-    function fillCopy() { qa('[data-copy]').forEach(el => el.value = (copy[q('#nt-edit-language').value] || copy.en)[el.dataset.copy]); }
+    function syncCopyEditor() {
+        const stepSelect = q('#wt-copy-step'); if (!stepSelect) return;
+        stepSelect.value = portalStep;
+        const defs = copyStepFields[portalStep] || copyStepFields.login;
+        const lang = q('#nt-edit-language')?.value || language;
+        const values = copy[lang] || copy.en;
+        for (let i = 1; i <= 4; i++) {
+            const wrap = q('#wt-copy-field-' + i), label = q('#wt-copy-label-' + i), input = q('#wt-copy-input-' + i), def = defs[i - 1];
+            if (!wrap || !label || !input) continue;
+            wrap.hidden = !def;
+            if (!def) { input.dataset.copy = ''; input.value = ''; continue; }
+            input.dataset.copy = def[0]; label.textContent = def[1]; input.value = values[def[0]] || '';
+        }
+        const help = q('#wt-copy-step-help'); if (help) help.textContent = 'กำลังแก้ข้อความหน้า ' + portalStep.charAt(0).toUpperCase() + portalStep.slice(1) + ' · Preview และ Editor ใช้หน้าที่เลือกเดียวกัน';
+    }
+    function fillCopy() { syncCopyEditor(); }
+    q('#wt-copy-step')?.addEventListener('change', event => setPortalStep(event.target.value));
     q('#nt-edit-language').addEventListener('change', () => { language = q('#nt-edit-language').value; fillCopy(); preview(); });
-    qa('[data-copy]').forEach(el => el.addEventListener('input', () => { copy[q('#nt-edit-language').value][el.dataset.copy] = el.value; changed(); }));
+    qa('[data-copy]').forEach(el => el.addEventListener('input', () => { const key = el.dataset.copy; if (!key) return; copy[q('#nt-edit-language').value][key] = el.value; changed(); }));
     qa('[data-asset]').forEach(el => el.addEventListener('change', () => {
         const f = el.files && el.files[0]; if (!f) return;
         if (!['image/png', 'image/jpeg', 'image/webp'].includes(f.type) || f.size > 3 * 1024 * 1024) { toast('เลือก PNG / JPG / WebP ขนาดไม่เกิน 3 MB'); el.value = ''; return; }
         const reader = new FileReader(); reader.onload = () => { assets[el.dataset.asset] = reader.result; changed(); toast('อัปเดตภาพใน Preview แล้ว'); }; reader.onerror = () => toast('อ่านไฟล์ภาพไม่สำเร็จ'); reader.readAsDataURL(f);
     }));
     qa('[data-clear]').forEach(el => el.addEventListener('click', () => { assets[el.dataset.clear] = ''; q('[data-asset="' + el.dataset.clear + '"]').value = ''; changed(); }));
-    q('#nt-preview-error').addEventListener('click', () => { previewMode = 'error'; preview(); }); q('#nt-preview-normal').addEventListener('click', () => { previewMode = 'normal'; preview(); });
+    q('#nt-preview-error').addEventListener('click', () => setPortalStep('error')); q('#nt-preview-normal').addEventListener('click', () => setPortalStep('login')); qa('[data-portal-step]').forEach(button => button.addEventListener('click', () => setPortalStep(button.dataset.portalStep)));
     q('#nt-mode-ai').addEventListener('click', () => { q('#nt-ai-panel').hidden = false; q('#nt-mode-ai').setAttribute('aria-pressed', 'true'); q('#nt-mode-manual').setAttribute('aria-pressed', 'false'); });
     q('#nt-mode-manual').addEventListener('click', () => { q('#nt-ai-panel').hidden = true; q('#nt-mode-ai').setAttribute('aria-pressed', 'false'); q('#nt-mode-manual').setAttribute('aria-pressed', 'true'); });
     q('#nt-ai-generate').addEventListener('click', () => {
@@ -160,7 +261,7 @@
     function setDevice(mode) { const desktop = mode === 'desktop'; q('#nt-phone').classList.toggle('nt-desktop-screen', desktop); q('#nt-phone').classList.toggle('nt-mobile-screen', !desktop); q('.nt-preview-wrap').classList.toggle('nt-mobile-mode', !desktop); q('#nt-device-desktop').setAttribute('aria-pressed', String(desktop)); q('#nt-device-mobile').setAttribute('aria-pressed', String(!desktop)); q('#nt-preview-device-label').textContent = desktop ? 'Desktop' : 'Mobile'; }
     q('#nt-device-desktop').addEventListener('click', () => setDevice('desktop')); q('#nt-device-mobile').addEventListener('click', () => setDevice('mobile'));
     q('#nt-preview-expand').addEventListener('click', () => { const expanded = q('.nt-editor-grid').classList.toggle('nt-preview-expanded'); q('#nt-preview-expand').textContent = expanded ? 'ย่อ Preview' : 'ขยาย Preview'; q('#nt-preview-expand').setAttribute('aria-pressed', String(expanded)); });
-    NT.onChange(() => { previewMode = 'normal'; syncRegisterFields(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
-    NT.onLoad(() => { proposal = null; acceptedTerms = ''; syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
+    NT.onChange(() => { previewMode = portalStep === 'error' ? 'error' : 'normal'; syncRegisterFields(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
+    NT.onLoad(() => { proposal = null; acceptedTerms = ''; portalStep = 'login'; syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); });
     syncRegisterFields(); fillCopy(); fillTermsEditor(); fillVideoAdOptions(); preview(); setDevice('desktop');
 })();

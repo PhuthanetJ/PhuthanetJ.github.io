@@ -53,10 +53,15 @@ function ui(admin = true) {
         });
     }
     let stored = null;
-    const storage = { getItem() { return stored; }, setItem(_, next) { stored = next; } };
+    const storage = { getItem() { return null; }, setItem() {} };
     const q = key => { assert.ok(nodes.has(key), key + ' exists in actual HTML'); return nodes.get(key); };
     const esc = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-    const NT = { q, esc, can: permission => permission === 'system' && admin, toast() {} };
+    const NT = {
+        q, esc, can: permission => permission === 'system' && admin, toast() {},
+        legacyStorageKeys: { radiusNasKey: 'legacy' },
+        radiusNas: () => stored ? JSON.parse(stored).nas : null,
+        setRadiusNas(rows) { stored = model.serialize(rows); return model.load(stored); }
+    };
     const context = { NT, WiFiNasModel: model, localStorage: storage, location: { href: 'file:///wifi/html/radius-policy.html' }, URL, confirm: () => true };
     context.window = context;
     vm.runInNewContext(js, context);

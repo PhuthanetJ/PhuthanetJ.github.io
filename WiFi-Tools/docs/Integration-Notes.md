@@ -33,9 +33,9 @@ Portal เลือกได้เฉพาะ Site รายชื่อ Packag
 
 ## NAS CRUD V013 — ข้อจำกัดการเชื่อมต่อ
 
-- แท็บ NAS เป็น CRUD ฝั่ง Browser สำหรับทดสอบ UI เท่านั้น เก็บใน localStorage แยกจาก Config และ window.name; `data/radius-nas.json` เป็นโครงสร้างรายการว่าง ไม่ใช่ข้อมูล RADIUS จริง
+- แท็บ NAS เป็น CRUD ฝั่ง Browser สำหรับทดสอบ UI เท่านั้น ตั้งแต่ V043 เก็บใน Shared Browser Draft key กลาง `wifi-tools:prototype:v3` ร่วมกับข้อมูล Draft หลัก; `data/radius-nas.json` เป็นโครงสร้างรายการว่าง ไม่ใช่ข้อมูล RADIUS จริง
 - ตารางแสดง Name/Host, Shortname, Secret แบบปิดบัง, Server; ฟอร์มมี Name/Host, Shortname, Type, Ports, Secret, Server, Community, Description
 - `Ports` ของต้นแบบรับเลข TCP/UDP 1–65535 คั่น comma ตามข้อกำหนด UI ภายใน ยังไม่ได้ยืนยัน semantic หรือชนิดฟิลด์ของ RADIUS Manager จริง รวมทั้ง Type/Server/Community ด้วย
 - ต้องยืนยันโครงสร้าง NAS ของ RADIUS Manager เวอร์ชันใช้งานจริง, CRUD API, RBAC, การตรวจข้อมูลซ้ำ, การเชื่อมต่อฐานข้อมูล และผลกระทบต่อ FreeRADIUS ก่อนเชื่อม Backend ห้ามเขียนลงตาราง `nas` จริงด้วยฟอร์มต้นแบบนี้
 - Secret ต้องส่งผ่าน HTTPS และจัดการฝั่ง Backend ด้วยการควบคุมสิทธิ์, secret storage และ audit logs; ห้ามส่งค่า Secret กลับใน API list, logs, export หรือเก็บ localStorage ใน Production
-- ความสามารถ `NT.can('system')` เป็นการจำลอง UI เท่านั้น ผู้ใช้ที่เข้าถึง Browser/localStorage สามารถอ่านค่า Secret ในต้นแบบได้ ต้องใช้ค่า Secret สมมติที่ไม่ใช้ในระบบจริงเท่านั้น
+- ความสามารถ `NT.can('system')` เป็นการจำลอง UI เท่านั้น ผู้ใช้ที่เข้าถึง Browser/localStorage สามารถอ่านค่า Secret ในต้นแบบได้ ต้องใช้ค่า Secret สมมติที่ไม่ใช้ในระบบจริงเท่านั้น ตั้งแต่ V043 NAS Secret ไม่ถูกใส่ใน `window.name` handoff แต่ localStorage เองยังไม่เข้ารหัส

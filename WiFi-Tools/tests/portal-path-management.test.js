@@ -26,11 +26,13 @@ test('V030 can create and edit a Portal Path with multiple Sites', () => {
     row = Array.from(c.NT.portalPathChoices()).find(x => x.id === id);
     assert.equal(row.name, 'Guest Portal 2'); assert.equal(row.path, '/portal/guest-v2'); assert.equal(row.template, 'Template03'); assert.equal(row.siteCount, 2);
 });
-test('V030 rejects duplicate Paths and keeps the owner Site during edit', () => {
+test('V043 rejects duplicate Paths and migrates Portal Path ownership when the previous owner is unassigned', () => {
     const first = app(); first.WiFiAuth.login('admin', 'Demo1234!'); const c = app(first.name, 'builder');
     const id = c.NT.createPortalPath({ name: 'Guest', path: '/portal/guest', template: 'Custom', siteIds: ['a', 'b'] });
     assert.throws(() => c.NT.createPortalPath({ name: 'Duplicate', path: '/portal/guest', template: 'Template01', siteIds: ['a'] }), /มีอยู่แล้ว/);
-    assert.throws(() => c.NT.updatePortalPath(id, { name: 'Guest', path: '/portal/new', template: 'Custom', siteIds: ['b'] }), /Site เจ้าของ/);
+    c.NT.updatePortalPath(id, { name: 'Guest', path: '/portal/new', template: 'Custom', siteIds: ['b'] });
+    assert.equal(c.NT.db.configs[id].ownerSiteId, 'b');
+    assert.deepEqual(Array.from(c.NT.db.configs[id].bindings.siteIds), ['b']);
 });
 test('V030 deletes a Portal Path Draft and clears it from the management list', () => {
     const first = app(); first.WiFiAuth.login('admin', 'Demo1234!'); const c = app(first.name, 'builder');

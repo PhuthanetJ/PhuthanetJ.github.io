@@ -1,8 +1,8 @@
 # Wi-Fi Tools — Offline Prototype
 
-**Current release:** V039  
-**Functional baseline:** V039  
-**Updated:** 24 September 2026 / 24 กันยายน 2569
+**Current release:** V045  
+**Functional baseline:** V045  
+**Updated:** 25 September 2026 / 25 กันยายน 2569
 
 Wi-Fi Tools เป็นต้นแบบระบบบริหาร Wi-Fi แบบ Offline สำหรับทดลอง UI/UX, Config, Portal, RADIUS & Policy, Report และงานบริหารที่เกี่ยวข้อง โดยออกแบบให้เปิดใช้งานจากไฟล์ HTML/CSS/JavaScript ใน Browser ได้โดยไม่ต้องเชื่อม Backend จริง
 
@@ -76,7 +76,8 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 - `Delete` → มี Confirm; ถ้ามี Site ผูกอยู่จะแจ้งจำนวน Site ก่อนลบ
 - Path ห้ามซ้ำและต้องอยู่ใต้ `/portal/`
 - Portal Path ใหม่ต้องผูก Site อย่างน้อย 1 Site
-- Site เจ้าของ Portal Path ถูกเก็บภายใน Draft และไม่สามารถนำออกด้วย Edit ปกติ
+- Site เจ้าของ Portal Path จะย้ายไป Site ที่ยังเหลือได้เมื่อแก้ Binding
+- Portal Path สามารถเหลือ `0` รายการได้ตาม Flow V036; Site สามารถอยู่โดยยังไม่ผูก Portal Path
 
 > Offline Prototype ยังยอมให้ Confirm แล้วลบ Path ที่มี Site ผูกอยู่ได้ เพื่อทดสอบ Flow เท่านั้น สำหรับ Production ควรบังคับ Unassign Site ก่อนลบ
 
@@ -107,7 +108,7 @@ Header ใช้ชื่อ **ส่วนงาน** โดยมีตัว�
 - **Social Login** รวม Provider: LINE / Google / Apple และเลือกเปิดแต่ละ Provider ได้; Preview แสดงเป็นปุ่มวงกลมพร้อม Icon
 - **thaiD Login** แยกจากกลุ่ม Social Login และยังเปิด/ปิดได้อิสระ
 - **ลงทะเบียน Free Wi-Fi** เปิด/ปิด Registration Form และเลือก Field ที่จะแสดงได้: Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email, Province
-- Province เป็น Dropdown ครบ 77 จังหวัด แบ่งเป็น กรุงเทพและปริมณฑล / ภาคกลาง / ภาคตะวันออก / ภาคเหนือ / ภาคตะวันออกเฉียงเหนือ / ภาคใต้
+- Province เป็น Dropdown ครบ 77 จังหวัด โดยใช้กลุ่มภูมิศาสตร์แยกจาก “ส่วนงาน”: กรุงเทพและปริมณฑล / ภาคกลาง / ภาคตะวันออก / ภาคตะวันตก / ภาคเหนือ / ภาคตะวันออกเฉียงเหนือ / ภาคใต้
 - V037 เปลี่ยน `Facebook Login` เป็น `thaiD Login` และ Migration Draft/Config รุ่นเก่าที่เคยเปิด Facebook จะย้าย flag มาเป็น thaiD
 - Provider และ Register ยังเป็น Offline UI และยังไม่เชื่อม OAuth/thaiD/Register Backend จริง
 
@@ -250,10 +251,12 @@ Validation หลัก:
 รองรับ:
 
 - **CREATE** — สร้าง Account ทีละรายการ
+- **EDIT** — แก้ Username, Package, Status และ DISPATCH
 - **GENERATE** — สร้างหลาย Account จาก `User Prefix + เลข 8 หลัก` สูงสุด 1,000 Account/ครั้ง
 - **IMPORT** — Import CSV
 - **DISPATCH** — กำหนด Account ให้ใช้ได้เฉพาะ Site
-- **EXPORT CSV** — Export รายการ Account ตาม Filter ปัจจุบัน
+- **DELETE** — ลบ Account ที่เลือกหลัง Confirm
+- **EXPORT CSV** — Export รายการ Account ตาม Filter ปัจจุบัน พร้อมป้องกัน Spreadsheet Formula Injection
 - Search / Filter / Select Account
 
 CSV Import ใช้ Header:
@@ -331,7 +334,7 @@ DISPATCH จึงเป็นตัวจำกัดขอบเขต Site �
 
 รองรับ **เพิ่ม / แก้ไข / ลบ Site**
 
-> V034: ต้องเหลือ Site อย่างน้อย 1 รายการ และถ้ายังมี Account ที่ `DISPATCH` ไป Site นั้น จะต้องยกเลิก DISPATCH ก่อนลบ. การลบ Site จะ reconcile Portal Path และ Site-scoped Draft เพื่อไม่ให้เกิด reference ค้าง.
+> V043: ต้องเหลือ Site อย่างน้อย 1 รายการ และถ้ายังมี Account ที่ `DISPATCH` ไป Site นั้น หรือยังมี Portal Path ผูก Site จะต้อง Undispatch / Unassign ก่อนลบ. ก่อนยืนยันลบจะแสดง Delete Impact ของ Notifications, Coupons, Report Schedules และ Administrator/User Site Scope เพื่อไม่ให้เกิด Cascade ที่ผู้ใช้ไม่ทราบ.
 
 พารามิเตอร์หลัก:
 
@@ -432,7 +435,15 @@ Draft ของ Browser ไม่ได้เขียนทับไฟล์�
 
 - JSON ใน `data/` = ข้อมูลตั้งต้น/ตัวอย่าง
 - `js/offline-data.js` = Bundle ข้อมูลเพื่อให้เปิด `file://` ได้โดยไม่ต้อง Fetch
-- `localStorage` = Draft ที่ผู้ใช้แก้ใน Browser
+- `localStorage` key กลาง `wifi-tools:prototype:v3` = **Single Source of Truth ของ Shared Browser Draft** สำหรับ Portal Config, Site, Package, Account, NAS และข้อมูลบริหารหลัก
+- V043 อ่าน Storage key รุ่นเก่าเพื่อ Migration เท่านั้น; การเขียน CRUD ใหม่ผ่าน Shared Store กลาง
+- `window.name` เป็น handoff สำรองสำหรับข้อมูลที่ไม่ใช่ Secret; **NAS Secret ไม่ถูกใส่ใน window.name** และต้องบันทึกลง localStorage สำเร็จเท่านั้น
+- Storage key กลางไม่ผูกกับชื่อ Folder ของแต่ละ Version จึงลดปัญหา Draft แยกชุดเมื่อรันภายใต้ Browser origin เดียวกัน (เช่นผ่าน local web server); พฤติกรรม `localStorage` ของ `file://` แตกต่างกันตาม Browser จึงไม่ควรถือว่า migration ข้าม Folder รับประกันได้
+
+### Save semantics
+
+- ฟิลด์ Config เป็น **Auto Save Draft** ใน Browser
+- ปุ่มเดิมที่สื่อว่า Save เปลี่ยนเป็น **ตรวจสอบ / สร้าง Version** เพื่อให้ตรงกับพฤติกรรมจริง: Validate Config และเพิ่ม Version reference โดย Draft ถูกบันทึกอัตโนมัติอยู่แล้ว
 
 ### ข้อจำกัดด้าน Security
 
@@ -496,15 +507,15 @@ WiFi-Tools/
 node --test tests/*.test.js
 ```
 
-ผลตรวจ Functional Baseline V030:
+ผลตรวจ Functional Baseline V043:
 
 ```text
-Tests: 114
-Pass: 114
+Tests: 161
+Pass: 161
 Fail: 0
 ```
 
-ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account, DISPATCH, Account Detail, Session, Package Unlimited semantics และ Portal Path Management CRUD
+ชุดทดสอบครอบคลุม Logic หลัก เช่น Config, Banner, Portal binding, Mobile, Division, NAS, Site/Package CRUD, Account Full CRUD, DISPATCH, Account Detail, Session, Package Unlimited semantics, Portal Path Management CRUD, Referential Integrity และ Shared Storage consistency
 
 > Automated Tests ใช้ Node / DOM จำลองในหลายส่วน ไม่เท่ากับการทดสอบ End-to-End บน Browser, Mobile Device หรือ RADIUS Production จริง
 
@@ -781,7 +792,64 @@ The filenames/routes remain unchanged; only the sidebar order and display labels
 ## V039 — Registration Fields + Questionnaire Language Selector
 - `Login / OTP`: เปลี่ยน Label Register เป็น **ลงทะเบียน Free Wi-Fi** และเมื่อเปิดจะแสดง Registration Field Configuration
 - Registration Fields รองรับ Name, Gender, Thai Citizen ID, Passport, Birthday, Mobile Phone, Email และ Province
-- Province ใช้ Dropdown ครบ 77 จังหวัด แบ่งเป็น 6 กลุ่มภูมิภาคของโครงการ
+- Province ใช้ Dropdown ครบ 77 จังหวัด; ตั้งแต่ V040 กลุ่ม Province แยกจาก “ส่วนงาน” และมีภาคตะวันตก
 - Portal Preview กด `ลงทะเบียน Free Wi-Fi` แล้วเปิด Registration Form ตาม Field ที่เลือก; ยังเป็น Offline Preview และไม่ส่ง Backend
 - `Quiz & เงื่อนไข`: Questionnaire / Quiz เพิ่ม Dropdown เลือกภาษาแบบเดียวกับ Terms & Conditions และกรองรายการคำถามตามภาษา
 - Config schema เพิ่มเป็น **schemaVersion 9** เพื่อเก็บ Registration Field flags และรองรับ Migration จาก Draft เดิม
+
+
+## V040 — Province Geographic Grouping Fix
+
+- แยก Province grouping ออกจาก Dropdown “ส่วนงาน” โดยไม่เปลี่ยน taxonomy ของส่วนงาน
+- Province Dropdown แบ่งเป็น 7 กลุ่ม: กรุงเทพและปริมณฑล / ภาคกลาง / ภาคตะวันออก / ภาคตะวันตก / ภาคเหนือ / ภาคตะวันออกเฉียงเหนือ / ภาคใต้
+- ภาคตะวันตกใน V040: กาญจนบุรี, ราชบุรี, เพชรบุรี, ประจวบคีรีขันธ์, ตาก
+- ตรวจครบ 77 จังหวัดและไม่มีชื่อซ้ำ
+
+
+## V041 — Portal Visual Flow Preview
+- ปรับ `Portal Configuration > Preview` ให้มี Flow ภายในหน้าจอเดียวตามตัวอย่าง: **Login → Register → Terms → Success / Error**
+- เพิ่มปุ่มสลับขั้นตอนสำหรับทดสอบ UI โดยตรง: Login / Register / Terms / Success / Error
+- หน้า Register ใน Preview ใช้ Registration Fields ชุดเดียวกับ `Login / OTP` และใช้ Province Dropdown จากข้อมูล 77 จังหวัดเดิม
+- หน้า Terms ใช้ Terms & Conditions ตามภาษาที่กำลังแสดง ไม่สร้างข้อความคนละชุด
+- Login / Free Trial / Social / thaiD ใน Preview สามารถเดิน Flow ต่อไปยัง Terms และ Success แบบ Offline Demo
+- เพิ่ม Success และ Error screen สำหรับตรวจ UI/UX โดยไม่ต้องมี Backend จริง
+- ปรับ Visual shell ของ Preview ให้ใกล้เคียงตัวอย่าง Mobile Portal: language pill, hero illustration, template/banner area, rounded content card และ footer navigation
+- ยังคงเป็น Offline Prototype: Success/Error เป็นการจำลองเท่านั้น ไม่ได้ทำ RADIUS Authentication หรือสร้าง Session จริง
+
+
+## V042 — Portal Preview Cleanup
+- ตัดภาพคน/โทรศัพท์/โน้ตบุ๊กแบบตกแต่งออกจาก Hero ของ Portal Preview
+- ตัดกรอบ Template และข้อความ `Template · FREE WiFi` ออกจาก Portal Preview
+- คง Language selector, Logo/Wordmark, Banner, Form Flow และ Footer Navigation เดิม
+- ลดความสูง Hero ให้เหมาะสมหลังนำองค์ประกอบตกแต่งออก
+
+## V043 — CRUD & Storage Consistency
+
+- Portal Preview เอาพื้นหลังสีเขียว/ฟ้าที่ฝังใน UI ออก; ถ้ามี Background asset จะแสดงรูปโดยตรงแบบ cover และไม่มี gradient overlay ทับ
+- Shared Browser Draft เปลี่ยนเป็น Storage key กลาง `wifi-tools:prototype:v3` และรวม Site / Package / Account / NAS เข้ากับ Main Draft เป็น Source of Truth เดียว
+- Storage key รุ่น V042 และ separate RADIUS keys ยังอ่านได้เพื่อ Migration แต่ CRUD ใหม่ไม่เขียนกลับไปหลายชุด
+- NAS Secret เก็บใน localStorage กลางแต่ไม่ใส่ใน `window.name` handoff; ถ้า localStorage บันทึกไม่ได้ NAS mutation จะถูกยกเลิก
+- Account เพิ่ม **EDIT / DELETE** ให้ Full CRUD และสามารถเปลี่ยน Package, Status, Username และ DISPATCH โดยรักษา telemetry/session เดิมของ Account
+- Package Delete workflow ไม่เป็น dead-end อีกต่อไป: ผู้ดูแลสามารถ Delete Account หรือย้าย Account ไป Package อื่นก่อนลบ Package
+- Site Delete แสดง Impact ก่อน Confirm และ Block หากยังมี Portal Path หรือ Account DISPATCH ผูกอยู่ เพื่อไม่ Cascade ข้อมูลโดยไม่ทราบผลกระทบ
+- Portal Path อนุญาตให้เหลือ 0 รายการ และ owner สามารถ migrate ไป Site ที่ยังเหลือเมื่อ Unassign owner เดิม
+- Config UI ระบุชัดว่าเป็น **Auto Save Draft**; ปุ่ม Version ใช้ Validate + สร้างจุดอ้างอิง ไม่ใช่ Commit ที่เพิ่งบันทึกข้อมูล
+- Account CSV Export คง Formula Injection protection จาก V035
+- Automated / Regression Tests: **161/161 ผ่าน**; ยังไม่ได้ยืนยัน E2E บน Browser/มือถือจริงในสภาพแวดล้อมนี้
+
+
+
+## V044 — Portal Preview Terms / Back Button / Page Copy Editor
+
+- หน้า Login ใน Portal Preview ไม่แสดงลิงก์/ปุ่มยอมรับ Terms ซ้ำอีกต่อไป; Terms จะอยู่เป็น Step แยกและถูกเรียกตาม Flow หลัง Login/Register เมื่อเปิด Terms
+- ปุ่มกลับในหน้า Register และ Terms เปลี่ยนเป็นปุ่ม Secondary แบบเดียวกับหน้า Error และกลับสู่หน้า Login
+- `ข้อความ & ภาษา > แก้ไขข้อความบน Portal` เพิ่มตัวเลือกหน้า Login / Register / Terms / Success / Error และ Sync กับ Step ที่เลือกใน Preview โดยอัตโนมัติ
+- เพิ่มข้อความแบบ Page-specific ต่อภาษา เช่น Register title/button, Terms title/accept/back, Success title/button/logout และ Error title/back
+- คง **schemaVersion 9** โดย Page-specific copy เป็น optional fields; Draft/Config รุ่นก่อนจะเติมค่า default ระหว่าง Migration
+
+
+V045 — Portal Button Style Groups + thaiD Icon
+- แท็บดีไซน์ > ภาพและอัตลักษณ์ แยกสีปุ่ม/สีข้อความเป็น 4 กลุ่ม: Submit, Back, ลงทะเบียน Free Wi-Fi และ thaiD
+- ปุ่ม Portal Preview ใช้สีตามกลุ่มของตัวเอง ไม่บังคับใช้สีชุดเดียวกันทุกปุ่ม
+- ปุ่ม thaiD เพิ่ม Inline SVG Icon แบบบัตรประจำตัว (Generic ID icon; ไม่ใช่ Official thaiD logo)
+- คง Config schemaVersion 9 และ Migration เติมค่าสีใหม่ให้ Draft/Config รุ่นก่อนอัตโนมัติ

@@ -4,7 +4,7 @@
     if (!window.NT || !window.WiFiRadiusCatalog || !window.WiFiRadiusPage) return;
     const { q, esc } = NT, model = WiFiRadiusCatalog, page = WiFiRadiusPage;
     const admin = NT.can('system');
-    const key = 'wifi-tools:radius-catalog-demo:v1:' + new URL('../', location.href).href;
+    const legacyKey = NT.legacyStorageKeys?.radiusCatalogKey || ('wifi-tools:radius-catalog-demo:v1:' + new URL('../', location.href).href);
     const siteDialog = q('#radius-site-dialog'), siteForm = q('#radius-site-form');
     const packageDialog = q('#radius-package-dialog'), packageForm = q('#radius-package-form');
     let snapshot = model.initial(NT_DATA), writable = true, editingSite = null, editingPackage = null, opener = null;
@@ -32,17 +32,20 @@
     function commit(next, selectedPackage = null) {
         if (!admin || !writable) throw Error('ไม่มีสิทธิ์หรือไม่สามารถบันทึก Draft');
         const validated = model.check(next);
-        try { localStorage.setItem(key, model.serialize(validated)); }
-        catch (_) { lock('Browser บันทึก Site / Package Draft ไม่ได้ กรุณาอนุญาต localStorage'); throw Error('บันทึกไม่สำเร็จ ข้อมูลเดิมยังอยู่'); }
-        if (NT.setRadiusCatalog) NT.setRadiusCatalog(validated);
+        try { if (!NT.setRadiusCatalog) throw Error('Shared Storage API ไม่พร้อมใช้งาน'); NT.setRadiusCatalog(validated); }
+        catch (e) { lock('Browser บันทึก Shared Site / Package Draft ไม่ได้'); throw Error(e.message || 'บันทึกไม่สำเร็จ ข้อมูลเดิมยังอยู่'); }
         snapshot = validated; refresh(selectedPackage);
         status('บันทึก Site / Package Draft แล้ว · Portal Configuration ใช้ข้อมูลชุดเดียวกัน · ยังไม่เชื่อม RADIUS Manager จริง');
     }
     function accountDraftRows() {
         if (!window.WiFiAccountModel) return [];
-        const accountKey = 'wifi-tools:radius-accounts-demo:v1:' + new URL('../', location.href).href;
-        try { return WiFiAccountModel.load(localStorage.getItem(accountKey), NT_DATA, snapshot.packages, snapshot.sites); }
-        catch (_) { return null; }
+        try {
+            const shared = NT.radiusAccounts?.();
+            if (shared) return WiFiAccountModel.check(shared, snapshot.packages, snapshot.sites);
+            const legacyKey = NT.legacyStorageKeys?.radiusAccountsKey;
+            const raw = legacyKey ? localStorage.getItem(legacyKey) : null;
+            return WiFiAccountModel.load(raw, NT_DATA, snapshot.packages, snapshot.sites);
+        } catch (_) { return null; }
     }
     function dispatchedAccountCount(siteId) {
         const rows = accountDraftRows(); return rows === null ? null : rows.filter(row => row.dispatchSiteId === siteId).length;
@@ -105,7 +108,10 @@
         q('#radius-package-count').textContent = '';
         return; // Do not load another user's local catalog draft.
     }
-    try { snapshot = NT.radiusCatalog ? model.check(NT.radiusCatalog()) : model.load(localStorage.getItem(key), NT_DATA); }
+    try {
+        if (NT.radiusCatalog) snapshot = model.check(NT.radiusCatalog());
+        else snapshot = model.load(localStorage.getItem(legacyKey), NT_DATA);
+    }
     catch (e) { lock(e.message); }
     if (writable) {
         if (NT.setRadiusCatalog) NT.setRadiusCatalog(snapshot);
@@ -122,9 +128,16 @@
         const dispatched = dispatchedAccountCount(record.id);
         if (dispatched === null) { status('ตรวจ Account Draft ไม่ได้ จึงยังไม่ลบ Site เพื่อป้องกัน DISPATCH ค้าง'); NT.toast('ตรวจ Account Draft ไม่ได้'); return; }
         if (dispatched > 0) { status('Site "' + record.name + '" ยังมี ' + dispatched + ' Account ที่ DISPATCH อยู่ · ยกเลิก DISPATCH ก่อนลบ Site'); NT.toast('ยกเลิก DISPATCH Account ก่อนลบ Site'); return; }
-        const portalCount = Object.values(NT.db?.configs || {}).filter(draft => draft?.bindings?.siteIds?.includes(record.id)).length;
-        const impact = portalCount ? '\nPortal Path ที่ผูก Site นี้ ' + portalCount + ' รายการจะถูกปรับความสัมพันธ์ และ Path ที่ไม่มี Site เหลือจะถูกลบจาก Draft' : '';
-        if (!confirm('ยืนยันลบ Site "' + record.name + '" จาก Draft ใน Browser?' + impact + '\nข้อมูล Site-scoped Draft ที่อ้าง Site นี้จะถูกทำความสะอาด แต่ยังไม่ลบ Site จริงใน RADIUS Manager')) return;
+        const impact = NT.siteDeleteImpact ? NT.siteDeleteImpact(record.id) : { portalPaths: 0, notifications: 0, coupons: 0, schedules: 0, administrators: 0 };
+        if (impact.portalPaths > 0) {
+            status('Site "' + record.name + '" ยังมี Portal Path ที่ผูก Site นี้ ' + impact.portalPaths + ' รายการ · Unassign หรือลบ Portal Path ก่อนลบ Site');
+            NT.toast('Unassign Site จาก Portal Path ก่อนลบ Site'); return;
+        }
+        const impactLines = [
+            ['Notifications', impact.notifications], ['Coupons', impact.coupons], ['Report Schedules', impact.schedules], ['Administrator/User Site Scope', impact.administrators]
+        ].filter(([, count]) => count > 0).map(([label, count]) => label + ': ' + count);
+        const impactText = impactLines.length ? '\n\nข้อมูล Site-scoped ที่จะถูกทำความสะอาดหลังยืนยัน:\n- ' + impactLines.join('\n- ') : '\n\nไม่พบ Site-scoped Draft อื่นที่ต้องทำความสะอาด';
+        if (!confirm('ยืนยันลบ Site "' + record.name + '" จาก Draft ใน Browser?' + impactText + '\n\nยังไม่ลบ Site จริงใน RADIUS Manager')) return;
         try { commit(model.removeSite(snapshot, record.id)); NT.toast('ลบ Site Draft แล้ว'); }
         catch (e) { status(e.message); NT.toast(e.message); }
     });

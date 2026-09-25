@@ -1,4 +1,4 @@
-Current release: V038
+Current release: V044
 
 Wi-Fi Tools — Desktop & Mobile
 
@@ -29,7 +29,7 @@ V011: Header เปลี่ยนเป็น "ส่วนงาน" ค่า
 
 V013: RADIUS & Policy > NAS เพิ่ม/แก้ไข/ลบ NAS Draft ได้จาก System Admin
 แสดง Name/Host, Shortname, Secret (ปิดบัง), Server; ฟอร์มครบ 8 ช่อง
-NAS อยู่ใน localStorage ไม่เข้ารหัส ใช้ Secret จำลองเท่านั้น ไม่เชื่อม RADIUS จริง
+V043 ใช้ Shared Browser Draft key กลางสำหรับ Site/Package/Account/NAS; NAS Secret อยู่ใน localStorage ที่ไม่เข้ารหัสและไม่ถูกส่งผ่าน window.name ใช้ Secret จำลองเท่านั้น ไม่เชื่อม RADIUS จริง
 
 V014: RADIUS & Policy > Site / Package เพิ่ม แก้ไข ลบ ได้ใน Offline Prototype
 - Site: Name, VLAN ID, Location, Concurrent, Description, เลือก Allow Package
@@ -119,3 +119,47 @@ V039 — Registration Fields + Questionnaire Language
 - Province Dropdown ครบ 77 จังหวัด แบ่งตาม 6 ภูมิภาคของโครงการ
 - Questionnaire / Quiz มี Dropdown เลือกภาษาแบบ Terms & Conditions
 - Config schemaVersion 9
+
+
+V040 — Province Geographic Grouping Fix
+- Province เป็นข้อมูลคนละชุดกับ “ส่วนงาน”
+- Province Dropdown เพิ่มภาคตะวันตกและจัดเป็น 7 กลุ่ม รวม 77 จังหวัดไม่ซ้ำ
+- ส่วนงานยังคง taxonomy เดิม ไม่เพิ่มภาคตะวันตกอัตโนมัติ
+
+
+V041 — Portal Visual Flow Preview
+- Portal Preview รองรับขั้นตอน Login → Register → Terms → Success / Error
+- Register ใช้ Field Configuration เดิม และ Terms ใช้ข้อความตามภาษาที่ตั้งไว้
+- เพิ่ม Step buttons สำหรับทดสอบแต่ละหน้าของ Portal โดยตรง
+- ปรับหน้าตา Preview ให้เป็น Mobile Portal style ใกล้เคียงภาพตัวอย่าง
+- ยังเป็น Offline Preview ไม่เชื่อม RADIUS/Backend จริง
+
+
+V042 — Portal Preview Cleanup
+- ตัดรูปคน/โทรศัพท์/โน้ตบุ๊กออกจาก Portal Preview
+- ตัดกรอบ Template และข้อความ Template · FREE WiFi ออกจาก Preview
+- คง Flow Login → Register → Terms → Success / Error และ Config เดิม
+
+V043 — CRUD & Storage Consistency
+- Portal Preview ไม่มีพื้นหลังสีเขียว/ฟ้า built-in มาทับ Background asset
+- Shared CRUD data ใช้ Main Browser Draft key กลาง `wifi-tools:prototype:v3`; separate keys รุ่นเก่าเป็น migration-only
+- Account เพิ่ม EDIT/DELETE และ Change Package ทำให้ Account เป็น Full CRUD ใน Prototype
+- Site Delete แสดง Impact และ Block ถ้ายังมี Portal Path / DISPATCH relation
+- Portal Path สามารถเหลือ 0 รายการได้ และ owner migrate ได้เมื่อแก้ Site binding
+- Config เป็น Auto Save Draft; ปุ่ม Version ใช้ Validate + สร้าง Version reference
+- Regression Tests 161/161 ผ่าน; ยังไม่ได้ยืนยัน Browser/Mobile E2E จริง
+
+
+
+V044 — Portal Preview / Copy Editor Consistency
+- Login Preview ไม่แสดงปุ่ม Terms ซ้ำ; Terms เป็น Step แยกใน Flow
+- Register/Terms ใช้ปุ่มกลับแบบเดียวกับ Error และกลับสู่ Login
+- แก้ไขข้อความบน Portal Sync ตามหน้า Login/Register/Terms/Success/Error ที่เลือก
+- คง Config schemaVersion 9; Page-specific copy เติม default ระหว่าง Migration จาก Draft เดิม
+
+
+V045 — Portal Button Style Groups + thaiD Icon
+- ดีไซน์: แยกสีปุ่ม/ข้อความ Submit, Back, Register Free Wi-Fi, thaiD
+- Portal Preview ใช้สีตามประเภทปุ่ม
+- thaiD เพิ่ม Generic ID icon แบบ Inline SVG
+- Config schemaVersion 9 เดิม; สีใหม่มี Migration default

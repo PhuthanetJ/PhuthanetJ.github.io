@@ -135,6 +135,19 @@
         }
         return { rows: next, created };
     }
+    function update(rows, accountId, value, packages, sites) {
+        const current = rows.find(row => row.id === accountId);
+        if (!current) throw Error('ไม่พบ Account ที่ต้องการแก้ไข');
+        const merged = { ...current, ...value, createdAt: current.createdAt, firstLogin: current.firstLogin, expiredDate: current.expiredDate, timeUsed: current.timeUsed, lastLogin: current.lastLogin, remain: current.remain, sessions: current.sessions };
+        const record = { id: current.id, ...normalizeRecord(merged, rows, packages, sites, current.id) };
+        return { rows: rows.map(row => row.id === current.id ? record : row), record };
+    }
+    function remove(rows, accountIds) {
+        const ids = new Set(Array.isArray(accountIds) ? accountIds : []);
+        if (!ids.size) throw Error('เลือก Account ที่ต้องการลบอย่างน้อย 1 รายการ');
+        if ([...ids].some(id => !rows.some(row => row.id === id))) throw Error('มี Account ที่เลือกไม่อยู่ในรายการปัจจุบัน');
+        return rows.filter(row => !ids.has(row.id));
+    }
     function dispatch(rows, accountIds, siteId, packages, sites) {
         const ids = new Set(Array.isArray(accountIds) ? accountIds : []);
         if (!ids.size) throw Error('เลือก Account ที่ต้องการ DISPATCH อย่างน้อย 1 รายการ');
@@ -164,5 +177,5 @@
         }
         return { rows: next, created };
     }
-    return { statusValues, maxAccounts, siteAllows, recoverStaleDispatch, initial, check, load, serialize, create, generate, dispatch, importRows };
+    return { statusValues, maxAccounts, siteAllows, recoverStaleDispatch, initial, check, load, serialize, create, update, remove, generate, dispatch, importRows };
 });
